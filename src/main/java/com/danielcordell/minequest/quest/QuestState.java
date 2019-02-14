@@ -1,6 +1,4 @@
-package com.example.examplemod.quest;
-
-import com.sun.javaws.exceptions.InvalidArgumentException;
+package com.danielcordell.minequest.quest;
 
 public enum QuestState {
     CREATED(0),

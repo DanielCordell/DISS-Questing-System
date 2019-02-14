@@ -1,6 +1,6 @@
-package com.example.examplemod.proxy;
+package com.danielcordell.minequest.proxy;
 
-import com.example.examplemod.ExampleMod;
+import com.danielcordell.minequest.MineQuest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-@Mod.EventBusSubscriber(modid = ExampleMod.MODID)
+@Mod.EventBusSubscriber(modid = MineQuest.MODID)
 public interface IProxy {
     void preInit(FMLPreInitializationEvent event);
 

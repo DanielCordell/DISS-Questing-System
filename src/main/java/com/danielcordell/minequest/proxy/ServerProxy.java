@@ -1,14 +1,12 @@
-package com.example.examplemod.proxy;
+package com.danielcordell.minequest.proxy;
 
-import com.example.examplemod.ExampleMod;
+import com.danielcordell.minequest.MineQuest;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
 
 public class ServerProxy implements IProxy {
     @Override
@@ -28,7 +26,7 @@ public class ServerProxy implements IProxy {
 
     @Override
     public void serverStarting(FMLServerStartingEvent event) {
-        ExampleMod.logger.info("Server starting.");
+        MineQuest.logger.info("Server starting.");
     }
 
     @Override
