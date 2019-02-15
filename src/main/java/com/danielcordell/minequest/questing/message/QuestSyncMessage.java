@@ -1,14 +1,14 @@
-package com.danielcordell.minequest.quest.message;
+package com.danielcordell.minequest.questing.message;
 
-import com.danielcordell.minequest.quest.Quest;
+import com.danielcordell.minequest.questing.quest.Quest;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class QuestSyncMessage implements IMessage {
-    public NBTTagCompound questNBT;
-    public int questID;
+    NBTTagCompound questNBT;
+    int questID;
 
     public QuestSyncMessage(Quest quest) {
         this.questID = quest.getQuestID();

@@ -1,17 +1,12 @@
-package com.danielcordell.minequest.quest.message;
+package com.danielcordell.minequest.questing.message;
 
-import com.danielcordell.minequest.MineQuest;
-import com.danielcordell.minequest.quest.Quest;
-import com.danielcordell.minequest.quest.QuestBuilder;
-import com.danielcordell.minequest.quest.capabilities.playerquest.CapPlayerQuestData;
-import com.danielcordell.minequest.quest.capabilities.playerquest.PlayerQuestData;
+import com.danielcordell.minequest.questing.quest.QuestBuilder;
+import com.danielcordell.minequest.questing.capabilities.playerquest.CapPlayerQuestData;
+import com.danielcordell.minequest.questing.capabilities.playerquest.PlayerQuestData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
-import java.util.Optional;
 
 public class QuestSyncMessageHandler implements IMessageHandler<QuestSyncMessage, IMessage> {
     @Override

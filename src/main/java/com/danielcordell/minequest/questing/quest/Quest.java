@@ -1,5 +1,7 @@
-package com.danielcordell.minequest.quest;
+package com.danielcordell.minequest.questing.quest;
 
+import com.danielcordell.minequest.questing.QuestCheckpoint;
+import com.danielcordell.minequest.questing.enums.QuestState;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,6 +30,18 @@ public class Quest {
 
     private int currentEntityIDCounter;
 
+    Quest(int questID, String questName, UUID playerID, QuestState state, int currentCheckpontIndex, HashMap<Integer, Integer> entityMap) {
+        this.questID = questID;
+        this.questName = questName;
+        this.playerID = playerID;
+        this.currentCheckpontIndex = currentCheckpontIndex;
+        this.state = state;
+        this.entityMap = entityMap;
+        this.currentEntityIDCounter = entityMap.isEmpty() ? 0 : Collections.max(entityMap.keySet()) + 1;
+        this.checkpoints = new ArrayList<>();
+        isDirty = true;
+    }
+
     public NBTTagCompound toNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setInteger("questID", questID);
@@ -47,18 +61,6 @@ public class Quest {
         return nbt;
     }
 
-    Quest(int questID, String questName, UUID playerID, QuestState state, int currentCheckpontIndex, HashMap<Integer, Integer> entityMap) {
-        this.questID = questID;
-        this.questName = questName;
-        this.playerID = playerID;
-        this.currentCheckpontIndex = currentCheckpontIndex;
-        this.state = state;
-        this.entityMap = entityMap;
-        this.currentEntityIDCounter = entityMap.isEmpty() ? 0 : Collections.max(entityMap.keySet()) + 1;
-        this.checkpoints = new ArrayList<>();
-        isDirty = true;
-    }
-
     public Quest addEntity(EntityLiving entity) {
         entityMap.put(currentEntityIDCounter++, entity.getEntityId());
         isDirty = true;
@@ -67,6 +69,12 @@ public class Quest {
 
     public int getQuestID() {
         return questID;
+    }
+    public String getName() {
+        return questName;
+    }
+    public QuestState getState() {
+        return state;
     }
 
     public void addCheckpoint(QuestCheckpoint checkpoint) {

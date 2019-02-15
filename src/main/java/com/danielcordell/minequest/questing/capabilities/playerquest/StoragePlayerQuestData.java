@@ -1,7 +1,7 @@
-package com.danielcordell.minequest.quest.capabilities.playerquest;
+package com.danielcordell.minequest.questing.capabilities.playerquest;
 
-import com.danielcordell.minequest.quest.Quest;
-import com.danielcordell.minequest.quest.QuestBuilder;
+import com.danielcordell.minequest.questing.quest.Quest;
+import com.danielcordell.minequest.questing.quest.QuestBuilder;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

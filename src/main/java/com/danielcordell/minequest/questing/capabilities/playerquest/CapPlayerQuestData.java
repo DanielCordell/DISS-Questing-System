@@ -1,4 +1,4 @@
-package com.danielcordell.minequest.quest.capabilities.playerquest;
+package com.danielcordell.minequest.questing.capabilities.playerquest;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;

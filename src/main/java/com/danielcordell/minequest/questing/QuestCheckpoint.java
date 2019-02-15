@@ -1,5 +1,6 @@
-package com.danielcordell.minequest.quest;
+package com.danielcordell.minequest.questing;
 
+import com.danielcordell.minequest.questing.quest.Quest;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -20,5 +21,9 @@ public class QuestCheckpoint {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setBoolean("isFinalCheckpoint", isFinalCheckpoint);
         return nbt;
+    }
+
+    public Quest getQuest() {
+        return quest;
     }
 }

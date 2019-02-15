@@ -1,6 +1,10 @@
 package com.danielcordell.minequest.keybind;
 
 import com.danielcordell.minequest.MineQuest;
+import com.danielcordell.minequest.questing.capabilities.playerquest.CapPlayerQuestData;
+import com.danielcordell.minequest.questing.capabilities.playerquest.PlayerQuestData;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -15,5 +19,9 @@ public class KeybindEventHandler {
     public static void onKeyDown(InputEvent.KeyInputEvent event) {
         if (!KeyBindings.keyBindings.get(0).isPressed()) return;
         MineQuest.logger.info("KeySide: " + FMLCommonHandler.instance().getEffectiveSide().name());
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
+        player.sendChatMessage("My Quests:");
+        pqd.getImmutableQuests().forEach(quest -> player.sendChatMessage(quest.getName() + " - Status: " + quest.getState().name()));
     }
 }

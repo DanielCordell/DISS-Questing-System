@@ -1,10 +1,8 @@
-package com.danielcordell.minequest.quest.capabilities.playerquest;
+package com.danielcordell.minequest.questing.capabilities.playerquest;
 
-import com.danielcordell.minequest.quest.Quest;
-import com.danielcordell.minequest.quest.QuestBuilder;
-import com.sun.istack.internal.NotNull;
+import com.danielcordell.minequest.questing.quest.Quest;
+import com.danielcordell.minequest.questing.quest.QuestBuilder;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,8 +13,9 @@ public class PlayerQuestData {
     ArrayList<Quest> playerQuests = new ArrayList<>();
 
     public void startQuest(EntityPlayer player, Quest quest) {
-        Quest newQuest = QuestBuilder.fromNBT(quest.toNBT());
         quest.setPlayer(player);
+        Quest clientQuest = QuestBuilder.fromNBT(quest.toNBT());
+        player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null).addQuest(quest);
     }
 
     public int numberOfQuests() {

@@ -1,5 +1,7 @@
-package com.danielcordell.minequest.quest;
+package com.danielcordell.minequest.questing.quest;
 
+import com.danielcordell.minequest.questing.QuestCheckpoint;
+import com.danielcordell.minequest.questing.enums.QuestState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 

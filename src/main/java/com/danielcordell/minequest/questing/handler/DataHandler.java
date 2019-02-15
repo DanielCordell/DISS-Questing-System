@@ -1,15 +1,13 @@
-package com.danielcordell.minequest.quest.handlers;
+package com.danielcordell.minequest.questing.handler;
 
 import com.danielcordell.minequest.MineQuest;
-import com.danielcordell.minequest.quest.Quest;
-import com.danielcordell.minequest.quest.QuestBuilder;
-import com.danielcordell.minequest.quest.QuestCheckpoint;
-import com.danielcordell.minequest.quest.capabilities.playerquest.CapPlayerQuestData;
-import com.danielcordell.minequest.quest.capabilities.playerquest.PlayerQuestData;
-import com.danielcordell.minequest.quest.message.QuestSyncMessage;
+import com.danielcordell.minequest.questing.quest.Quest;
+import com.danielcordell.minequest.questing.quest.QuestBuilder;
+import com.danielcordell.minequest.questing.QuestCheckpoint;
+import com.danielcordell.minequest.questing.capabilities.playerquest.CapPlayerQuestData;
+import com.danielcordell.minequest.questing.capabilities.playerquest.PlayerQuestData;
+import com.danielcordell.minequest.questing.message.QuestSyncMessage;
 import com.danielcordell.minequest.worlddata.WorldQuestData;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

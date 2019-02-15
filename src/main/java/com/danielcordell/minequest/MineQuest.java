@@ -1,10 +1,10 @@
 package com.danielcordell.minequest;
 
 import com.danielcordell.minequest.proxy.IProxy;
-import com.danielcordell.minequest.quest.capabilities.playerquest.PlayerQuestData;
-import com.danielcordell.minequest.quest.capabilities.playerquest.StoragePlayerQuestData;
-import com.danielcordell.minequest.quest.message.QuestSyncMessage;
-import com.danielcordell.minequest.quest.message.QuestSyncMessageHandler;
+import com.danielcordell.minequest.questing.capabilities.playerquest.PlayerQuestData;
+import com.danielcordell.minequest.questing.capabilities.playerquest.StoragePlayerQuestData;
+import com.danielcordell.minequest.questing.message.QuestSyncMessage;
+import com.danielcordell.minequest.questing.message.QuestSyncMessageHandler;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;

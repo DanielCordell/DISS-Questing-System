@@ -1,9 +1,8 @@
 package com.danielcordell.minequest.worlddata;
 
 import com.danielcordell.minequest.MineQuest;
-import com.danielcordell.minequest.quest.Quest;
-import com.danielcordell.minequest.quest.QuestBuilder;
-import com.google.common.collect.ImmutableList;
+import com.danielcordell.minequest.questing.quest.Quest;
+import com.danielcordell.minequest.questing.quest.QuestBuilder;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
