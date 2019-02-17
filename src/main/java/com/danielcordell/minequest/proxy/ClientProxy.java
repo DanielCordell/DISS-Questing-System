@@ -1,10 +1,14 @@
 package com.danielcordell.minequest.proxy;
 
 import com.danielcordell.minequest.MineQuest;
+import com.danielcordell.minequest.core.ModBlocks;
 import com.danielcordell.minequest.keybind.KeyBindings;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -21,6 +25,8 @@ public class ClientProxy implements IProxy {
     @Override
     public void init(FMLInitializationEvent event) {
         KeyBindings.keyBindings.forEach(ClientRegistry::registerKeyBinding);
+
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(ModBlocks.questStartBlock), 0, new ModelResourceLocation(ModBlocks.questStartBlock.getRegistryName(), "inventory"));
     }
 
     @Override

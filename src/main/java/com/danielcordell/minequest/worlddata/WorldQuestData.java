@@ -75,4 +75,8 @@ public class WorldQuestData extends WorldSavedData {
     public List<Quest> getImmutableQuests() {
         return Collections.unmodifiableList(quests);
     }
+
+    public void removeQuest(int questID) {
+        quests.removeIf(quest -> quest.getQuestID() == questID);
+    }
 }

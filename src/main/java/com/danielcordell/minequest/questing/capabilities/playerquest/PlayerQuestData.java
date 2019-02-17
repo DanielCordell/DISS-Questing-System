@@ -1,5 +1,6 @@
 package com.danielcordell.minequest.questing.capabilities.playerquest;
 
+import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestBuilder;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,9 +14,10 @@ public class PlayerQuestData {
     ArrayList<Quest> playerQuests = new ArrayList<>();
 
     public void startQuest(EntityPlayer player, Quest quest) {
-        quest.setPlayer(player);
         Quest clientQuest = QuestBuilder.fromNBT(quest.toNBT());
-        player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null).addQuest(quest);
+        clientQuest.setPlayer(player);
+        clientQuest.start();
+        player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null).addQuest(clientQuest);
     }
 
     public int numberOfQuests() {
@@ -27,10 +29,19 @@ public class PlayerQuestData {
     }
 
     public void addQuest(Quest quest) {
-        playerQuests.add(quest);
+        if (containsQuest(quest.getQuestID())) {
+            MineQuest.logger.error("Attempting to add quest that already is in player data!");
+            MineQuest.logger.error("Old Quest: " + playerQuests.stream().filter(q -> q.getQuestID() == quest.getQuestID()).findFirst().get().toNBT());
+            MineQuest.logger.error("New Quest: " + quest.toNBT());
+        }
+        else playerQuests.add(quest);
     }
 
     public void removeQuest(int questID) {
         playerQuests.removeIf(quest -> quest.getQuestID() == questID);
+    }
+
+    public boolean containsQuest(int questID) {
+        return playerQuests.stream().filter(quest -> quest.getQuestID() == questID).count() > 0;
     }
 }

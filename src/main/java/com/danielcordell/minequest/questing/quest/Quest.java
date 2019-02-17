@@ -1,5 +1,6 @@
 package com.danielcordell.minequest.questing.quest;
 
+import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.questing.QuestCheckpoint;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import net.minecraft.entity.EntityLiving;
@@ -93,5 +94,14 @@ public class Quest {
 
     private void setClean() {
         isDirty = false;
+    }
+
+    public void start() {
+        if (state != QuestState.CREATED) {
+            MineQuest.logger.error("Trying to start an already started quest, whoops!");
+            MineQuest.logger.error("Quest: " + toNBT());
+            return;
+        }
+        state = QuestState.STARTED;
     }
 }
