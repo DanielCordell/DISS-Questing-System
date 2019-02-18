@@ -23,6 +23,7 @@ public class Quest {
     private QuestState state;
 
     //QuestEntityID -> WorldEntityID
+    //For specific KNOWN entities at the start of the quest. Must exist throughout the entire quest, not just for an objective/checkpoint.
     private HashMap<Integer, Integer> entityMap;
 
     private int currentCheckpontIndex;

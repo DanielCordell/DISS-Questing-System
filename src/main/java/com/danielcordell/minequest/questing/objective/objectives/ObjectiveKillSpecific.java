@@ -1,38 +1,34 @@
-package com.danielcordell.minequest.questing.objective;
+package com.danielcordell.minequest.questing.objective.objectives;
 
-import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.enums.QuestState;
-import com.danielcordell.minequest.questing.objective.params.ParamsKillType;
+import com.danielcordell.minequest.questing.objective.ObjectiveBase;
+import com.danielcordell.minequest.questing.objective.params.ParamsKillSpecific;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
 
-public class ObjectiveKillType extends ObjectiveBase {
-    private Class<? extends EntityLivingBase> entityType;
+public class ObjectiveKillSpecific extends ObjectiveBase {
+
+    private String nbtTagToFind;
     private int numToKill;
     private int numKilled;
 
-    ObjectiveKillType(ParamsKillType params, ObjectiveType type) {
+    public ObjectiveKillSpecific(ParamsKillSpecific params, ObjectiveType type) {
         super(params.checkpoint, params.description, params.state, params.optional, type);
-        entityType = params.entityTypeToKill;
+        nbtTagToFind = params.nbtTagToFind;
         numToKill = params.numToKill;
         numKilled = params.numAlreadyKilled;
     }
 
-    ObjectiveKillType(QuestCheckpoint checkpoint, ObjectiveType type, NBTTagCompound nbt) {
+    public ObjectiveKillSpecific(QuestCheckpoint checkpoint, ObjectiveType type, NBTTagCompound nbt) {
         super(checkpoint, type, nbt);
         objectiveSpecificFromNBT(nbt);
     }
 
     public void update(LivingDeathEvent event) {
         if (state != QuestState.STARTED) return;
-        if (event.getEntity().getClass() == entityType) {
-            MineQuest.logger.info("Objective Updated:");
+        if (event.getEntity().getEntityData().hasKey(nbtTagToFind)) {
             numKilled++;
             if (numToKill == numKilled) {
                 state = QuestState.COMPLETED;
@@ -45,7 +41,7 @@ public class ObjectiveKillType extends ObjectiveBase {
     protected NBTTagCompound objectiveSpecificToNBT(NBTTagCompound nbt) {
         nbt.setInteger("numToKill", numToKill);
         nbt.setInteger("numKilled", numKilled);
-        nbt.setString("entityName", EntityRegistry.getEntry(entityType).getName());
+        nbt.setString("nbtTagToFind", nbtTagToFind);
         return nbt;
     }
 
@@ -53,12 +49,12 @@ public class ObjectiveKillType extends ObjectiveBase {
     public void objectiveSpecificFromNBT(NBTTagCompound nbt) {
         numToKill = nbt.getInteger("numToKill");
         numKilled = nbt.getInteger("numKilled");
-        entityType = EntityList.getClassFromName(nbt.getString("entityName")).asSubclass(EntityLiving.class);
+        nbtTagToFind = nbt.getString("nbtTagToFind");
     }
 
     @Override
     public String debugInfo() {
-        return "Target - " + EntityRegistry.getEntry(entityType).getName() + ": " + numKilled + "/" + numToKill;
+        return "Target - Specific Entities" + ": " + numKilled + "/" + numToKill;
     }
 
 }

@@ -17,7 +17,7 @@ public abstract class ObjectiveBase {
     protected boolean optional;
     protected ObjectiveType type;
 
-    ObjectiveBase(QuestCheckpoint checkpoint, String description, QuestState state, boolean optional, ObjectiveType type) {
+    public ObjectiveBase(QuestCheckpoint checkpoint, String description, QuestState state, boolean optional, ObjectiveType type) {
         this.checkpoint = checkpoint;
         this.quest = checkpoint.getQuest();
         this.description = description;
@@ -26,7 +26,7 @@ public abstract class ObjectiveBase {
         this.type = type;
     }
 
-    ObjectiveBase(QuestCheckpoint checkpoint, ObjectiveType type, NBTTagCompound nbt) {
+    public ObjectiveBase(QuestCheckpoint checkpoint, ObjectiveType type, NBTTagCompound nbt) {
         this(checkpoint, nbt.getString("description"), QuestState.getStateFromInt(nbt.getInteger("state")),
                 nbt.getBoolean("optional"), type);
     }

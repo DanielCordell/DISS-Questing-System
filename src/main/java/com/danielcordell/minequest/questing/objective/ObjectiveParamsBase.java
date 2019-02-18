@@ -1,8 +1,6 @@
 package com.danielcordell.minequest.questing.objective;
 
-import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.enums.QuestState;
-import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 
 public abstract class ObjectiveParamsBase {

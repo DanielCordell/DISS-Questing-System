@@ -5,8 +5,9 @@ import com.danielcordell.minequest.core.ModBlocks;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
-import com.danielcordell.minequest.questing.objective.ObjectiveKillType;
+import com.danielcordell.minequest.questing.objective.objectives.ObjectiveKillType;
 import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
+import com.danielcordell.minequest.questing.objective.params.ParamsKillSpecific;
 import com.danielcordell.minequest.questing.objective.params.ParamsKillType;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestBuilder;
@@ -40,14 +41,19 @@ public class DataHandler {
 
     @SubscribeEvent
     public static void onWorldLoad(WorldEvent.Load event) {
-        WorldQuestData data = WorldQuestData.get(event.getWorld());
+        World world = event.getWorld();
+        WorldQuestData data = WorldQuestData.get(world);
 
         //Temp todo
         if (data.getQuestByID(0) == null) {
             Quest quest = new QuestBuilder(data.getFreshQuestID(), "Reclaim the Land").build();
+            //Checkpoint 1, kill 5 zombies
             QuestCheckpoint checkpoint = new QuestCheckpoint(quest);
             ObjectiveParamsBase params = new ParamsKillType(checkpoint, "Kill 5 Zombies").setQuestDetails(EntityZombie.class, 5);
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.KILL_TYPE));
+            //Checkpoint 2, kill 3 entities with the tag.
+            params = new ParamsKillSpecific(checkpoint, "Kill 3 Special Mobs").setQuestDetails(quest.getName(), 3);
+            checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.KILL_SPECIFIC));
             data.addQuest(quest);
             data.markDirty();
         }
