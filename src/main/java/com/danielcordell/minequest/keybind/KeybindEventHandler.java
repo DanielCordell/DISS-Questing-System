@@ -3,6 +3,7 @@ package com.danielcordell.minequest.keybind;
 import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.questing.capabilities.playerquest.CapPlayerQuestData;
 import com.danielcordell.minequest.questing.capabilities.playerquest.PlayerQuestData;
+import com.danielcordell.minequest.questing.enums.QuestState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -22,6 +23,11 @@ public class KeybindEventHandler {
         EntityPlayerSP player = Minecraft.getMinecraft().player;
         PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
         player.sendChatMessage("My Quests:");
-        pqd.getImmutableQuests().forEach(quest -> player.sendChatMessage(quest.getName() + " - Status: " + quest.getState().name()));
+        pqd.getQuests().forEach(quest -> {
+            player.sendChatMessage(quest.getName() + " - Status: " + quest.getState().name());
+            if (quest.getState() == QuestState.STARTED) {
+                quest.getCurrentCheckpointObjectives().forEach(chkpnt -> player.sendChatMessage("__" + chkpnt.debugInfo()));
+            }
+        });
     }
 }

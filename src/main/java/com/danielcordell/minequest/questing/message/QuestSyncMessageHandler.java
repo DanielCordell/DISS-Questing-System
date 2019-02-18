@@ -15,7 +15,7 @@ public class QuestSyncMessageHandler implements IMessageHandler<QuestSyncMessage
         Minecraft.getMinecraft().addScheduledTask(() -> {
             if (message.typeOfSync == QuestSyncMessage.TypeOfSync.PLAYER) {
                 PlayerQuestData pqd = Minecraft.getMinecraft().player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
-                pqd.getImmutableQuests().stream()
+                pqd.getQuests().stream()
                         .filter(quest -> quest.getQuestID() == message.questID)
                         .findFirst()
                         .ifPresent(quest -> pqd.removeQuest(quest.getQuestID()));

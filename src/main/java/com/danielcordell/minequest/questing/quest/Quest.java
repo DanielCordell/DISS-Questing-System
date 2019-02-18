@@ -1,12 +1,14 @@
 package com.danielcordell.minequest.questing.quest;
 
 import com.danielcordell.minequest.MineQuest;
-import com.danielcordell.minequest.questing.QuestCheckpoint;
 import com.danielcordell.minequest.questing.enums.QuestState;
+import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +42,7 @@ public class Quest {
         this.entityMap = entityMap;
         this.currentEntityIDCounter = entityMap.isEmpty() ? 0 : Collections.max(entityMap.keySet()) + 1;
         this.checkpoints = new ArrayList<>();
-        isDirty = true;
+        setDirty();
     }
 
     public NBTTagCompound toNBT() {
@@ -64,7 +66,7 @@ public class Quest {
 
     public Quest addEntity(EntityLiving entity) {
         entityMap.put(currentEntityIDCounter++, entity.getEntityId());
-        isDirty = true;
+        setDirty();
         return this;
     }
 
@@ -78,21 +80,25 @@ public class Quest {
         return state;
     }
 
-    public void addCheckpoint(QuestCheckpoint checkpoint) {
+    void addCheckpoint(QuestCheckpoint checkpoint) {
         this.checkpoints.add(checkpoint);
-        isDirty = true;
+        setDirty();
     }
 
     public void setPlayer(EntityPlayer player) {
         playerID = player.getUniqueID();
-        isDirty = true;
+        setDirty();
     }
 
     public boolean isDirty() {
         return isDirty;
     }
 
-    private void setClean() {
+    public void setDirty() {
+        isDirty = true;
+    }
+
+    public void setClean() {
         isDirty = false;
     }
 
@@ -103,5 +109,33 @@ public class Quest {
             return;
         }
         state = QuestState.STARTED;
+    }
+
+    public ArrayList<ObjectiveBase> getCurrentCheckpointObjectives() {
+        return new ArrayList<>(checkpoints.get(currentCheckpontIndex).getObjectives());
+    }
+
+    public void update(World world) {
+        if (state == QuestState.COMPLETED || state == QuestState.FAILED) return;
+        //Check current checkpoint for completion.
+        if (getCurrentCheckpointObjectives().stream().allMatch(chkpnt -> chkpnt.getState() == QuestState.COMPLETED)) {
+            if (progressCheckpoint()) completeQuest(world);
+            setDirty();
+        }
+    }
+
+    private void completeQuest(World world) {
+        world.getPlayerEntityByUUID(playerID).sendMessage(new TextComponentString("Quest Complete: " + questName));
+        state = QuestState.COMPLETED;
+    }
+
+    // Returns true if the quest has just been completed.
+    private boolean progressCheckpoint() {
+        if (currentCheckpontIndex+1 == checkpoints.size()) {
+            MineQuest.logger.info("Quest complete!");
+            return true;
+        }
+        else currentCheckpontIndex++;
+        return false;
     }
 }

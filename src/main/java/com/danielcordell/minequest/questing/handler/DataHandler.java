@@ -1,32 +1,39 @@
 package com.danielcordell.minequest.questing.handler;
 
 import com.danielcordell.minequest.MineQuest;
-import com.danielcordell.minequest.blocks.QuestStartBlock;
 import com.danielcordell.minequest.core.ModBlocks;
+import com.danielcordell.minequest.questing.enums.ObjectiveType;
+import com.danielcordell.minequest.questing.objective.ObjectiveBase;
+import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
+import com.danielcordell.minequest.questing.objective.ObjectiveKillType;
+import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
+import com.danielcordell.minequest.questing.objective.params.ParamsKillType;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestBuilder;
-import com.danielcordell.minequest.questing.QuestCheckpoint;
+import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import com.danielcordell.minequest.questing.capabilities.playerquest.CapPlayerQuestData;
 import com.danielcordell.minequest.questing.capabilities.playerquest.PlayerQuestData;
 import com.danielcordell.minequest.questing.message.QuestSyncMessage;
 import com.danielcordell.minequest.tileentities.QuestStartTileEntity;
 import com.danielcordell.minequest.worlddata.WorldQuestData;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+
+import java.util.List;
 
 @Mod.EventBusSubscriber(modid = MineQuest.MODID)
 public class DataHandler {
@@ -35,11 +42,14 @@ public class DataHandler {
     public static void onWorldLoad(WorldEvent.Load event) {
         WorldQuestData data = WorldQuestData.get(event.getWorld());
 
-        //Temp
+        //Temp todo
         if (data.getQuestByID(0) == null) {
             Quest quest = new QuestBuilder(data.getFreshQuestID(), "Reclaim the Land").build();
-            quest.addCheckpoint(new QuestCheckpoint(quest));
+            QuestCheckpoint checkpoint = new QuestCheckpoint(quest);
+            ObjectiveParamsBase params = new ParamsKillType(checkpoint, "Kill 5 Zombies").setQuestDetails(EntityZombie.class, 5);
+            checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.KILL_TYPE));
             data.addQuest(quest);
+            data.markDirty();
         }
     }
 
@@ -70,11 +80,12 @@ public class DataHandler {
         if (MineQuest.isClient(event.player.world.isRemote)) return;
         EntityPlayer player = event.player;
         World world = player.world;
-        if (world.getWorldTime() % 100 == 0) {
+        if (world.getWorldTime() % 50 == 0) {
             WorldQuestData wqd = WorldQuestData.get(world);
             PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
+
+            //Should start quest.
             BlockPos position = player.getPosition().add(0, -1, 0);
-            MineQuest.logger.error(world.getBlockState(position).getBlock().getRegistryName());
             if (world.getBlockState(position) == ModBlocks.questStartBlock.getDefaultState()) {
                 QuestStartTileEntity te = (QuestStartTileEntity) world.getTileEntity(position);
                 wqd.getImmutableQuests().stream().filter(quest -> quest.getQuestID() == te.getQuestID()).forEach(quest -> {
@@ -86,22 +97,32 @@ public class DataHandler {
                     }
                 });
             }
-            pqd.getImmutableQuests()
+
+            //Check for Quest Completion
+            //FAILING ON SAVE AND RELOAD? TODO CHECK THIS
+            pqd.getQuests().forEach(quest -> quest.update(world));
+            pqd.getQuests()
                     .stream()
                     .filter(Quest::isDirty)
-                    .forEach(quest -> MineQuest.networkWrapper.sendTo(new QuestSyncMessage(quest, QuestSyncMessage.TypeOfSync.PLAYER), ((EntityPlayerMP) player)));
+                    .forEach(quest -> {
+                        MineQuest.networkWrapper.sendTo(new QuestSyncMessage(quest, QuestSyncMessage.TypeOfSync.PLAYER), ((EntityPlayerMP) player));
+                        quest.setClean();
+                    });
         }
     }
 
     @SubscribeEvent
     public static void onWorldUpdate(TickEvent.WorldTickEvent event) {
         World world = event.world;
-        if (world.getWorldTime() % 100 == 0) {
+        if (world.getWorldTime() % 50 == 0) {
             WorldQuestData wqd = WorldQuestData.get(world);
             wqd.getImmutableQuests()
                     .stream()
                     .filter(Quest::isDirty)
-                    .forEach(quest -> MineQuest.networkWrapper.sendToAll(new QuestSyncMessage(quest, QuestSyncMessage.TypeOfSync.WORLD)));
+                    .forEach(quest -> {
+                        MineQuest.networkWrapper.sendToAll(new QuestSyncMessage(quest, QuestSyncMessage.TypeOfSync.WORLD));
+                        quest.setClean();
+                    });
         }
     }
 
@@ -112,5 +133,21 @@ public class DataHandler {
             event.getWorld().setBlockState(pos, ModBlocks.questStartBlock.getDefaultState());
             ((QuestStartTileEntity) event.getWorld().getTileEntity(pos)).setQuestID(0);
         }
+    }
+
+    @SubscribeEvent
+    public static void onEntityDeath(LivingDeathEvent event) {
+        Entity trueSource = event.getSource().getTrueSource();
+        if(!(trueSource instanceof EntityPlayer)) return;
+        EntityPlayer player = ((EntityPlayer) trueSource);
+        PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
+        List<ObjectiveBase> objectives = pqd.getAllCurrentObjectives();
+        objectives.forEach(objective -> {
+            if (objective instanceof ObjectiveKillType) {
+                ((ObjectiveKillType) objective).update(event);
+            }
+            //Add other cases later
+        });
+
     }
 }

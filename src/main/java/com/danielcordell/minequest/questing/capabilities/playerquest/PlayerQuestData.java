@@ -1,16 +1,18 @@
 package com.danielcordell.minequest.questing.capabilities.playerquest;
 
 import com.danielcordell.minequest.MineQuest;
+import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestBuilder;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlayerQuestData {
-    // Temp public
+
     ArrayList<Quest> playerQuests = new ArrayList<>();
 
     public void startQuest(EntityPlayer player, Quest quest) {
@@ -24,8 +26,8 @@ public class PlayerQuestData {
         return playerQuests.size();
     }
 
-    public List<Quest> getImmutableQuests() {
-        return Collections.unmodifiableList(playerQuests);
+    public ArrayList<Quest> getQuests() {
+        return new ArrayList<>(playerQuests);
     }
 
     public void addQuest(Quest quest) {
@@ -43,5 +45,13 @@ public class PlayerQuestData {
 
     public boolean containsQuest(int questID) {
         return playerQuests.stream().filter(quest -> quest.getQuestID() == questID).count() > 0;
+    }
+
+    public Quest findQuest(int questID) {
+        return playerQuests.stream().filter(quest -> quest.getQuestID() == questID).findFirst().orElse(null);
+    }
+
+    public List<ObjectiveBase> getAllCurrentObjectives() {
+        return playerQuests.stream().map(Quest::getCurrentCheckpointObjectives).flatMap(Collection::stream).collect(Collectors.toList());
     }
 }

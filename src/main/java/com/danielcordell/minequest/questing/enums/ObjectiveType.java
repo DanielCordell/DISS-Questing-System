@@ -4,7 +4,8 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public enum ObjectiveType {
-    KILLALL(0);
+    KILL_TYPE(0),
+    KILL_SPECIFIC(1);
 
     public final int objectiveInt;
 

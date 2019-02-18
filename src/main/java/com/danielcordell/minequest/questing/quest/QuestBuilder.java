@@ -1,6 +1,5 @@
 package com.danielcordell.minequest.questing.quest;
 
-import com.danielcordell.minequest.questing.QuestCheckpoint;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -32,10 +31,10 @@ public class QuestBuilder {
 
         NBTTagList checkpointsNBT = ((NBTTagList) nbt.getTag("checkpoints"));
         if (checkpointsNBT.tagCount() != 0) checkpointsNBT.forEach(checkpoint ->
-                newQuest.addCheckpoint(new QuestCheckpoint(newQuest, ((NBTTagCompound) checkpoint).getBoolean("isFinalCheckpoint")))
+                newQuest.addCheckpoint(new QuestCheckpoint(newQuest, (NBTTagCompound) checkpoint))
         );
 
-        return qb.build();
+        return newQuest;
     }
 
     public QuestBuilder(int questID, String questName, UUID playerID) {
