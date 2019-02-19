@@ -18,7 +18,7 @@ public class PlayerQuestData {
     public void startQuest(EntityPlayer player, Quest quest) {
         Quest clientQuest = QuestBuilder.fromNBT(quest.toNBT());
         clientQuest.setPlayer(player);
-        clientQuest.start();
+        clientQuest.start(player.world);
         player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null).addQuest(clientQuest);
     }
 

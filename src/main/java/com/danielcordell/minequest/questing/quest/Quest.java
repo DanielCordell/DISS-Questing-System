@@ -103,13 +103,18 @@ public class Quest {
         isDirty = false;
     }
 
-    public void start() {
+    public void start(World world) {
         if (state != QuestState.CREATED) {
             MineQuest.logger.error("Trying to start an already started quest, whoops!");
             MineQuest.logger.error("Quest: " + toNBT());
             return;
         }
         state = QuestState.STARTED;
+        performCurrentCheckpointIntents(world);
+    }
+
+    public void performCurrentCheckpointIntents(World world) {
+        checkpoints.get(currentCheckpontIndex).performIntents(world);
     }
 
     public ArrayList<ObjectiveBase> getCurrentCheckpointObjectives() {

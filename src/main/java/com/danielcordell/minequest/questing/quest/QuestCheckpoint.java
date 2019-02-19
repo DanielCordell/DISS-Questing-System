@@ -7,6 +7,7 @@ import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 
@@ -70,4 +71,7 @@ public class QuestCheckpoint {
         return new ArrayList<>(objectives);
     }
 
+    public void performIntents(World world) {
+        intents.forEach(intent -> intent.perform(world));
+    }
 }
