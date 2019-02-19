@@ -3,6 +3,9 @@ package com.danielcordell.minequest.questing.handler;
 import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.core.ModBlocks;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
+import com.danielcordell.minequest.questing.intent.Intent;
+import com.danielcordell.minequest.questing.intent.IntentSpawnEntity;
+import com.danielcordell.minequest.questing.intent.params.PlayerRadiusPosParam;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
 import com.danielcordell.minequest.questing.objective.objectives.ObjectiveKillType;
@@ -18,6 +21,7 @@ import com.danielcordell.minequest.questing.message.QuestSyncMessage;
 import com.danielcordell.minequest.tileentities.QuestStartTileEntity;
 import com.danielcordell.minequest.worlddata.WorldQuestData;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -54,6 +58,8 @@ public class DataHandler {
             //Checkpoint 2, kill 3 entities with the tag.
             params = new ParamsKillSpecific(checkpoint, "Kill 3 Special Mobs").setQuestDetails(quest.getName(), 3);
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.KILL_SPECIFIC));
+            Intent intent = new IntentSpawnEntity(quest, EntitySpider.class, 3, new PlayerRadiusPosParam(10), true, quest.getName(), "TestEntity");
+            checkpoint.addIntent(intent);
             data.addQuest(quest);
             data.markDirty();
         }

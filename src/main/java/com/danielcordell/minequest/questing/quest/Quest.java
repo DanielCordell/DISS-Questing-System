@@ -139,4 +139,8 @@ public class Quest {
         else currentCheckpontIndex++;
         return false;
     }
+
+    public UUID getPlayerID() {
+        return playerID;
+    }
 }

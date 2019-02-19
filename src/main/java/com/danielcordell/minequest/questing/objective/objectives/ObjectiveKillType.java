@@ -1,5 +1,6 @@
 package com.danielcordell.minequest.questing.objective.objectives;
 
+import com.danielcordell.minequest.Util;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
@@ -52,12 +53,12 @@ public class ObjectiveKillType extends ObjectiveBase {
     public void objectiveSpecificFromNBT(NBTTagCompound nbt) {
         numToKill = nbt.getInteger("numToKill");
         numKilled = nbt.getInteger("numKilled");
-        entityType = EntityList.getClassFromName(nbt.getString("entityName")).asSubclass(EntityLiving.class);
+        entityType = Util.getEntityFromName(nbt.getString("entityName"));
     }
 
     @Override
     public String debugInfo() {
-        return "Target - " + EntityRegistry.getEntry(entityType).getName() + ": " + numKilled + "/" + numToKill;
+        return "Target - " + Util.getNameFromEntity(entityType) + ": " + numKilled + "/" + numToKill;
     }
 
 }

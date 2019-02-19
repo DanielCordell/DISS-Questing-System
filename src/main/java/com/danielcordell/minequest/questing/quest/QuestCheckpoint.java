@@ -1,8 +1,9 @@
 package com.danielcordell.minequest.questing.quest;
 
+import com.danielcordell.minequest.questing.intent.Intent;
+import com.danielcordell.minequest.questing.intent.IntentBuilder;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
-import com.danielcordell.minequest.questing.quest.Quest;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -15,6 +16,8 @@ public class QuestCheckpoint {
 
     private final ArrayList<ObjectiveBase> objectives;
 
+    private final ArrayList<Intent> intents;
+
     public QuestCheckpoint(Quest quest) {
         this(quest, new NBTTagCompound());
     }
@@ -26,17 +29,26 @@ public class QuestCheckpoint {
         quest.addCheckpoint(this);
         
         objectives = new ArrayList<>();
-        if (!nbt.hasKey("objectives")) return;
-        NBTTagList list = ((NBTTagList) nbt.getTag("objectives"));
-        list.forEach(nbtBase -> objectives.add(ObjectiveBuilder.fromNBT(this, (NBTTagCompound) nbtBase)));
+        intents = new ArrayList<>();
+        if (nbt.hasKey("objectives")) {
+            NBTTagList list = ((NBTTagList) nbt.getTag("objectives"));
+            list.forEach(nbtBase -> objectives.add(ObjectiveBuilder.fromNBT(this, (NBTTagCompound) nbtBase)));
+        }
+        if (nbt.hasKey("intents")) {
+            NBTTagList list = ((NBTTagList) nbt.getTag("intents"));
+            list.forEach(nbtBase -> intents.add(IntentBuilder.fromNBT(quest, (NBTTagCompound) nbtBase)));
+        }
     }
 
     public NBTBase toNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setBoolean("isFinalCheckpoint", isFinalCheckpoint);
-        NBTTagList list = new NBTTagList();
-        objectives.forEach(objective -> list.appendTag(objective.toNBT()));
-        nbt.setTag("objectives", list);
+        NBTTagList objList = new NBTTagList();
+        objectives.forEach(objective -> objList.appendTag(objective.toNBT()));
+        nbt.setTag("objectives", objList);
+        NBTTagList intentList = new NBTTagList();
+        intents.forEach(intent -> intentList.appendTag(intent.toNBT()));
+        nbt.setTag("intents", intentList);
 
         return nbt;
     }
@@ -49,7 +61,13 @@ public class QuestCheckpoint {
         objectives.add(objective);
     }
 
+    public void addIntent(Intent intent) {
+
+    }
+
+
     public ArrayList<ObjectiveBase> getObjectives() {
         return new ArrayList<>(objectives);
     }
+
 }
