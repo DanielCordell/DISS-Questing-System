@@ -3,7 +3,7 @@ package com.danielcordell.minequest.questing.intent;
 import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.Util;
 import com.danielcordell.minequest.questing.enums.IntentType;
-import com.danielcordell.minequest.questing.intent.params.IPosParam;
+import com.danielcordell.minequest.questing.intent.params.PosParamBase;
 import com.danielcordell.minequest.questing.quest.Quest;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,13 +19,13 @@ public class IntentSpawnEntity extends Intent {
     private Class<? extends EntityLivingBase> entityToSpawn;
     private int numToSpawn;
     private String entityData;
-    private IPosParam posParam;
+    private PosParamBase posParam;
     private Quest quest;
 
-    public IntentSpawnEntity(Quest quest, Class<? extends EntityLivingBase> entityToSpawn, int numToSpawn, IPosParam posParam){
+    public IntentSpawnEntity(Quest quest, Class<? extends EntityLivingBase> entityToSpawn, int numToSpawn, PosParamBase posParam){
         this(quest, entityToSpawn, numToSpawn, posParam, false, null, null);
     }
-    public IntentSpawnEntity(Quest quest, Class<? extends EntityLivingBase> entityToSpawn, int numToSpawn, IPosParam posParam, boolean persistent, String entityData, String nametag) {
+    public IntentSpawnEntity(Quest quest, Class<? extends EntityLivingBase> entityToSpawn, int numToSpawn, PosParamBase posParam, boolean persistent, String entityData, String nametag) {
         this.quest = quest;
         this.entityToSpawn = entityToSpawn;
         this.numToSpawn = numToSpawn;
@@ -39,7 +39,7 @@ public class IntentSpawnEntity extends Intent {
         this(quest,
                 Util.getEntityFromName(nbt.getString("entityToSpawn")),
                 nbt.getInteger("numToSpawn"),
-                IPosParam.fromNBT((NBTTagCompound) nbt.getTag("posParam")),
+                PosParamBase.fromNBT((NBTTagCompound) nbt.getTag("posParam")),
                 nbt.getBoolean("persistent"),
                 nbt.hasKey("entityData") ? nbt.getString("entityData") : null,
                 nbt.hasKey("nametag") ? nbt.getString("nametag") : null
@@ -50,7 +50,7 @@ public class IntentSpawnEntity extends Intent {
     public void perform(World world) {
         try {
             for (int i = 0; i < numToSpawn; ++i) {
-                EntityLiving entity = (EntityLiving) entityToSpawn.getConstructors()[0].newInstance();
+                EntityLiving entity = (EntityLiving) entityToSpawn.getConstructors()[0].newInstance(world);
                 BlockPos pos = posParam.getPos(world, quest);
                 entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
                 if (entityData != null) entity.getEntityData().setBoolean(entityData, true);

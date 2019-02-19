@@ -1,13 +1,11 @@
 package com.danielcordell.minequest.questing.intent.params;
 
 import com.danielcordell.minequest.questing.quest.Quest;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class PlayerRadiusPosParam implements IPosParam{
+public class PlayerRadiusPosParam extends PosParamBase {
 
     private int radius;
 
@@ -25,8 +23,12 @@ public class PlayerRadiusPosParam implements IPosParam{
     }
 
     @Override
-    public NBTTagCompound toNBT() {
-        NBTTagCompound nbt = new NBTTagCompound();
+    public String getParamTypeString() {
+        return "radius";
+    }
+
+    @Override
+    public NBTTagCompound toParamSpecificNBT(NBTTagCompound nbt) {
         nbt.setInteger("radius", radius);
         return nbt;
     }

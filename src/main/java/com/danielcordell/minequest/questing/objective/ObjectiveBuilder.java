@@ -18,7 +18,7 @@ public class ObjectiveBuilder {
     }
 
     public static ObjectiveBase fromNBT(QuestCheckpoint checkpoint, NBTTagCompound nbt) {
-        ObjectiveType type = ObjectiveType.getTypeFromInt(nbt.getInteger(nbt.getString("type")));
+        ObjectiveType type = ObjectiveType.getTypeFromInt(nbt.getInteger("type"));
         switch (type) {
             case KILL_TYPE: return new ObjectiveKillType(checkpoint, type, nbt);
             case KILL_SPECIFIC: return new ObjectiveKillSpecific(checkpoint, type, nbt);

@@ -63,7 +63,7 @@ public class QuestCheckpoint {
     }
 
     public void addIntent(Intent intent) {
-
+        intents.add(intent);
     }
 
 

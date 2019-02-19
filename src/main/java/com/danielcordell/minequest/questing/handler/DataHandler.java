@@ -8,6 +8,7 @@ import com.danielcordell.minequest.questing.intent.IntentSpawnEntity;
 import com.danielcordell.minequest.questing.intent.params.PlayerRadiusPosParam;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
+import com.danielcordell.minequest.questing.objective.objectives.ObjectiveKillSpecific;
 import com.danielcordell.minequest.questing.objective.objectives.ObjectiveKillType;
 import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsKillSpecific;
@@ -157,6 +158,8 @@ public class DataHandler {
         objectives.forEach(objective -> {
             if (objective instanceof ObjectiveKillType) {
                 ((ObjectiveKillType) objective).update(event);
+            } else if (objective instanceof ObjectiveKillSpecific) {
+                ((ObjectiveKillSpecific) objective).update(event);
             }
             //Add other cases later
         });
