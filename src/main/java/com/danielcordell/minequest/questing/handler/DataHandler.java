@@ -4,7 +4,8 @@ import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.core.ModBlocks;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.intent.Intent;
-import com.danielcordell.minequest.questing.intent.IntentSpawnEntity;
+import com.danielcordell.minequest.questing.intent.intents.IntentGiveItemStack;
+import com.danielcordell.minequest.questing.intent.intents.IntentSpawnEntity;
 import com.danielcordell.minequest.questing.intent.params.PlayerRadiusPosParam;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
@@ -26,6 +27,9 @@ import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -61,6 +65,9 @@ public class DataHandler {
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.KILL_SPECIFIC));
             Intent intent = new IntentSpawnEntity(quest, EntitySpider.class, 3, new PlayerRadiusPosParam(10), true, quest.getName(), "TestEntity");
             checkpoint.addIntent(intent);
+            quest.addCheckpoint(checkpoint);
+            quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Items.DIAMOND, 3)));
+            quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Blocks.PURPUR_BLOCK, 32)));
             data.addQuest(quest);
             data.markDirty();
         }
@@ -75,7 +82,6 @@ public class DataHandler {
 
     @SubscribeEvent
     public static void onPlayerPickup(PlayerEvent.ItemPickupEvent event) {
-        //if (MineQuest.isClient(event.player.world.isRemote)) return;
         WorldQuestData data = WorldQuestData.get(event.player.world);
         Quest q = data.getQuestByID(0);
         if (q == null) MineQuest.logger.error("SERVER: WHOOPS ITS NULL BAD ABORT");

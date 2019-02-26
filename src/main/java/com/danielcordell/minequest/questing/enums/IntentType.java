@@ -4,7 +4,8 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public enum IntentType {
-    SPAWN_ENTITY(0);
+    SPAWN_ENTITY(0),
+    GIVE_ITEMSTACK(1);
 
     public final int intentInt;
 

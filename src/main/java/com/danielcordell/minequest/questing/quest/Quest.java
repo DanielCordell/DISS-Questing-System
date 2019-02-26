@@ -2,6 +2,7 @@ package com.danielcordell.minequest.questing.quest;
 
 import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.questing.enums.QuestState;
+import com.danielcordell.minequest.questing.intent.Intent;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,7 +27,7 @@ public class Quest {
     //For specific KNOWN entities at the start of the quest. Must exist throughout the entire quest, not just for an objective/checkpoint.
     private HashMap<Integer, Integer> entityMap;
 
-    private int currentCheckpontIndex;
+    private int currentCheckpointIndex;
     private ArrayList<QuestCheckpoint> checkpoints;
 
     //Should be synced to client.
@@ -34,15 +35,18 @@ public class Quest {
 
     private int currentEntityIDCounter;
 
-    Quest(int questID, String questName, UUID playerID, QuestState state, int currentCheckpontIndex, HashMap<Integer, Integer> entityMap) {
+    private ArrayList<Intent> onFinishIntents;
+
+    Quest(int questID, String questName, UUID playerID, QuestState state, int currentCheckpointIndex, HashMap<Integer, Integer> entityMap) {
         this.questID = questID;
         this.questName = questName;
         this.playerID = playerID;
-        this.currentCheckpontIndex = currentCheckpontIndex;
+        this.currentCheckpointIndex = currentCheckpointIndex;
         this.state = state;
         this.entityMap = entityMap;
         this.currentEntityIDCounter = entityMap.isEmpty() ? 0 : Collections.max(entityMap.keySet()) + 1;
         this.checkpoints = new ArrayList<>();
+        this.onFinishIntents = new ArrayList<>();
         setDirty();
     }
 
@@ -51,7 +55,7 @@ public class Quest {
         nbt.setInteger("questID", questID);
         nbt.setString("questName", questName);
         if (playerID != null) nbt.setUniqueId("playerID", playerID);
-        nbt.setInteger("currentCheckpointIndex", currentCheckpontIndex);
+        nbt.setInteger("currentCheckpointIndex", currentCheckpointIndex);
         nbt.setInteger("state", state.stateInt);
 
         NBTTagCompound entityMapNBT = new NBTTagCompound();
@@ -62,6 +66,9 @@ public class Quest {
         checkpoints.forEach(checkpoint -> checkpointsNBT.appendTag(checkpoint.toNBT()));
         nbt.setTag("checkpoints", checkpointsNBT);
 
+        NBTTagList intentsNBT = new NBTTagList();
+        onFinishIntents.forEach(intent -> intentsNBT.appendTag(intent.toNBT()));
+        nbt.setTag("onFinishIntents", intentsNBT);
         return nbt;
     }
 
@@ -81,7 +88,7 @@ public class Quest {
         return state;
     }
 
-    void addCheckpoint(QuestCheckpoint checkpoint) {
+    public void addCheckpoint(QuestCheckpoint checkpoint) {
         this.checkpoints.add(checkpoint);
         setDirty();
     }
@@ -111,14 +118,16 @@ public class Quest {
         }
         state = QuestState.STARTED;
         performCurrentCheckpointIntents(world);
+        setDirty();
     }
 
     public void performCurrentCheckpointIntents(World world) {
-        checkpoints.get(currentCheckpontIndex).performIntents(world);
+        checkpoints.get(currentCheckpointIndex).performIntents(world);
+        setDirty();
     }
 
     public ArrayList<ObjectiveBase> getCurrentCheckpointObjectives() {
-        return new ArrayList<>(checkpoints.get(currentCheckpontIndex).getObjectives());
+        return new ArrayList<>(checkpoints.get(currentCheckpointIndex).getObjectives());
     }
 
     public void update(World world) {
@@ -131,21 +140,30 @@ public class Quest {
     }
 
     private void completeQuest(World world) {
-        world.getPlayerEntityByUUID(playerID).sendMessage(new TextComponentString("Quest Complete: " + questName));
+        EntityPlayer player = world.getPlayerEntityByUUID(playerID);
+        if (player != null) player.sendMessage(new TextComponentString("Quest Complete: " + questName));
         state = QuestState.COMPLETED;
+        onFinishIntents.forEach(intent -> intent.perform(world));
+        setDirty();
     }
 
     // Returns true if the quest has just been completed.
     private boolean progressCheckpoint() {
-        if (currentCheckpontIndex+1 == checkpoints.size()) {
+        if (currentCheckpointIndex +1 == checkpoints.size()) {
             MineQuest.logger.info("Quest complete!");
             return true;
         }
-        else currentCheckpontIndex++;
+        else currentCheckpointIndex++;
+        setDirty();
         return false;
     }
 
     public UUID getPlayerID() {
         return playerID;
+    }
+
+    public void addFinishIntent(Intent intent) {
+        onFinishIntents.add(intent);
+        setDirty();
     }
 }

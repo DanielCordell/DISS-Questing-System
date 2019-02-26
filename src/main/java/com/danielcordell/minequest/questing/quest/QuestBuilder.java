@@ -1,6 +1,7 @@
 package com.danielcordell.minequest.questing.quest;
 
 import com.danielcordell.minequest.questing.enums.QuestState;
+import com.danielcordell.minequest.questing.intent.IntentBuilder;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
@@ -32,6 +33,11 @@ public class QuestBuilder {
         NBTTagList checkpointsNBT = ((NBTTagList) nbt.getTag("checkpoints"));
         if (checkpointsNBT.tagCount() != 0) checkpointsNBT.forEach(checkpoint ->
                 newQuest.addCheckpoint(new QuestCheckpoint(newQuest, (NBTTagCompound) checkpoint))
+        );
+
+        NBTTagList finishIntentsNBT = ((NBTTagList) nbt.getTag("onFinishIntents"));
+        if (finishIntentsNBT.tagCount() != 0) finishIntentsNBT.forEach(intent ->
+                newQuest.addFinishIntent(IntentBuilder.fromNBT(newQuest, (NBTTagCompound) intent))
         );
 
         return newQuest;

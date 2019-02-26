@@ -23,12 +23,10 @@ public class QuestCheckpoint {
         this(quest, new NBTTagCompound());
     }
 
-    //Adds to quest automatically
     public QuestCheckpoint(Quest quest, NBTTagCompound nbt) {
         this.quest = quest;
         this.isFinalCheckpoint = nbt.getBoolean("isFinalCheckpoint");
-        quest.addCheckpoint(this);
-        
+
         objectives = new ArrayList<>();
         intents = new ArrayList<>();
         if (nbt.hasKey("objectives")) {

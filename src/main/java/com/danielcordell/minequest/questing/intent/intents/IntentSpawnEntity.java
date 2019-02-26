@@ -1,8 +1,9 @@
-package com.danielcordell.minequest.questing.intent;
+package com.danielcordell.minequest.questing.intent.intents;
 
 import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.Util;
 import com.danielcordell.minequest.questing.enums.IntentType;
+import com.danielcordell.minequest.questing.intent.Intent;
 import com.danielcordell.minequest.questing.intent.params.PosParamBase;
 import com.danielcordell.minequest.questing.quest.Quest;
 import net.minecraft.entity.EntityLiving;
@@ -26,7 +27,7 @@ public class IntentSpawnEntity extends Intent {
         this(quest, entityToSpawn, numToSpawn, posParam, false, null, null);
     }
     public IntentSpawnEntity(Quest quest, Class<? extends EntityLivingBase> entityToSpawn, int numToSpawn, PosParamBase posParam, boolean persistent, String entityData, String nametag) {
-        this.quest = quest;
+        super(quest);
         this.entityToSpawn = entityToSpawn;
         this.numToSpawn = numToSpawn;
         this.posParam = posParam;
