@@ -11,6 +11,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 public class ObjectiveKillType extends ObjectiveBase {
@@ -30,12 +31,15 @@ public class ObjectiveKillType extends ObjectiveBase {
         objectiveSpecificFromNBT(nbt);
     }
 
-    public void update(LivingDeathEvent event) {
+    @Override
+    public void update(Event baseEvent) {
+        if (!(baseEvent instanceof LivingDeathEvent)) return;
         if (state != QuestState.STARTED) return;
+        LivingDeathEvent event = ((LivingDeathEvent) baseEvent);
         if (event.getEntity().getClass() == entityType) {
             numKilled++;
             if (numToKill == numKilled) {
-                state = QuestState.COMPLETED;
+                completeObjective();
             }
             quest.setDirty();
         }

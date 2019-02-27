@@ -2,6 +2,7 @@ package com.danielcordell.minequest;
 
 import com.danielcordell.minequest.blocks.QuestStartBlock;
 import com.danielcordell.minequest.core.ModBlocks;
+import com.danielcordell.minequest.core.ModEntities;
 import com.danielcordell.minequest.proxy.IProxy;
 import com.danielcordell.minequest.questing.capabilities.playerquest.PlayerQuestData;
 import com.danielcordell.minequest.questing.capabilities.playerquest.StoragePlayerQuestData;
@@ -39,6 +40,9 @@ public class MineQuest {
     private static int id = 0;
     public static final SimpleNetworkWrapper networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
 
+    @Mod.Instance
+    public static MineQuest instance;
+
 
     @SidedProxy(clientSide = "com.danielcordell.minequest.proxy.ClientProxy", serverSide = "com.danielcordell.minequest.proxy.ServerProxy")
     public static IProxy proxy;
@@ -47,6 +51,7 @@ public class MineQuest {
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
         logger.info("preInit");
+        ModEntities.init();
         proxy.preInit(event);
     }
 

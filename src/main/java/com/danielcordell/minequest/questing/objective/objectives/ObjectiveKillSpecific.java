@@ -7,6 +7,7 @@ import com.danielcordell.minequest.questing.objective.params.ParamsKillSpecific;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class ObjectiveKillSpecific extends ObjectiveBase {
 
@@ -26,12 +27,15 @@ public class ObjectiveKillSpecific extends ObjectiveBase {
         objectiveSpecificFromNBT(nbt);
     }
 
-    public void update(LivingDeathEvent event) {
+    @Override
+    public void update(Event baseEvent) {
+        if (!(baseEvent instanceof LivingDeathEvent)) return;
         if (state != QuestState.STARTED) return;
+        LivingDeathEvent event = ((LivingDeathEvent) baseEvent);
         if (event.getEntity().getEntityData().hasKey(nbtTagToFind)) {
             numKilled++;
             if (numToKill == numKilled) {
-                state = QuestState.COMPLETED;
+                completeObjective();
             }
             quest.setDirty();
         }

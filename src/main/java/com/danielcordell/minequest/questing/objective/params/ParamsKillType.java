@@ -11,11 +11,11 @@ public class ParamsKillType extends ObjectiveParamsBase{
     public int numToKill;
     public int numAlreadyKilled;
 
-    public ParamsKillType setQuestDetails(Class<? extends EntityLivingBase> entityTypeToKill, int numToKill) {
-        return setQuestDetails(entityTypeToKill, numToKill, 0);
+    public ParamsKillType setParamDetails(Class<? extends EntityLivingBase> entityTypeToKill, int numToKill) {
+        return setParamDetails(entityTypeToKill, numToKill, 0);
     }
 
-    public ParamsKillType setQuestDetails(Class<? extends EntityLivingBase> entityTypeToKill, int numToKill, int numAlreadyKilled) {
+    public ParamsKillType setParamDetails(Class<? extends EntityLivingBase> entityTypeToKill, int numToKill, int numAlreadyKilled) {
         this.entityTypeToKill = entityTypeToKill;
         this.numToKill = numToKill;
         this.numAlreadyKilled = numAlreadyKilled;

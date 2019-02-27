@@ -2,6 +2,7 @@ package com.danielcordell.minequest.proxy;
 
 import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.core.ModBlocks;
+import com.danielcordell.minequest.core.ModEntities;
 import com.danielcordell.minequest.keybind.KeyBindings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -19,7 +20,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class ClientProxy implements IProxy {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
-
+        ModEntities.initModels();
     }
 
     @Override

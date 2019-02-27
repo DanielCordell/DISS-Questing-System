@@ -12,6 +12,7 @@ import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
 import com.danielcordell.minequest.questing.objective.objectives.ObjectiveKillSpecific;
 import com.danielcordell.minequest.questing.objective.objectives.ObjectiveKillType;
 import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
+import com.danielcordell.minequest.questing.objective.params.ParamsGather;
 import com.danielcordell.minequest.questing.objective.params.ParamsKillSpecific;
 import com.danielcordell.minequest.questing.objective.params.ParamsKillType;
 import com.danielcordell.minequest.questing.quest.Quest;
@@ -23,6 +24,7 @@ import com.danielcordell.minequest.questing.message.QuestSyncMessage;
 import com.danielcordell.minequest.tileentities.QuestStartTileEntity;
 import com.danielcordell.minequest.worlddata.WorldQuestData;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
@@ -56,20 +58,31 @@ public class DataHandler {
         //Temp todo
         if (data.getQuestByID(0) == null) {
             Quest quest = new QuestBuilder(data.getFreshQuestID(), "Reclaim the Land").build();
-            //Checkpoint 1, kill 5 zombies
+            //Checkpoint 1
+            //Objective 1, kill 5 zombies
             QuestCheckpoint checkpoint = new QuestCheckpoint(quest);
-            ObjectiveParamsBase params = new ParamsKillType(checkpoint, "Kill 5 Zombies").setQuestDetails(EntityZombie.class, 5);
+            ObjectiveParamsBase params = new ParamsKillType(checkpoint, "Kill 5 Zombies").setParamDetails(EntityZombie.class, 5);
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.KILL_TYPE));
-            //Checkpoint 2, kill 3 entities with the tag.
-            params = new ParamsKillSpecific(checkpoint, "Kill 3 Special Mobs").setQuestDetails(quest.getName(), 3);
+            //Objective 2, kill 3 entities with the tag.
+            params = new ParamsKillSpecific(checkpoint, "Kill 3 Special Mobs").setParamDetails(quest.getName(), 3);
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.KILL_SPECIFIC));
             Intent intent = new IntentSpawnEntity(quest, EntitySpider.class, 3, new PlayerRadiusPosParam(10), true, quest.getName(), "TestEntity");
             checkpoint.addIntent(intent);
             quest.addCheckpoint(checkpoint);
+
+            //Checkpoint 2
+            checkpoint = new QuestCheckpoint(quest);
+            params = new ParamsGather(checkpoint, "Gather 3 Items", false).setParamDetails(new ItemStack(Items.STRING), 3);
+            checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.GATHER));
+            quest.addCheckpoint(checkpoint);
+
             quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Items.DIAMOND, 3)));
             quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Blocks.PURPUR_BLOCK, 32)));
             data.addQuest(quest);
             data.markDirty();
+        }
+        if (data.getQuestByID(1) == null) {
+            Quest quest = new QuestBuilder(data.getFreshQuestID(), "Deliver some stuff").build();
         }
     }
 
@@ -117,6 +130,9 @@ public class DataHandler {
                 });
             }
 
+            //Update player quests
+            pqd.updateAllCurrentObjectives(event);
+
             //Check for Quest Completion
             //FAILING ON SAVE AND RELOAD? TODO CHECK THIS
             pqd.getQuests().forEach(quest -> quest.update(world));
@@ -160,15 +176,6 @@ public class DataHandler {
         if(!(trueSource instanceof EntityPlayer)) return;
         EntityPlayer player = ((EntityPlayer) trueSource);
         PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
-        List<ObjectiveBase> objectives = pqd.getAllCurrentObjectives();
-        objectives.forEach(objective -> {
-            if (objective instanceof ObjectiveKillType) {
-                ((ObjectiveKillType) objective).update(event);
-            } else if (objective instanceof ObjectiveKillSpecific) {
-                ((ObjectiveKillSpecific) objective).update(event);
-            }
-            //Add other cases later
-        });
-
+        pqd.updateAllCurrentObjectives(event);
     }
 }

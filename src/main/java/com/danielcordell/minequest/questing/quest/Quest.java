@@ -11,10 +11,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class Quest {
     // For setting up quest entities for quests that have been loaded from save data, should not be saved!
@@ -72,10 +69,32 @@ public class Quest {
         return nbt;
     }
 
-    public Quest addEntity(EntityLiving entity) {
-        entityMap.put(currentEntityIDCounter++, entity.getEntityId());
+    // Returns the internal ID of the entity just created.
+    // If that entity already exists in the list, return the existing ID
+    public int addEntity(EntityLiving entity) {
+        int entityID = entity.getEntityId();
+        if (entityMap.containsValue(entityID)){
+            Optional<Map.Entry<Integer, Integer>> foundID = entityMap.entrySet()
+                    .stream()
+                    .filter(entry -> entry.getValue() == entityID)
+                    .findFirst();
+            if (foundID.isPresent()) return foundID.get().getKey();
+        }
+
+        int questEntityID = currentEntityIDCounter++;
+        entityMap.put(questEntityID, entityID);
         setDirty();
-        return this;
+        return questEntityID;
+    }
+
+    // Using the Entity ID,
+    public int getQuestEntityIDFromEntityID(int entityID) {
+        Optional<Map.Entry<Integer, Integer>> found = entityMap.entrySet()
+                .stream()
+                .filter(pair -> pair.getValue() == entityID)
+                .findFirst();
+        if (found.isPresent()) return found.get().getKey();
+        else return -1;
     }
 
     public int getQuestID() {

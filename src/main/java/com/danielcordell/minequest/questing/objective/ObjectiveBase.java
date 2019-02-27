@@ -5,6 +5,7 @@ import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 public abstract class ObjectiveBase {
     //Parent objects
@@ -59,5 +60,11 @@ public abstract class ObjectiveBase {
         return state;
     }
 
+    public abstract void update(Event baseEvent);
+
     public abstract String debugInfo();
+
+    protected final void completeObjective() {
+        state = QuestState.COMPLETED;
+    }
 }

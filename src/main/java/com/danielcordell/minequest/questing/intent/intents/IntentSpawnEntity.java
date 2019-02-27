@@ -21,7 +21,6 @@ public class IntentSpawnEntity extends Intent {
     private int numToSpawn;
     private String entityData;
     private PosParamBase posParam;
-    private Quest quest;
 
     public IntentSpawnEntity(Quest quest, Class<? extends EntityLivingBase> entityToSpawn, int numToSpawn, PosParamBase posParam){
         this(quest, entityToSpawn, numToSpawn, posParam, false, null, null);

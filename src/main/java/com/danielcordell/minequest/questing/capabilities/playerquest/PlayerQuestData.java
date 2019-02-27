@@ -5,6 +5,7 @@ import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestBuilder;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,7 +52,7 @@ public class PlayerQuestData {
         return playerQuests.stream().filter(quest -> quest.getQuestID() == questID).findFirst().orElse(null);
     }
 
-    public List<ObjectiveBase> getAllCurrentObjectives() {
-        return playerQuests.stream().map(Quest::getCurrentCheckpointObjectives).flatMap(Collection::stream).collect(Collectors.toList());
+    public void updateAllCurrentObjectives(Event event) {
+        playerQuests.stream().map(Quest::getCurrentCheckpointObjectives).flatMap(Collection::stream).forEach(objective -> objective.update(event));
     }
 }

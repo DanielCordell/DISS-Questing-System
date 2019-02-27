@@ -10,11 +10,11 @@ public class ParamsKillSpecific extends ObjectiveParamsBase{
     public int numToKill;
     public int numAlreadyKilled;
 
-    public ParamsKillSpecific setQuestDetails(String nbtTagToFind, int numToKill) {
-        return setQuestDetails(nbtTagToFind, numToKill, 0);
+    public ParamsKillSpecific setParamDetails(String nbtTagToFind, int numToKill) {
+        return setParamDetails(nbtTagToFind, numToKill, 0);
     }
 
-    public ParamsKillSpecific setQuestDetails(String nbtTagToFind, int numToKill, int numAlreadyKilled) {
+    public ParamsKillSpecific setParamDetails(String nbtTagToFind, int numToKill, int numAlreadyKilled) {
         this.nbtTagToFind = nbtTagToFind;
         this.numToKill = numToKill;
         this.numAlreadyKilled = numAlreadyKilled;
