@@ -115,7 +115,6 @@ public class DataHandler {
         if (world.getWorldTime() % 50 == 0) {
             WorldQuestData wqd = WorldQuestData.get(world);
             PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
-
             //Should start quest.
             BlockPos position = player.getPosition().add(0, -1, 0);
             if (world.getBlockState(position) == ModBlocks.questStartBlock.getDefaultState()) {
@@ -129,10 +128,6 @@ public class DataHandler {
                     }
                 });
             }
-
-            //Update player quests
-            pqd.updateAllCurrentObjectives(event);
-
             //Check for Quest Completion
             //FAILING ON SAVE AND RELOAD? TODO CHECK THIS
             pqd.getQuests().forEach(quest -> quest.update(world));
@@ -168,14 +163,5 @@ public class DataHandler {
             event.getWorld().setBlockState(pos, ModBlocks.questStartBlock.getDefaultState());
             ((QuestStartTileEntity) event.getWorld().getTileEntity(pos)).setQuestID(0);
         }
-    }
-
-    @SubscribeEvent
-    public static void onEntityDeath(LivingDeathEvent event) {
-        Entity trueSource = event.getSource().getTrueSource();
-        if(!(trueSource instanceof EntityPlayer)) return;
-        EntityPlayer player = ((EntityPlayer) trueSource);
-        PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
-        pqd.updateAllCurrentObjectives(event);
     }
 }

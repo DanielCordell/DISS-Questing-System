@@ -1,7 +1,8 @@
 package com.danielcordell.minequest.blocks;
 
 import com.danielcordell.minequest.MineQuest;
-import com.danielcordell.minequest.tileentities.QuestStartTileEntity;
+import com.danielcordell.minequest.events.ActionBlockTriggeredEvent;
+import com.danielcordell.minequest.tileentities.QuestActionTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -12,16 +13,16 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
 
-public class QuestStartBlock extends Block implements ITileEntityProvider {
-    public QuestStartBlock() {
+public class QuestActionBlock extends Block implements ITileEntityProvider {
+    public QuestActionBlock() {
         super(Material.CLOTH);
-        setUnlocalizedName("queststartblock");
-        setRegistryName("queststartblock");
+        setUnlocalizedName("questactionblock");
+        setRegistryName("questactionblock");
     }
 
     @SideOnly(Side.CLIENT)
@@ -31,6 +32,14 @@ public class QuestStartBlock extends Block implements ITileEntityProvider {
 
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new QuestStartTileEntity();
+        return new QuestActionTileEntity();
+    }
+
+    @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        if (worldIn.isBlockPowered(pos)) {
+            int actionBlockID = ((QuestActionTileEntity) worldIn.getTileEntity(pos)).getActionBlockID();
+            MinecraftForge.EVENT_BUS.post(new ActionBlockTriggeredEvent(worldIn, actionBlockID));
+        }
     }
 }

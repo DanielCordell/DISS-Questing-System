@@ -8,6 +8,7 @@ import com.danielcordell.minequest.questing.capabilities.playerquest.PlayerQuest
 import com.danielcordell.minequest.questing.capabilities.playerquest.StoragePlayerQuestData;
 import com.danielcordell.minequest.questing.message.QuestSyncMessage;
 import com.danielcordell.minequest.questing.message.QuestSyncMessageHandler;
+import com.danielcordell.minequest.tileentities.QuestActionTileEntity;
 import com.danielcordell.minequest.tileentities.QuestStartTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -71,14 +72,15 @@ public class MineQuest {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        logger.info("THIS IS RUNNING");
-        event.getRegistry().register(ModBlocks.questStartBlock);
+        event.getRegistry().registerAll(ModBlocks.questStartBlock, ModBlocks.questActionBlock);
         GameRegistry.registerTileEntity(QuestStartTileEntity.class, new ResourceLocation(MODID, "queststartblock"));
+        GameRegistry.registerTileEntity(QuestActionTileEntity.class, new ResourceLocation(MODID, "questactionblock"));
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
         event.getRegistry().register(new ItemBlock(ModBlocks.questStartBlock).setRegistryName(ModBlocks.questStartBlock.getRegistryName()));
+        event.getRegistry().register(new ItemBlock(ModBlocks.questActionBlock).setRegistryName(ModBlocks.questActionBlock.getRegistryName()));
     }
 
         // Hate the naming of isRemote so little convenience function here for my sanity.
