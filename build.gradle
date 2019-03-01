@@ -75,3 +75,7 @@ processResources {
         exclude 'mcmod.info'
     }
 }
+
+runClient {
+    args = ['--username', 'mineQuestTest']
+}
