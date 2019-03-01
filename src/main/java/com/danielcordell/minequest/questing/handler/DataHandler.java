@@ -15,12 +15,14 @@ import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsGather;
 import com.danielcordell.minequest.questing.objective.params.ParamsKillSpecific;
 import com.danielcordell.minequest.questing.objective.params.ParamsKillType;
+import com.danielcordell.minequest.questing.objective.params.ParamsTrigger;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestBuilder;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import com.danielcordell.minequest.questing.capabilities.playerquest.CapPlayerQuestData;
 import com.danielcordell.minequest.questing.capabilities.playerquest.PlayerQuestData;
 import com.danielcordell.minequest.questing.message.QuestSyncMessage;
+import com.danielcordell.minequest.tileentities.QuestActionTileEntity;
 import com.danielcordell.minequest.tileentities.QuestStartTileEntity;
 import com.danielcordell.minequest.worlddata.WorldQuestData;
 import net.minecraft.entity.Entity;
@@ -61,7 +63,7 @@ public class DataHandler {
             //Checkpoint 1
             //Objective 1, kill 5 zombies
             QuestCheckpoint checkpoint = new QuestCheckpoint(quest);
-            ObjectiveParamsBase params = new ParamsKillType(checkpoint, "Kill 5 Zombies").setParamDetails(EntityZombie.class, 5);
+            ObjectiveParamsBase params = new ParamsKillType(checkpoint, "Kill 2 Zombies").setParamDetails(EntityZombie.class, 2);
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.KILL_TYPE));
             //Objective 2, kill 3 entities with the tag.
             params = new ParamsKillSpecific(checkpoint, "Kill 3 Special Mobs").setParamDetails(quest.getName(), 3);
@@ -82,7 +84,15 @@ public class DataHandler {
             data.markDirty();
         }
         if (data.getQuestByID(1) == null) {
-            Quest quest = new QuestBuilder(data.getFreshQuestID(), "Deliver some stuff").build();
+            Quest quest = new QuestBuilder(data.getFreshQuestID(), "Interact with the block").build();
+            QuestCheckpoint checkpoint = new QuestCheckpoint(quest);
+            ObjectiveParamsBase params = new ParamsTrigger(checkpoint, "Interact with the boy").setParamDetails(0);
+            checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.TRIGGER));
+            quest.addCheckpoint(checkpoint);
+
+            quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Items.APPLE, 4)));
+            data.addQuest(quest);
+            data.markDirty();
         }
     }
 
@@ -162,6 +172,12 @@ public class DataHandler {
             BlockPos pos = new BlockPos(0, event.getWorld().getSeaLevel(), 0);
             event.getWorld().setBlockState(pos, ModBlocks.questStartBlock.getDefaultState());
             ((QuestStartTileEntity) event.getWorld().getTileEntity(pos)).setQuestID(0);
+
+            event.getWorld().setBlockState(pos.add(0, 5, 0), ModBlocks.questStartBlock.getDefaultState());
+            ((QuestStartTileEntity) event.getWorld().getTileEntity(pos.add(0, 5, 0))).setQuestID(1);
+
+            event.getWorld().setBlockState(pos.add(0, 5, 2), ModBlocks.questActionBlock.getDefaultState());
+            ((QuestActionTileEntity) event.getWorld().getTileEntity(pos.add(0, 5, 2))).setActionBlockID(0);
         }
     }
 }

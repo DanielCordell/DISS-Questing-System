@@ -6,7 +6,8 @@ import java.util.Optional;
 public enum ObjectiveType {
     KILL_TYPE(0),
     KILL_SPECIFIC(1),
-    GATHER(2);
+    GATHER(2),
+    TRIGGER(3);
 
     public final int objectiveInt;
 
