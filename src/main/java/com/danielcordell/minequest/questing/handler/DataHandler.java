@@ -2,6 +2,7 @@ package com.danielcordell.minequest.questing.handler;
 
 import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.core.ModBlocks;
+import com.danielcordell.minequest.entities.EntityNPC;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.intent.Intent;
 import com.danielcordell.minequest.questing.intent.intents.IntentGiveItemStack;
@@ -12,10 +13,7 @@ import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
 import com.danielcordell.minequest.questing.objective.objectives.ObjectiveKillSpecific;
 import com.danielcordell.minequest.questing.objective.objectives.ObjectiveKillType;
 import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
-import com.danielcordell.minequest.questing.objective.params.ParamsGather;
-import com.danielcordell.minequest.questing.objective.params.ParamsKillSpecific;
-import com.danielcordell.minequest.questing.objective.params.ParamsKillType;
-import com.danielcordell.minequest.questing.objective.params.ParamsTrigger;
+import com.danielcordell.minequest.questing.objective.params.*;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestBuilder;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
@@ -51,50 +49,6 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(modid = MineQuest.MODID)
 public class DataHandler {
-
-    @SubscribeEvent
-    public static void onWorldLoad(WorldEvent.Load event) {
-        World world = event.getWorld();
-        WorldQuestData data = WorldQuestData.get(world);
-
-        //Temp todo
-        if (data.getQuestByID(0) == null) {
-            Quest quest = new QuestBuilder(data.getFreshQuestID(), "Reclaim the Land").build();
-            //Checkpoint 1
-            //Objective 1, kill 5 zombies
-            QuestCheckpoint checkpoint = new QuestCheckpoint(quest);
-            ObjectiveParamsBase params = new ParamsKillType(checkpoint, "Kill 2 Zombies").setParamDetails(EntityZombie.class, 2);
-            checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.KILL_TYPE));
-            //Objective 2, kill 3 entities with the tag.
-            params = new ParamsKillSpecific(checkpoint, "Kill 3 Special Mobs").setParamDetails(quest.getName(), 3);
-            checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.KILL_SPECIFIC));
-            Intent intent = new IntentSpawnEntity(quest, EntitySpider.class, 3, new PlayerRadiusPosParam(10), true, quest.getName(), "TestEntity");
-            checkpoint.addIntent(intent);
-            quest.addCheckpoint(checkpoint);
-
-            //Checkpoint 2
-            checkpoint = new QuestCheckpoint(quest);
-            params = new ParamsGather(checkpoint, "Gather 3 Items", false).setParamDetails(new ItemStack(Items.STRING), 3);
-            checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.GATHER));
-            quest.addCheckpoint(checkpoint);
-
-            quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Items.DIAMOND, 3)));
-            quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Blocks.PURPUR_BLOCK, 32)));
-            data.addQuest(quest);
-            data.markDirty();
-        }
-        if (data.getQuestByID(1) == null) {
-            Quest quest = new QuestBuilder(data.getFreshQuestID(), "Interact with the block").build();
-            QuestCheckpoint checkpoint = new QuestCheckpoint(quest);
-            ObjectiveParamsBase params = new ParamsTrigger(checkpoint, "Interact with the boy").setParamDetails(0);
-            checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.TRIGGER));
-            quest.addCheckpoint(checkpoint);
-
-            quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Items.APPLE, 4)));
-            data.addQuest(quest);
-            data.markDirty();
-        }
-    }
 
     @SubscribeEvent
     public static void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
@@ -178,6 +132,58 @@ public class DataHandler {
 
             event.getWorld().setBlockState(pos.add(0, 5, 2), ModBlocks.questActionBlock.getDefaultState());
             ((QuestActionTileEntity) event.getWorld().getTileEntity(pos.add(0, 5, 2))).setActionBlockID(0);
+            generateTempQuests(event);
+        }
+    }
+
+    public static void generateTempQuests(PopulateChunkEvent.Post event){
+        World world = event.getWorld();
+        WorldQuestData data = WorldQuestData.get(world);
+
+        //Temp todo
+        if (data.getQuestByID(0) == null) {
+            Quest quest = new QuestBuilder(data.getFreshQuestID(), "Reclaim the Land").build();
+            //Checkpoint 1
+            //Objective 1, kill 5 zombies
+            QuestCheckpoint checkpoint = new QuestCheckpoint(quest);
+            ObjectiveParamsBase params = new ParamsKillType(checkpoint, "Kill 2 Zombies").setParamDetails(EntityZombie.class, 2);
+            checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.KILL_TYPE));
+            //Objective 2, kill 3 entities with the tag.
+            params = new ParamsKillSpecific(checkpoint, "Kill 3 Special Mobs").setParamDetails(quest.getName(), 3);
+            checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.KILL_SPECIFIC));
+            Intent intent = new IntentSpawnEntity(quest, EntitySpider.class, 3, new PlayerRadiusPosParam(10), true, quest.getName(), "TestEntity");
+            checkpoint.addIntent(intent);
+            quest.addCheckpoint(checkpoint);
+
+            //Checkpoint 2
+            checkpoint = new QuestCheckpoint(quest);
+            params = new ParamsGather(checkpoint, "Gather 3 Items", false).setParamDetails(new ItemStack(Items.STRING), 3);
+            checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.GATHER));
+            quest.addCheckpoint(checkpoint);
+
+            quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Items.DIAMOND, 3)));
+            quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Blocks.PURPUR_BLOCK, 32)));
+            data.addQuest(quest);
+            data.markDirty();
+        }
+        if (data.getQuestByID(1) == null) {
+            EntityNPC npc = new EntityNPC(world);
+            npc.setPosition(5,world.getSeaLevel()+1,5);
+            world.spawnEntity(npc);
+
+
+            Quest quest = new QuestBuilder(data.getFreshQuestID(), "Do stuff").build();
+            QuestCheckpoint checkpoint = new QuestCheckpoint(quest);
+            ObjectiveParamsBase params = new ParamsTrigger(checkpoint, "Interact with the block").setParamDetails(0);
+            checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.TRIGGER));
+
+            int entityID = quest.addEntity(npc.getEntityId());
+            params = new ParamsDeliver(checkpoint, "Give the boy some stuff").setParamDetails(new ItemStack(Items.STRING), 3, 0);
+            checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.DELIVER));
+            quest.addCheckpoint(checkpoint);
+            quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Items.APPLE, 4)));
+            data.addQuest(quest);
+            data.markDirty();
         }
     }
 }

@@ -4,15 +4,10 @@ import com.danielcordell.minequest.events.ActionBlockTriggeredEvent;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
-import com.danielcordell.minequest.questing.objective.params.ParamsGather;
 import com.danielcordell.minequest.questing.objective.params.ParamsTrigger;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 
 public class ObjectiveTrigger extends ObjectiveBase {
@@ -46,7 +41,7 @@ public class ObjectiveTrigger extends ObjectiveBase {
         if (state != QuestState.STARTED) return;
         ActionBlockTriggeredEvent event = ((ActionBlockTriggeredEvent) baseEvent);
         if (event.actionBlockID == actionBlockID) {
-            completeObjective();
+            completeObjective(event.world);
             quest.setDirty();
         }
     }

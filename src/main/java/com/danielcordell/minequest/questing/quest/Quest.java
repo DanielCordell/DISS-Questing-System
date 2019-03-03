@@ -6,9 +6,13 @@ import com.danielcordell.minequest.questing.intent.Intent;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.play.server.SPacketTitle;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import java.util.*;
@@ -71,8 +75,7 @@ public class Quest {
 
     // Returns the internal ID of the entity just created.
     // If that entity already exists in the list, return the existing ID
-    public int addEntity(EntityLiving entity) {
-        int entityID = entity.getEntityId();
+    public int addEntity(int entityID) {
         if (entityMap.containsValue(entityID)){
             Optional<Map.Entry<Integer, Integer>> foundID = entityMap.entrySet()
                     .stream()
@@ -159,9 +162,15 @@ public class Quest {
     }
 
     private void completeQuest(World world) {
-        EntityPlayer player = world.getPlayerEntityByUUID(playerID);
-        if (player != null) player.sendMessage(new TextComponentString("Quest Complete: " + questName));
+        EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByUUID(getPlayerID());
         state = QuestState.COMPLETED;
+
+        if (player != null) {
+            SPacketTitle packet = new SPacketTitle(SPacketTitle.Type.TITLE, new TextComponentString("Quest Complete").setStyle(new Style().setColor(TextFormatting.WHITE)));
+            player.connection.sendPacket(packet);
+            packet = new SPacketTitle(SPacketTitle.Type.SUBTITLE, new TextComponentString(getName()).setStyle(new Style().setColor(TextFormatting.GRAY).setItalic(true)));
+            player.connection.sendPacket(packet);
+        }
         onFinishIntents.forEach(intent -> intent.perform(world));
         setDirty();
     }

@@ -4,7 +4,14 @@ import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import com.danielcordell.minequest.questing.enums.QuestState;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.CommandTitle;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketTitle;
+import net.minecraft.util.text.*;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public abstract class ObjectiveBase {
@@ -64,7 +71,13 @@ public abstract class ObjectiveBase {
 
     public abstract String debugInfo();
 
-    protected final void completeObjective() {
+    protected final void completeObjective(World world) {
         state = QuestState.COMPLETED;
+        EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByUUID(quest.getPlayerID());
+        if (player == null) return;
+        SPacketTitle packet = new SPacketTitle(SPacketTitle.Type.TITLE, new TextComponentString("Objective Complete").setStyle(new Style().setColor(TextFormatting.WHITE)));
+        player.connection.sendPacket(packet);
+        packet = new SPacketTitle(SPacketTitle.Type.SUBTITLE, new TextComponentString(description).setStyle(new Style().setColor(TextFormatting.GRAY).setItalic(true)));
+        player.connection.sendPacket(packet);
     }
 }

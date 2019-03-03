@@ -7,6 +7,7 @@ import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,6 +27,7 @@ public class EntityNPC extends EntityMob {
 
     public EntityNPC(World worldIn) {
         super(worldIn);
+        this.setEntityInvulnerable(true);
         this.setSize(0.6f, 1.95f);
         this.dataManager.register(NPC_TYPE, world.rand.nextInt(4));
     }

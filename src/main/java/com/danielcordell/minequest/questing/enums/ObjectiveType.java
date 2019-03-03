@@ -7,7 +7,8 @@ public enum ObjectiveType {
     KILL_TYPE(0),
     KILL_SPECIFIC(1),
     GATHER(2),
-    TRIGGER(3);
+    TRIGGER(3),
+    DELIVER(4);
 
     public final int objectiveInt;
 

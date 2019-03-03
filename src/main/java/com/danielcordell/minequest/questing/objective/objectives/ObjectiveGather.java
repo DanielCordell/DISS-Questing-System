@@ -4,19 +4,12 @@ import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsGather;
-import com.danielcordell.minequest.questing.objective.params.ParamsKillSpecific;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 
@@ -63,7 +56,7 @@ public class ObjectiveGather extends ObjectiveBase {
                 currentCount += itemStack.getCount();
         }
         if (currentCount == count) {
-            completeObjective();
+            completeObjective(event.player.world);
             quest.setDirty();
         }
     }

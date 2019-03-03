@@ -5,6 +5,7 @@ import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsKillSpecific;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -32,10 +33,11 @@ public class ObjectiveKillSpecific extends ObjectiveBase {
         if (!(baseEvent instanceof LivingDeathEvent)) return;
         if (state != QuestState.STARTED) return;
         LivingDeathEvent event = ((LivingDeathEvent) baseEvent);
-        if (event.getEntity().getEntityData().hasKey(nbtTagToFind)) {
+        Entity entity = event.getEntity();
+        if (entity.getEntityData().hasKey(nbtTagToFind)) {
             numKilled++;
             if (numToKill == numKilled) {
-                completeObjective();
+                completeObjective(entity.world);
             }
             quest.setDirty();
         }
