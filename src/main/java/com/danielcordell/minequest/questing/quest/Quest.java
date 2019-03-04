@@ -100,6 +100,16 @@ public class Quest {
         else return -1;
     }
 
+    // Using
+    public int getEntityIDFromQuestEntityID(int questEntityID) {
+        Optional<Map.Entry<Integer, Integer>> found = entityMap.entrySet()
+                .stream()
+                .filter(pair -> pair.getKey() == questEntityID)
+                .findFirst();
+        if (found.isPresent()) return found.get().getValue();
+        else return -1;
+    }
+
     public int getQuestID() {
         return questID;
     }

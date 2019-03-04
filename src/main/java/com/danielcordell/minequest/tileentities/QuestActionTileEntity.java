@@ -9,13 +9,14 @@ public class QuestActionTileEntity extends TileEntity {
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
         actionBlockID = compound.getInteger("actionBlockID");
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setInteger("actionBlockID", actionBlockID);
-        return compound;
+        return super.writeToNBT(compound);
     }
 
     public int getActionBlockID() {

@@ -9,13 +9,14 @@ public class QuestStartTileEntity extends TileEntity {
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
         questID = compound.getInteger("questID");
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setInteger("questID", questID);
-        return compound;
+        return super.writeToNBT(compound);
     }
 
     public int getQuestID() {

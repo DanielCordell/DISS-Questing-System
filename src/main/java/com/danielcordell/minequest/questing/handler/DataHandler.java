@@ -6,6 +6,7 @@ import com.danielcordell.minequest.entities.EntityNPC;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.intent.Intent;
 import com.danielcordell.minequest.questing.intent.intents.IntentGiveItemStack;
+import com.danielcordell.minequest.questing.intent.intents.IntentSetNPCFollow;
 import com.danielcordell.minequest.questing.intent.intents.IntentSpawnEntity;
 import com.danielcordell.minequest.questing.intent.params.PlayerRadiusPosParam;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
@@ -74,6 +75,7 @@ public class DataHandler {
     @SubscribeEvent
     public static void onPlayerUpdate(TickEvent.PlayerTickEvent event) {
         if (MineQuest.isClient(event.player.world.isRemote)) return;
+        if (event.phase == TickEvent.Phase.END) return;
         EntityPlayer player = event.player;
         World world = player.world;
         if (world.getWorldTime() % 50 == 0) {
@@ -171,7 +173,6 @@ public class DataHandler {
             npc.setPosition(5,world.getSeaLevel()+1,5);
             world.spawnEntity(npc);
 
-
             Quest quest = new QuestBuilder(data.getFreshQuestID(), "Do stuff").build();
             QuestCheckpoint checkpoint = new QuestCheckpoint(quest);
             ObjectiveParamsBase params = new ParamsTrigger(checkpoint, "Interact with the block").setParamDetails(0);
@@ -180,6 +181,7 @@ public class DataHandler {
             int entityID = quest.addEntity(npc.getEntityId());
             params = new ParamsDeliver(checkpoint, "Give the boy some stuff").setParamDetails(new ItemStack(Items.STRING), 3, 0);
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.DELIVER));
+            checkpoint.addIntent(new IntentSetNPCFollow(quest, entityID));
             quest.addCheckpoint(checkpoint);
             quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Items.APPLE, 4)));
             data.addQuest(quest);

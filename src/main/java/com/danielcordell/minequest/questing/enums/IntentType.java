@@ -5,7 +5,8 @@ import java.util.Optional;
 
 public enum IntentType {
     SPAWN_ENTITY(0),
-    GIVE_ITEMSTACK(1);
+    GIVE_ITEMSTACK(1),
+    SET_NPC_FOLLOW(2);
 
     public final int intentInt;
 
