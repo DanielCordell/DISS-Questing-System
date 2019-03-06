@@ -9,7 +9,8 @@ public enum ObjectiveType {
     GATHER(2),
     TRIGGER(3),
     DELIVER(4),
-    ESCORT(5);
+    ESCORT(5),
+    SEARCH(6);
 
     public final int objectiveInt;
 
