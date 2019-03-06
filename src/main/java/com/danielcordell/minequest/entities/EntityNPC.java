@@ -32,6 +32,11 @@ public class EntityNPC extends EntityMob {
         this.dataManager.register(NPC_FOLLOW, Optional.absent());
     }
 
+    @Override
+    public boolean canDespawn(){
+        return false;
+    }
+
     public void setNPCType(int type) {
         this.dataManager.set(NPC_TYPE, type);
     }

@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -51,7 +52,6 @@ public class QuestTriggerHandler {
             PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
             if (pqd == null) return;
             pqd.updateAllCurrentObjectives(event);
-            player.sendMessage(new TextComponentString("Action Block Triggered!"));
         });
     }
 
@@ -61,5 +61,18 @@ public class QuestTriggerHandler {
         PlayerQuestData pqd = event.getEntityPlayer().getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
         if (pqd == null) return;
         pqd.updateAllCurrentObjectives(event);
+    }
+
+    @SubscribeEvent
+    public static void onEntityLivingUpdate(LivingEvent.LivingUpdateEvent event) {
+        World world = event.getEntity().world;
+        if (world.getWorldTime() % 50 != 0) return;
+        if (MineQuest.isClient(world.isRemote)) return;
+        world.playerEntities.forEach(player -> {
+            PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
+            if (pqd == null) return;
+            pqd.updateAllCurrentObjectives(event);
+        });
+
     }
 }

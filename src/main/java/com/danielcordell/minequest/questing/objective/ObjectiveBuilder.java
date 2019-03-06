@@ -14,6 +14,7 @@ public class ObjectiveBuilder {
             case GATHER: return new ObjectiveGather((ParamsGather) base, type);
             case TRIGGER: return new ObjectiveTrigger((ParamsTrigger) base, type);
             case DELIVER: return new ObjectiveDeliver((ParamsDeliver) base, type);
+            case ESCORT: return new ObjectiveEscort((ParamsEscort) base, type);
         }
         return null;
     }
@@ -26,6 +27,7 @@ public class ObjectiveBuilder {
             case GATHER: return new ObjectiveGather(checkpoint, type, nbt);
             case TRIGGER: return new ObjectiveTrigger(checkpoint, type, nbt);
             case DELIVER: return new ObjectiveDeliver(checkpoint, type, nbt);
+            case ESCORT: return new ObjectiveEscort(checkpoint, type, nbt);
         }
         return null;
     }

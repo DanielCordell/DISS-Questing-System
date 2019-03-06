@@ -42,7 +42,6 @@ public class ObjectiveTrigger extends ObjectiveBase {
         ActionBlockTriggeredEvent event = ((ActionBlockTriggeredEvent) baseEvent);
         if (event.actionBlockID == actionBlockID) {
             completeObjective(event.world);
-            quest.setDirty();
         }
     }
 

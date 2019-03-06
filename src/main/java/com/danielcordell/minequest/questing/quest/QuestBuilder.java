@@ -1,5 +1,6 @@
 package com.danielcordell.minequest.questing.quest;
 
+import com.danielcordell.minequest.Util;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.intent.IntentBuilder;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,19 +15,24 @@ public class QuestBuilder {
     private UUID playerID;
     private QuestState state = QuestState.CREATED;
     private int currentCheckpontIndex = 0;
-    private HashMap<Integer, Integer> entityMap = new HashMap<>();
+    private HashMap<Integer, UUID> entityMap = new HashMap<Integer, UUID>();
 
     public static Quest fromNBT(NBTTagCompound nbt) {
         UUID id = nbt.getUniqueId("playerID");
-        if (new UUID(0L, 0L).equals(id)) id = null;
+        if (Util.isEmptyUUID(id)) id = null;
         QuestBuilder qb = new QuestBuilder(nbt.getInteger("questID"), nbt.getString("questName"), id);
         qb.setCurrentCheckpontIndex(nbt.getInteger("currentCheckpointIndex"))
                 .setState(QuestState.getStateFromInt(nbt.getInteger("state")));
 
         NBTTagCompound entityMapNBT = nbt.getCompoundTag("entityMap");
-        if (entityMapNBT.getSize() != 0) entityMapNBT.getKeySet().forEach(questEntityID ->
-                qb.entityMap.put(Integer.valueOf(questEntityID), entityMapNBT.getInteger(questEntityID))
-        );
+        if (entityMapNBT.getSize() != 0) {
+            int count = 0;
+            while (true) {
+                UUID uuid = entityMapNBT.getUniqueId(String.valueOf(count));
+                if (Util.isEmptyUUID(uuid)) break;
+                qb.entityMap.put(count++, uuid);
+            }
+        }
 
         Quest newQuest = qb.build();
 

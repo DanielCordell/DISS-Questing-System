@@ -1,10 +1,10 @@
 package com.danielcordell.minequest.questing.quest;
 
 import com.danielcordell.minequest.MineQuest;
+import com.danielcordell.minequest.Util;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.intent.Intent;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,7 +26,7 @@ public class Quest {
 
     //QuestEntityID -> WorldEntityID
     //For specific KNOWN entities at the start of the quest. Must exist throughout the entire quest, not just for an objective/checkpoint.
-    private HashMap<Integer, Integer> entityMap;
+    private HashMap<Integer, UUID> entityMap;
 
     private int currentCheckpointIndex;
     private ArrayList<QuestCheckpoint> checkpoints;
@@ -38,7 +38,7 @@ public class Quest {
 
     private ArrayList<Intent> onFinishIntents;
 
-    Quest(int questID, String questName, UUID playerID, QuestState state, int currentCheckpointIndex, HashMap<Integer, Integer> entityMap) {
+    Quest(int questID, String questName, UUID playerID, QuestState state, int currentCheckpointIndex, HashMap<Integer, UUID> entityMap) {
         this.questID = questID;
         this.questName = questName;
         this.playerID = playerID;
@@ -60,7 +60,7 @@ public class Quest {
         nbt.setInteger("state", state.stateInt);
 
         NBTTagCompound entityMapNBT = new NBTTagCompound();
-        entityMap.forEach((questEntityID, entity) -> entityMapNBT.setInteger(questEntityID.toString(), entity));
+        entityMap.forEach((questEntityID, entity) -> entityMapNBT.setUniqueId(questEntityID.toString(), entity));
         nbt.setTag("entityMap", entityMapNBT);
 
         NBTTagList checkpointsNBT = new NBTTagList();
@@ -75,9 +75,9 @@ public class Quest {
 
     // Returns the internal ID of the entity just created.
     // If that entity already exists in the list, return the existing ID
-    public int addEntity(int entityID) {
+    public int addEntity(UUID entityID) {
         if (entityMap.containsValue(entityID)){
-            Optional<Map.Entry<Integer, Integer>> foundID = entityMap.entrySet()
+            Optional<Map.Entry<Integer, UUID>> foundID = entityMap.entrySet()
                     .stream()
                     .filter(entry -> entry.getValue() == entityID)
                     .findFirst();
@@ -91,23 +91,23 @@ public class Quest {
     }
 
     // Using the Entity ID,
-    public int getQuestEntityIDFromEntityID(int entityID) {
-        Optional<Map.Entry<Integer, Integer>> found = entityMap.entrySet()
+    public int getQuestEntityIDFromEntityID(UUID entityID) {
+        Optional<Map.Entry<Integer, UUID>> found = entityMap.entrySet()
                 .stream()
-                .filter(pair -> pair.getValue() == entityID)
+                .filter(pair -> pair.getValue().compareTo(entityID) == 0)
                 .findFirst();
         if (found.isPresent()) return found.get().getKey();
         else return -1;
     }
 
     // Using
-    public int getEntityIDFromQuestEntityID(int questEntityID) {
-        Optional<Map.Entry<Integer, Integer>> found = entityMap.entrySet()
+    public UUID getEntityIDFromQuestEntityID(int questEntityID) {
+        Optional<Map.Entry<Integer, UUID>> found = entityMap.entrySet()
                 .stream()
                 .filter(pair -> pair.getKey() == questEntityID)
                 .findFirst();
         if (found.isPresent()) return found.get().getValue();
-        else return -1;
+        else return Util.emptyUUID;
     }
 
     public int getQuestID() {

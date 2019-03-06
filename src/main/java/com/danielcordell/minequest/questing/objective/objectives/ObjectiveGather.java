@@ -57,7 +57,6 @@ public class ObjectiveGather extends ObjectiveBase {
         }
         if (currentCount == count) {
             completeObjective(event.player.world);
-            quest.setDirty();
         }
     }
 

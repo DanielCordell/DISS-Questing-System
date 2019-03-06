@@ -24,6 +24,7 @@ import com.danielcordell.minequest.questing.message.QuestSyncMessage;
 import com.danielcordell.minequest.tileentities.QuestActionTileEntity;
 import com.danielcordell.minequest.tileentities.QuestStartTileEntity;
 import com.danielcordell.minequest.worlddata.WorldQuestData;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntitySpider;
@@ -37,6 +38,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -139,7 +141,7 @@ public class DataHandler {
     }
 
     public static void generateTempQuests(PopulateChunkEvent.Post event){
-        World world = event.getWorld();
+        WorldServer world = (WorldServer) event.getWorld();
         WorldQuestData data = WorldQuestData.get(world);
 
         //Temp todo
@@ -178,9 +180,13 @@ public class DataHandler {
             ObjectiveParamsBase params = new ParamsTrigger(checkpoint, "Interact with the block").setParamDetails(0);
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.TRIGGER));
 
-            int entityID = quest.addEntity(npc.getEntityId());
+            int entityID = quest.addEntity(npc.getUniqueID());
             params = new ParamsDeliver(checkpoint, "Give the boy some stuff").setParamDetails(new ItemStack(Items.STRING), 3, 0);
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.DELIVER));
+            BlockPos nearest = world.getChunkProvider().getNearestStructurePos(world, "Village",  npc.getPosition(),true);
+            nearest = new BlockPos(nearest.getX(), 0, nearest.getZ());
+            params = new ParamsEscort(checkpoint, "Take me places!").setParamDetails(entityID, world.getTopSolidOrLiquidBlock(nearest));
+            checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.ESCORT));
             checkpoint.addIntent(new IntentSetNPCFollow(quest, entityID));
             quest.addCheckpoint(checkpoint);
             quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Items.APPLE, 4)));

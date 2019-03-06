@@ -71,7 +71,7 @@ public abstract class ObjectiveBase {
 
     public abstract String debugInfo();
 
-    protected final void completeObjective(World world) {
+    protected void completeObjective(World world) {
         state = QuestState.COMPLETED;
         EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByUUID(quest.getPlayerID());
         if (player == null) return;
@@ -79,5 +79,6 @@ public abstract class ObjectiveBase {
         player.connection.sendPacket(packet);
         packet = new SPacketTitle(SPacketTitle.Type.SUBTITLE, new TextComponentString(description).setStyle(new Style().setColor(TextFormatting.GRAY).setItalic(true)));
         player.connection.sendPacket(packet);
+        quest.setDirty();
     }
 }
