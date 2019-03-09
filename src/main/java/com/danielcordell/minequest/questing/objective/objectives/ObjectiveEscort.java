@@ -36,11 +36,19 @@ import java.util.RandomAccess;
 public class ObjectiveEscort extends ObjectiveBase {
     private BlockPos pos;
     private int questEntityID;
+    private String structureType;
 
     public ObjectiveEscort(ParamsEscort params, ObjectiveType type) {
         super(params.checkpoint, params.description, params.state, params.optional, type);
         questEntityID = params.questEntityID;
-        pos = params.pos;
+        structureType = params.type;
+
+        //Random
+        WorldServer world = params.world;
+        String structureType = params.type;
+        pos = world.getChunkProvider().getNearestStructurePos(world, structureType,
+                new BlockPos(world.rand.nextInt(5000) - 2500, world.getSeaLevel(), world.rand.nextInt(5000) - 2500), true
+        );
     }
 
     public ObjectiveEscort(QuestCheckpoint checkpoint, ObjectiveType type, NBTTagCompound nbt) {
@@ -69,14 +77,22 @@ public class ObjectiveEscort extends ObjectiveBase {
         if (state != QuestState.STARTED) return;
         LivingUpdateEvent event = (LivingUpdateEvent) baseEvent;
         EntityLivingBase target = event.getEntityLiving();
+        WorldServer world = (WorldServer) target.world;
+
         // If entity target is not san NPC stop.
         if (!(target instanceof EntityNPC)) return;
         // If this objective is not for this NPC then stop.
         if (quest.getQuestEntityIDFromEntityID(target.getUniqueID()) != questEntityID) return;
 
         MineQuest.logger.error("Mob Position: " + target.getPosition().toString());
-        if (pos.getDistance((int) target.posX, (int) target.posY, (int) target.posZ) < 15) {
-            completeObjective(target.world);
+
+        BlockPos nearStructurePos = world.getChunkProvider().getNearestStructurePos(world, structureType, target.getPosition(), true);
+        if (nearStructurePos == null) return;
+
+        if (nearStructurePos.equals(pos)) {
+            if (world.getChunkProvider().isInsideStructure(world, structureType, target.getPosition())) {
+                completeObjective(target.world);
+            }
         }
     }
 

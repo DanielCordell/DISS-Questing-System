@@ -163,6 +163,9 @@ public class DataHandler {
             checkpoint = new QuestCheckpoint(quest);
             params = new ParamsGather(checkpoint, "Gather 3 Items", false).setParamDetails(new ItemStack(Items.STRING), 3);
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.GATHER));
+
+            params = new ParamsSearch(checkpoint, "Search the world!", false).setParamDetails("Village");
+            checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.SEARCH));
             quest.addCheckpoint(checkpoint);
 
             quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Items.DIAMOND, 3)));
@@ -183,9 +186,8 @@ public class DataHandler {
             int entityID = quest.addEntity(npc.getUniqueID());
             params = new ParamsDeliver(checkpoint, "Give the boy some stuff").setParamDetails(new ItemStack(Items.STRING), 3, 0);
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.DELIVER));
-            BlockPos nearest = world.getChunkProvider().getNearestStructurePos(world, "Village",  npc.getPosition(),true);
-            nearest = new BlockPos(nearest.getX(), 0, nearest.getZ());
-            params = new ParamsEscort(checkpoint, "Take me places!").setParamDetails(entityID, world.getTopSolidOrLiquidBlock(nearest));
+            String type = "Village";
+            params = new ParamsEscort(checkpoint, "Take me places!").setParamDetails(entityID, world, type);
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.ESCORT));
             checkpoint.addIntent(new IntentSetNPCFollow(quest, entityID));
             quest.addCheckpoint(checkpoint);

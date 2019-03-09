@@ -11,8 +11,9 @@ import net.minecraft.world.gen.structure.MapGenStronghold;
 import net.minecraft.world.gen.structure.MapGenStructure;
 
 public class ParamsEscort extends ObjectiveParamsBase {
-    public BlockPos pos;
+    public WorldServer world;
     public int questEntityID;
+    public String type;
 
     public ParamsEscort(QuestCheckpoint questCheckpoint, String description) {
         super(questCheckpoint, description);
@@ -26,9 +27,10 @@ public class ParamsEscort extends ObjectiveParamsBase {
         super(questCheckpoint, description, optional, state);
     }
 
-    public ParamsEscort setParamDetails(int questEntityID, BlockPos pos){
-        this.pos = pos;
+    public ParamsEscort setParamDetails(int questEntityID, WorldServer world, String type){
+        this.world = world;
         this.questEntityID = questEntityID;
+        this.type = type;
         return this;
     }
 
