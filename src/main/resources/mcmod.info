@@ -1,11 +1,15 @@
-[{
-  "modid": "mine_quest",
-  "name": "Mine Quest",
-  "description": "A Questing System for Minecraft",
-  "mcversion": "1.12.2",
-  "logoFile": "",
-  "url": "minecraftforge.net/",
-  "updateJSON": "minecraftforge.net/versions.json",
-  "authorList": ["Author"],
-  "credits": "Martin for putting up with me for 8 months."
-}]
+[
+  {
+    "modid": "mine_quest",
+    "name": "Mine Quest",
+    "description": "A Questing System for Minecraft",
+    "mcversion": "1.12.2",
+    "logoFile": "",
+    "url": "minecraftforge.net/",
+    "updateJSON": "minecraftforge.net/versions.json",
+    "authorList": [
+      "Author"
+    ],
+    "credits": "Martin for putting up with me for 8 months."
+  }
+]

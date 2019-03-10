@@ -1,16 +1,15 @@
 package com.danielcordell.minequest.questing.objective;
 
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
+import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
-import com.danielcordell.minequest.questing.enums.QuestState;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandTitle;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketTitle;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
@@ -55,6 +54,7 @@ public abstract class ObjectiveBase {
     public QuestCheckpoint getCheckpoint() {
         return checkpoint;
     }
+
     public Quest getQuest() {
         return quest;
     }

@@ -23,11 +23,16 @@ public class RenderNPC extends RenderLiving<EntityNPC> {
     @Override
     protected ResourceLocation getEntityTexture(@Nonnull EntityNPC entity) {
         switch (entity.getNPCType()) {
-            case 0: return NPC_COOL_TEXTURE;
-            case 1: return NPC_COP_TEXTURE;
-            case 2: return NPC_MEDIC_TEXTURE;
-            case 3: return NPC_COOL_TEXTURE;
-            default: return NPC_PRIEST_TEXTURE;
+            case 0:
+                return NPC_COOL_TEXTURE;
+            case 1:
+                return NPC_COP_TEXTURE;
+            case 2:
+                return NPC_MEDIC_TEXTURE;
+            case 3:
+                return NPC_COOL_TEXTURE;
+            default:
+                return NPC_PRIEST_TEXTURE;
         }
     }
 }

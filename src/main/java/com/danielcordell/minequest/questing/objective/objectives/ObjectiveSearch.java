@@ -1,23 +1,14 @@
 package com.danielcordell.minequest.questing.objective.objectives;
 
-import com.danielcordell.minequest.MineQuest;
-import com.danielcordell.minequest.Util;
-import com.danielcordell.minequest.entities.EntityNPC;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
-import com.danielcordell.minequest.questing.objective.params.ParamsEscort;
 import com.danielcordell.minequest.questing.objective.params.ParamsSearch;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 

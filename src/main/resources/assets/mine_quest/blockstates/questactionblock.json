@@ -1,7 +1,9 @@
 {
   "variants": {
-      "normal": [
-          { "model": "mine_quest:questactionblock" }
-      ]
+    "normal": [
+      {
+        "model": "mine_quest:questactionblock"
+      }
+    ]
   }
 }

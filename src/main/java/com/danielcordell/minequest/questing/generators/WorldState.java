@@ -1,8 +1,6 @@
 package com.danielcordell.minequest.questing.generators;
 
 import com.danielcordell.minequest.Util;
-import com.google.common.collect.Iterators;
-import net.minecraft.block.BlockMobSpawner;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,8 +10,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import scala.tools.nsc.typechecker.StructuredTypeStrings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +43,7 @@ public class WorldState {
 
         worldState.biome = world.getBiome(pos);
         worldState.nearbyMobs = world.getEntitiesWithinAABB(EntityLiving.class,
-                new AxisAlignedBB(pos.getX() - 128, 0, pos.getZ() - 128,pos.getX() + 128, 255, pos.getZ() + 128),
+                new AxisAlignedBB(pos.getX() - 128, 0, pos.getZ() - 128, pos.getX() + 128, 255, pos.getZ() + 128),
                 entity -> entity instanceof IMob
         );
         worldState.inOrNextToSlimeChunk = Arrays.stream(chunks).anyMatch(chunk -> chunk.getRandomWithSeed(987234911L).nextInt(10) == 0);
@@ -55,8 +51,8 @@ public class WorldState {
         worldState.nearbySpawners = new ArrayList<>();
         for (Chunk chunk : chunks) {
             chunk.getTileEntityMap().forEach((key, value) -> {
-                        if (value instanceof TileEntityMobSpawner) worldState.nearbySpawners.add(key);
-                    });
+                if (value instanceof TileEntityMobSpawner) worldState.nearbySpawners.add(key);
+            });
         }
 
         worldState.dimension = player.dimension;

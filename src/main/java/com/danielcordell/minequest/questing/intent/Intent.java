@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 public abstract class Intent {
-    public Intent(Quest quest){
+    public Intent(Quest quest) {
         this.quest = quest;
     }
 
@@ -20,6 +20,7 @@ public abstract class Intent {
         nbt.setInteger("type", getIntentType().intentInt);
         return toIntentSpecificNBT(nbt);
     }
+
     public abstract NBTTagCompound toIntentSpecificNBT(NBTTagCompound nbt);
 
     public abstract IntentType getIntentType();

@@ -1,9 +1,13 @@
 package com.danielcordell.minequest.entities;
 
 import com.danielcordell.minequest.MineQuest;
+import com.danielcordell.minequest.Util;
 import com.google.common.base.Optional;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.*;
+import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
+import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -24,6 +28,7 @@ public class EntityNPC extends EntityMob {
     public static ResourceLocation location = new ResourceLocation(MineQuest.MODID, "entityNPC");
     private static final DataParameter<Integer> NPC_TYPE = EntityDataManager.createKey(EntityNPC.class, DataSerializers.VARINT);
     private static final DataParameter<Optional<UUID>> NPC_FOLLOW = EntityDataManager.createKey(EntityNPC.class, DataSerializers.OPTIONAL_UNIQUE_ID);
+
     public EntityNPC(World worldIn) {
         super(worldIn);
         this.setEntityInvulnerable(true);
@@ -33,7 +38,7 @@ public class EntityNPC extends EntityMob {
     }
 
     @Override
-    public boolean canDespawn(){
+    public boolean canDespawn() {
         return false;
     }
 
@@ -48,12 +53,15 @@ public class EntityNPC extends EntityMob {
     public void setNPCFollow(UUID player) {
         this.dataManager.set(NPC_FOLLOW, Optional.fromNullable(player));
     }
+
     public void clearNPCFollow() {
         this.dataManager.set(NPC_FOLLOW, Optional.absent());
     }
+
     public UUID getNPCFollow() {
         return this.dataManager.get(NPC_FOLLOW).orNull();
     }
+
     public boolean hasNPCFollow() {
         return this.dataManager.get(NPC_FOLLOW).isPresent();
     }
@@ -92,20 +100,18 @@ public class EntityNPC extends EntityMob {
     }
 
     @Override
-    public void readEntityFromNBT(NBTTagCompound compound)
-    {
+    public void readEntityFromNBT(NBTTagCompound compound) {
         super.readEntityFromNBT(compound);
         this.dataManager.set(NPC_TYPE, compound.getInteger("npcType"));
 
         UUID follow = compound.getUniqueId("npcFollow");
-        if (follow.compareTo(new UUID(0,0)) != 0){
+        if (follow.compareTo(Util.emptyUUID) != 0) {
             setNPCFollow(follow);
         }
     }
 
     @Override
-    public void writeEntityToNBT(NBTTagCompound compound)
-    {
+    public void writeEntityToNBT(NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
         compound.setInteger("npcType", this.getNPCType());
         if (this.hasNPCFollow()) compound.setUniqueId("npcFollow", this.getNPCFollow());

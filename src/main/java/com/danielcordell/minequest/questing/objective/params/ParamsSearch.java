@@ -3,7 +3,6 @@ package com.danielcordell.minequest.questing.objective.params;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
-import net.minecraft.util.math.BlockPos;
 
 public class ParamsSearch extends ObjectiveParamsBase {
     public String structureType;
@@ -20,7 +19,7 @@ public class ParamsSearch extends ObjectiveParamsBase {
         super(questCheckpoint, description, optional, state);
     }
 
-    public ParamsSearch setParamDetails(String structureType){
+    public ParamsSearch setParamDetails(String structureType) {
         this.structureType = structureType;
         return this;
     }

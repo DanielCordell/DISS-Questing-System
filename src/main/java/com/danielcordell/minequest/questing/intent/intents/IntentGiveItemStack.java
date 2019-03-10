@@ -1,9 +1,7 @@
 package com.danielcordell.minequest.questing.intent.intents;
 
-import com.danielcordell.minequest.Util;
 import com.danielcordell.minequest.questing.enums.IntentType;
 import com.danielcordell.minequest.questing.intent.Intent;
-import com.danielcordell.minequest.questing.intent.params.PosParamBase;
 import com.danielcordell.minequest.questing.quest.Quest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

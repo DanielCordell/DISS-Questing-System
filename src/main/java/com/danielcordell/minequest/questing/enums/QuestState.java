@@ -19,7 +19,8 @@ public enum QuestState {
         Optional<QuestState> state = Arrays.stream(QuestState.values())
                 .filter(value -> value.stateInt == type)
                 .findFirst();
-        if (!state.isPresent()) throw new IllegalArgumentException("Invalid state value passed to QuestState.getTypeFromInt() : " + type);
+        if (!state.isPresent())
+            throw new IllegalArgumentException("Invalid state value passed to QuestState.getTypeFromInt() : " + type);
         return state.get();
     }
 

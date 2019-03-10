@@ -85,7 +85,7 @@ public class Quest {
     // Returns the internal ID of the entity just created.
     // If that entity already exists in the list, return the existing ID
     public int addEntity(UUID entityID) {
-        if (entityMap.containsValue(entityID)){
+        if (entityMap.containsValue(entityID)) {
             Optional<Map.Entry<Integer, UUID>> foundID = entityMap.entrySet()
                     .stream()
                     .filter(entry -> entry.getValue() == entityID)
@@ -122,9 +122,11 @@ public class Quest {
     public int getQuestID() {
         return questID;
     }
+
     public String getName() {
         return questName;
     }
+
     public QuestState getState() {
         return state;
     }
@@ -196,11 +198,10 @@ public class Quest {
 
     // Returns true if the quest has just been completed.
     private boolean progressCheckpoint() {
-        if (currentCheckpointIndex +1 == checkpoints.size()) {
+        if (currentCheckpointIndex + 1 == checkpoints.size()) {
             MineQuest.logger.info("Quest complete!");
             return true;
-        }
-        else currentCheckpointIndex++;
+        } else currentCheckpointIndex++;
         setDirty();
         return false;
     }

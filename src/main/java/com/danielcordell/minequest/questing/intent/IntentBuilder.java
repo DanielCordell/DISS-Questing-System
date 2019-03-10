@@ -12,10 +12,14 @@ public class IntentBuilder {
     public static Intent fromNBT(Quest quest, NBTTagCompound nbt) {
         IntentType type = IntentType.getTypeFromInt(nbt.getInteger("type"));
         switch (type) {
-            case SPAWN_ENTITY: return new IntentSpawnEntity(nbt, quest);
-            case GIVE_ITEMSTACK: return new IntentGiveItemStack(nbt, quest);
-            case SET_NPC_FOLLOW: return new IntentSetNPCFollow(nbt, quest);
-            case START_QUEST: return new IntentStartQuest(nbt, quest);
+            case SPAWN_ENTITY:
+                return new IntentSpawnEntity(nbt, quest);
+            case GIVE_ITEMSTACK:
+                return new IntentGiveItemStack(nbt, quest);
+            case SET_NPC_FOLLOW:
+                return new IntentSetNPCFollow(nbt, quest);
+            case START_QUEST:
+                return new IntentStartQuest(nbt, quest);
         }
         return null;
     }

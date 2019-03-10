@@ -4,7 +4,7 @@ import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 
-public class ParamsKillSpecific extends ObjectiveParamsBase{
+public class ParamsKillSpecific extends ObjectiveParamsBase {
 
     public String nbtTagToFind;
     public int numToKill;

@@ -33,8 +33,7 @@ public class PlayerQuestData {
             MineQuest.logger.error("Attempting to add quest that already is in player data!");
             MineQuest.logger.error("Old Quest: " + playerQuests.stream().filter(q -> q.getQuestID() == quest.getQuestID()).findFirst().get().toNBT());
             MineQuest.logger.error("New Quest: " + quest.toNBT());
-        }
-        else playerQuests.add(quest);
+        } else playerQuests.add(quest);
     }
 
     public void removeQuest(int questID) {

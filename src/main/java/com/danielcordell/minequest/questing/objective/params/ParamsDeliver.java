@@ -22,7 +22,7 @@ public class ParamsDeliver extends ObjectiveParamsBase {
         super(questCheckpoint, description, optional, state);
     }
 
-    public ParamsDeliver setParamDetails(ItemStack item, int count, int questEntityID){
+    public ParamsDeliver setParamDetails(ItemStack item, int count, int questEntityID) {
         this.item = item;
         this.count = count;
         this.questEntityID = questEntityID;

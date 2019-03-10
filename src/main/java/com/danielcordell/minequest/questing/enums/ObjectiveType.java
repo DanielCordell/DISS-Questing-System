@@ -23,7 +23,8 @@ public enum ObjectiveType {
         Optional<ObjectiveType> objective = Arrays.stream(values())
                 .filter(value -> value.objectiveInt == type)
                 .findFirst();
-        if (!objective.isPresent()) throw new IllegalArgumentException("Invalid state value passed to ObjectiveType.getTypeFromInt() : " + type);
+        if (!objective.isPresent())
+            throw new IllegalArgumentException("Invalid state value passed to ObjectiveType.getTypeFromInt() : " + type);
         return objective.get();
     }
 

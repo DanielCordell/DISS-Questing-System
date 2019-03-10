@@ -22,14 +22,14 @@ public class IntentStartQuest extends Intent {
         this(quest, nbt.getInteger("newQuestID"));
     }
 
-        @Override
+    @Override
     public void perform(World world) {
         EntityPlayer player = world.getPlayerEntityByUUID(quest.getPlayerID());
         PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
         WorldQuestData wqd = WorldQuestData.get(world);
         Quest newQuest = wqd.getQuestByID(newQuestID);
 
-        if (newQuest != null){
+        if (newQuest != null) {
             pqd.addQuest(newQuest);
         }
     }

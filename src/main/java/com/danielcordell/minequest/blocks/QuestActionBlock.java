@@ -1,6 +1,5 @@
 package com.danielcordell.minequest.blocks;
 
-import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.events.ActionBlockTriggeredEvent;
 import com.danielcordell.minequest.tileentities.QuestActionTileEntity;
 import net.minecraft.block.Block;

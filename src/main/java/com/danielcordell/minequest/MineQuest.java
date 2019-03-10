@@ -82,7 +82,7 @@ public class MineQuest {
         event.getRegistry().register(new ItemBlock(ModBlocks.questActionBlock).setRegistryName(ModBlocks.questActionBlock.getRegistryName()));
     }
 
-        // Hate the naming of isRemote so little convenience function here for my sanity.
+    // Hate the naming of isRemote so little convenience function here for my sanity.
     public static boolean isClient(boolean isRemote) {
         return isRemote;
     }

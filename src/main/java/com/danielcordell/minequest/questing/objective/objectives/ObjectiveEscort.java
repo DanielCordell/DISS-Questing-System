@@ -6,32 +6,15 @@ import com.danielcordell.minequest.entities.EntityNPC;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
-import com.danielcordell.minequest.questing.objective.params.ParamsDeliver;
 import com.danielcordell.minequest.questing.objective.params.ParamsEscort;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.village.Village;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.gen.ChunkProviderServer;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
 import net.minecraftforge.fml.common.eventhandler.Event;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.RandomAccess;
 
 
 public class ObjectiveEscort extends ObjectiveBase {

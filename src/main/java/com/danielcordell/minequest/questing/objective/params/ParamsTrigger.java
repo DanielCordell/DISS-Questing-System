@@ -3,7 +3,6 @@ package com.danielcordell.minequest.questing.objective.params;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
-import net.minecraft.item.ItemStack;
 
 public class ParamsTrigger extends ObjectiveParamsBase {
     public int actionBlockID;
@@ -20,7 +19,7 @@ public class ParamsTrigger extends ObjectiveParamsBase {
         super(questCheckpoint, description, optional, state);
     }
 
-    public ParamsTrigger setParamDetails(int actionBlockID){
+    public ParamsTrigger setParamDetails(int actionBlockID) {
         this.actionBlockID = actionBlockID;
         return this;
     }

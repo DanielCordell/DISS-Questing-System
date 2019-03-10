@@ -5,7 +5,7 @@ import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import net.minecraft.entity.EntityLivingBase;
 
-public class ParamsKillType extends ObjectiveParamsBase{
+public class ParamsKillType extends ObjectiveParamsBase {
 
     public Class<? extends EntityLivingBase> entityTypeToKill;
     public int numToKill;

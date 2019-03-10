@@ -19,7 +19,8 @@ public enum IntentType {
         Optional<IntentType> objective = Arrays.stream(IntentType.values())
                 .filter(value -> value.intentInt == type)
                 .findFirst();
-        if (!objective.isPresent()) throw new IllegalArgumentException("Invalid state value passed to IntentType.getTypeFromInt() : " + type);
+        if (!objective.isPresent())
+            throw new IllegalArgumentException("Invalid state value passed to IntentType.getTypeFromInt() : " + type);
         return objective.get();
     }
 }

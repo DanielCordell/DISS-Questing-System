@@ -11,7 +11,8 @@ public class QuestSyncMessage implements IMessage {
     NBTTagCompound questNBT;
     int questID;
 
-    public QuestSyncMessage() {}
+    public QuestSyncMessage() {
+    }
 
     public QuestSyncMessage(Quest quest, TypeOfSync typeOfSync) {
         this.questID = quest.getQuestID();

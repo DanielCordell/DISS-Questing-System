@@ -1,10 +1,6 @@
 package com.danielcordell.minequest.questing.generators;
 
-import com.danielcordell.minequest.Util;
-import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.quest.Quest;
-import ibxm.Player;
-import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.WorldServer;
 

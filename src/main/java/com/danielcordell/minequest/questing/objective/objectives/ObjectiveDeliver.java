@@ -73,8 +73,7 @@ public class ObjectiveDeliver extends ObjectiveBase {
             currentCount.keySet().forEach(inv::removeStackFromSlot);
             completeObjective(event.getWorld());
             quest.setDirty();
-        }
-        else {
+        } else {
             event.getEntityPlayer().sendMessage(new TextComponentString("You do not have enough " + I18n.format(item.getUnlocalizedName())));
         }
     }

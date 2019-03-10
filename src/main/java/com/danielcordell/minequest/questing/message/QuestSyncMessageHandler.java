@@ -1,8 +1,8 @@
 package com.danielcordell.minequest.questing.message;
 
-import com.danielcordell.minequest.questing.quest.QuestBuilder;
 import com.danielcordell.minequest.questing.capabilities.CapPlayerQuestData;
 import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
+import com.danielcordell.minequest.questing.quest.QuestBuilder;
 import com.danielcordell.minequest.worlddata.WorldQuestData;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

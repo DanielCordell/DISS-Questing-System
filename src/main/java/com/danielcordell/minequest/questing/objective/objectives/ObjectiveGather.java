@@ -62,6 +62,6 @@ public class ObjectiveGather extends ObjectiveBase {
 
     @Override
     public String debugInfo() {
-        return "Target - Gather " + count + " " + I18n.format(item.getUnlocalizedName() + ".name") ;
+        return "Target - Gather " + count + " " + I18n.format(item.getUnlocalizedName() + ".name");
     }
 }

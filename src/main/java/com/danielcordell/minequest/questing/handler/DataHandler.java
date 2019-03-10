@@ -3,21 +3,20 @@ package com.danielcordell.minequest.questing.handler;
 import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.core.ModBlocks;
 import com.danielcordell.minequest.entities.EntityNPC;
+import com.danielcordell.minequest.questing.capabilities.CapPlayerQuestData;
+import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.intent.Intent;
 import com.danielcordell.minequest.questing.intent.intents.IntentGiveItemStack;
 import com.danielcordell.minequest.questing.intent.intents.IntentSetNPCFollow;
 import com.danielcordell.minequest.questing.intent.intents.IntentSpawnEntity;
 import com.danielcordell.minequest.questing.intent.params.PlayerRadiusPosParam;
+import com.danielcordell.minequest.questing.message.QuestSyncMessage;
 import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
 import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.objective.params.*;
 import com.danielcordell.minequest.questing.quest.Quest;
-import com.danielcordell.minequest.questing.quest.QuestBuilder;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
-import com.danielcordell.minequest.questing.capabilities.CapPlayerQuestData;
-import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
-import com.danielcordell.minequest.questing.message.QuestSyncMessage;
 import com.danielcordell.minequest.tileentities.QuestActionTileEntity;
 import com.danielcordell.minequest.tileentities.QuestStartTileEntity;
 import com.danielcordell.minequest.worlddata.WorldQuestData;
@@ -131,7 +130,7 @@ public class DataHandler {
         }
     }
 
-    public static void generateTempQuests(PopulateChunkEvent.Post event){
+    public static void generateTempQuests(PopulateChunkEvent.Post event) {
         WorldServer world = (WorldServer) event.getWorld();
         WorldQuestData data = WorldQuestData.get(world);
 
@@ -166,7 +165,7 @@ public class DataHandler {
         }
         if (data.getQuestByID(1) == null) {
             EntityNPC npc = new EntityNPC(world);
-            npc.setPosition(5,world.getSeaLevel()+1,5);
+            npc.setPosition(5, world.getSeaLevel() + 1, 5);
             world.spawnEntity(npc);
 
             Quest quest = Quest.newEmptyQuest(world, "Do stuff");

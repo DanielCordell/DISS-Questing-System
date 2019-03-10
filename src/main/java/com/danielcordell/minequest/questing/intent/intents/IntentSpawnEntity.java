@@ -22,9 +22,10 @@ public class IntentSpawnEntity extends Intent {
     private String entityData;
     private PosParamBase posParam;
 
-    public IntentSpawnEntity(Quest quest, Class<? extends EntityLivingBase> entityToSpawn, int numToSpawn, PosParamBase posParam){
+    public IntentSpawnEntity(Quest quest, Class<? extends EntityLivingBase> entityToSpawn, int numToSpawn, PosParamBase posParam) {
         this(quest, entityToSpawn, numToSpawn, posParam, false, null, null);
     }
+
     public IntentSpawnEntity(Quest quest, Class<? extends EntityLivingBase> entityToSpawn, int numToSpawn, PosParamBase posParam, boolean persistent, String entityData, String nametag) {
         super(quest);
         this.entityToSpawn = entityToSpawn;
