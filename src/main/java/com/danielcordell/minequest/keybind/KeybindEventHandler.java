@@ -1,8 +1,8 @@
 package com.danielcordell.minequest.keybind;
 
 import com.danielcordell.minequest.MineQuest;
-import com.danielcordell.minequest.questing.capabilities.playerquest.CapPlayerQuestData;
-import com.danielcordell.minequest.questing.capabilities.playerquest.PlayerQuestData;
+import com.danielcordell.minequest.questing.capabilities.CapPlayerQuestData;
+import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;

@@ -1,11 +1,10 @@
 package com.danielcordell.minequest;
 
-import com.danielcordell.minequest.blocks.QuestStartBlock;
 import com.danielcordell.minequest.core.ModBlocks;
 import com.danielcordell.minequest.core.ModEntities;
 import com.danielcordell.minequest.proxy.IProxy;
-import com.danielcordell.minequest.questing.capabilities.playerquest.PlayerQuestData;
-import com.danielcordell.minequest.questing.capabilities.playerquest.StoragePlayerQuestData;
+import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
+import com.danielcordell.minequest.questing.capabilities.StoragePlayerQuestData;
 import com.danielcordell.minequest.questing.message.QuestSyncMessage;
 import com.danielcordell.minequest.questing.message.QuestSyncMessageHandler;
 import com.danielcordell.minequest.tileentities.QuestActionTileEntity;

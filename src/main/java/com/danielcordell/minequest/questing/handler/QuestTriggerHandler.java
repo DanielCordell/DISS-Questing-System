@@ -2,16 +2,11 @@ package com.danielcordell.minequest.questing.handler;
 
 
 import com.danielcordell.minequest.MineQuest;
-import com.danielcordell.minequest.core.ModBlocks;
 import com.danielcordell.minequest.events.ActionBlockTriggeredEvent;
-import com.danielcordell.minequest.questing.capabilities.playerquest.CapPlayerQuestData;
-import com.danielcordell.minequest.questing.capabilities.playerquest.PlayerQuestData;
-import com.danielcordell.minequest.tileentities.QuestStartTileEntity;
-import com.danielcordell.minequest.worlddata.WorldQuestData;
+import com.danielcordell.minequest.questing.capabilities.CapPlayerQuestData;
+import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;

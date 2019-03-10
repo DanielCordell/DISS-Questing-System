@@ -2,6 +2,7 @@ package com.danielcordell.minequest.questing.enums;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Random;
 
 public enum ObjectiveType {
     KILL_TYPE(0),
@@ -19,10 +20,16 @@ public enum ObjectiveType {
     }
 
     public static ObjectiveType getTypeFromInt(int type) {
-        Optional<ObjectiveType> objective = Arrays.stream(ObjectiveType.values())
+        Optional<ObjectiveType> objective = Arrays.stream(values())
                 .filter(value -> value.objectiveInt == type)
                 .findFirst();
         if (!objective.isPresent()) throw new IllegalArgumentException("Invalid state value passed to ObjectiveType.getTypeFromInt() : " + type);
         return objective.get();
     }
+
+    public static ObjectiveType getRandomObjectiveType(Random rand) {
+        ObjectiveType[] vals = values();
+        return vals[rand.nextInt(vals.length)];
+    }
+
 }

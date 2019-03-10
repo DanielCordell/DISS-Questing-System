@@ -1,4 +1,4 @@
-package com.danielcordell.minequest.questing.capabilities.playerquest;
+package com.danielcordell.minequest.questing.capabilities;
 
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestBuilder;

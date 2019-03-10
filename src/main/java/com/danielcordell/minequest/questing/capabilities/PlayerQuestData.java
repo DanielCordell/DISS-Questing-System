@@ -1,7 +1,6 @@
-package com.danielcordell.minequest.questing.capabilities.playerquest;
+package com.danielcordell.minequest.questing.capabilities;
 
 import com.danielcordell.minequest.MineQuest;
-import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestBuilder;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,8 +8,6 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class PlayerQuestData {
 

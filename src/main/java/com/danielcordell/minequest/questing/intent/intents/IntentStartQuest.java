@@ -1,13 +1,11 @@
 package com.danielcordell.minequest.questing.intent.intents;
 
-import com.danielcordell.minequest.questing.capabilities.playerquest.CapPlayerQuestData;
-import com.danielcordell.minequest.questing.capabilities.playerquest.PlayerQuestData;
+import com.danielcordell.minequest.questing.capabilities.CapPlayerQuestData;
+import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
 import com.danielcordell.minequest.questing.enums.IntentType;
 import com.danielcordell.minequest.questing.intent.Intent;
-import com.danielcordell.minequest.questing.intent.params.PosParamBase;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.worlddata.WorldQuestData;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;

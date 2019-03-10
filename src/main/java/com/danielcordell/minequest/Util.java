@@ -1,13 +1,15 @@
 package com.danielcordell.minequest;
 
 import com.danielcordell.minequest.entities.EntityNPC;
+import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.quest.Quest;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
-import java.util.UUID;
+import java.util.*;
 
 public class Util {
     public static UUID emptyUUID = new UUID(0,0);
@@ -29,5 +31,13 @@ public class Util {
                 .stream()
                 .findFirst()
                 .orElse(null);
+    }
+
+    public static List<String> getStructuresFromDimension(int dim) {
+        if (dim == DimensionType.OVERWORLD.getId()) return Arrays.asList("Stronghold", "Mansion", "Monument", "Village", "Mineshaft", "Temple");
+        if (dim == DimensionType.NETHER.getId()) return Arrays.asList("Fortress");
+        if (dim == DimensionType.THE_END.getId()) return Arrays.asList("EndCity");
+        return new ArrayList<>();
+
     }
 }

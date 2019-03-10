@@ -9,24 +9,19 @@ import com.danielcordell.minequest.questing.intent.intents.IntentGiveItemStack;
 import com.danielcordell.minequest.questing.intent.intents.IntentSetNPCFollow;
 import com.danielcordell.minequest.questing.intent.intents.IntentSpawnEntity;
 import com.danielcordell.minequest.questing.intent.params.PlayerRadiusPosParam;
-import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
-import com.danielcordell.minequest.questing.objective.objectives.ObjectiveKillSpecific;
-import com.danielcordell.minequest.questing.objective.objectives.ObjectiveKillType;
 import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.objective.params.*;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestBuilder;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
-import com.danielcordell.minequest.questing.capabilities.playerquest.CapPlayerQuestData;
-import com.danielcordell.minequest.questing.capabilities.playerquest.PlayerQuestData;
+import com.danielcordell.minequest.questing.capabilities.CapPlayerQuestData;
+import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
 import com.danielcordell.minequest.questing.message.QuestSyncMessage;
 import com.danielcordell.minequest.tileentities.QuestActionTileEntity;
 import com.danielcordell.minequest.tileentities.QuestStartTileEntity;
 import com.danielcordell.minequest.worlddata.WorldQuestData;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,15 +35,11 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-
-import java.util.List;
 
 @Mod.EventBusSubscriber(modid = MineQuest.MODID)
 public class DataHandler {
@@ -146,7 +137,7 @@ public class DataHandler {
 
         //Temp todo
         if (data.getQuestByID(0) == null) {
-            Quest quest = new QuestBuilder(data.getFreshQuestID(), "Reclaim the Land").build();
+            Quest quest = Quest.newEmptyQuest(world, "Reclaim the Land");
             //Checkpoint 1
             //Objective 1, kill 5 zombies
             QuestCheckpoint checkpoint = new QuestCheckpoint(quest);
@@ -178,7 +169,7 @@ public class DataHandler {
             npc.setPosition(5,world.getSeaLevel()+1,5);
             world.spawnEntity(npc);
 
-            Quest quest = new QuestBuilder(data.getFreshQuestID(), "Do stuff").build();
+            Quest quest = Quest.newEmptyQuest(world, "Do stuff");
             QuestCheckpoint checkpoint = new QuestCheckpoint(quest);
             ObjectiveParamsBase params = new ParamsTrigger(checkpoint, "Interact with the block").setParamDetails(0);
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.TRIGGER));
