@@ -1,12 +1,14 @@
 package com.danielcordell.minequest.questing.generators;
 
 import com.danielcordell.minequest.Util;
+import com.mojang.realmsclient.util.Pair;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
@@ -22,18 +24,22 @@ public class WorldState {
     public boolean inOrNextToSlimeChunk;
 
     public List<BlockPos> nearbySpawners;
-    public boolean isDaytime;
     public int dimension;
 
     public long worldTime;
     public int playerAlive;
 
-    public HashMap<String, BlockPos> closestStructurePerType;
+    public BlockPos playerPos;
+
+    public HashMap<String, Pair<BlockPos, Boolean>> closestStructurePerType;
+    public boolean inWater;
+    public int overallDifficulty;
+
+    public World world;
 
     public static WorldState getWorldState(WorldServer world, EntityPlayerMP player) {
         WorldState worldState = new WorldState();
-        worldState.isDaytime = world.isDaytime();
-
+        worldState.world = world;
         BlockPos pos = player.getPosition();
 
         Chunk[] chunks = {world.getChunkFromBlockCoords(pos), world.getChunkFromBlockCoords(pos.add(128, 0, 0)),
@@ -49,21 +55,31 @@ public class WorldState {
         worldState.inOrNextToSlimeChunk = Arrays.stream(chunks).anyMatch(chunk -> chunk.getRandomWithSeed(987234911L).nextInt(10) == 0);
 
         worldState.nearbySpawners = new ArrayList<>();
-        for (Chunk chunk : chunks) {
+        for (Chunk chunk : chunks)
             chunk.getTileEntityMap().forEach((key, value) -> {
                 if (value instanceof TileEntityMobSpawner) worldState.nearbySpawners.add(key);
             });
-        }
 
         worldState.dimension = player.dimension;
         worldState.closestStructurePerType = new HashMap<>();
         Util.getStructuresFromDimension(worldState.dimension).forEach(type -> worldState.closestStructurePerType
-                .put(type, world.getChunkProvider().getNearestStructurePos(world, type, player.getPosition(), true))
+                .put(type, Pair.of(
+                        world.getChunkProvider().getNearestStructurePos(world, type, player.getPosition(), true),
+                        world.getChunkProvider().isInsideStructure(world, type, player.getPosition())
+                ))
         );
+
+        worldState.inWater = player.isInWater();
 
         //Difficulty
         worldState.worldTime = world.getTotalWorldTime();
         worldState.playerAlive = player.ticksExisted;
+        worldState.playerPos = player.getPosition();
+
+        worldState.overallDifficulty = (int) Math.round(Math.min(
+                Math.pow(worldState.worldTime / 24000.f <= 10 ? worldState.playerAlive : worldState.worldTime, 0.25f) / 4,
+                20
+        ));
         return worldState;
     }
 }
