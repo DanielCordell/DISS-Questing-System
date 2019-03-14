@@ -43,21 +43,21 @@ public enum ObjectiveType {
     public static HashMap<ObjectiveType, Integer> getObjectiveWeightMap(WorldState worldState) {
         HashMap<ObjectiveType, Integer> weight = new HashMap<>();
         int baseVal = (int) ((worldState.nearbySpawners.size() + 1) * (0.1 * worldState.nearbyMobs.stream().filter(it -> it instanceof IMob).count())) + (worldState.inOrNextToSlimeChunk ? 2 : 0);
-        weight.put(ObjectiveType.KILL_TYPE, baseVal < 6 ? 6 : baseVal);
+        weight.put(ObjectiveType.KILL_TYPE, baseVal < 6 ? 6 : baseVal > 12 ? 12 : baseVal);
         weight.put(ObjectiveType.KILL_SPECIFIC, weight.get(ObjectiveType.KILL_TYPE));
         weight.put(ObjectiveType.GATHER, 6);
         weight.put(ObjectiveType.TRIGGER, 0);
-        weight.put(ObjectiveType.ESCORT, worldState.closestStructurePerType.values().stream().anyMatch(Pair::second) ? 7 : 0);
-        weight.put(ObjectiveType.SEARCH, ((int) worldState.closestStructurePerType.values()
+        int searchWeight = (int) worldState.closestStructurePerType.values()
                 .stream()
-                // If a position exists, and it's < 10000 away from the player, increase the probability of a locate quest.
+                // If a position exists, and it's < 800 away from the player, increase the probability of a locate quest.
                 .filter(it -> it != null && Math.sqrt(it.first().distanceSq(worldState.playerPos)) < 800)
-                .count())
-        );
+                .count();
+        searchWeight = (int) Math.ceil(searchWeight * 1.5);
+        weight.put(ObjectiveType.SEARCH, (searchWeight));
 
-        boolean isPlayerInsideStructure = worldState.closestStructurePerType.entrySet().stream().anyMatch(it -> it.getValue().second() && it.getKey().equals("Temple") && worldState.inWater);
-        weight.put(ObjectiveType.ESCORT, isPlayerInsideStructure ? 8 : 0);
-        weight.put(ObjectiveType.DELIVER, isPlayerInsideStructure ? 8 : 0);
+        //boolean isPlayerInsideStructure = worldState.closestStructurePerType.entrySet().stream().anyMatch(it -> it.getValue().second() && it.getKey().equals("Temple") && worldState.inWater);
+        weight.put(ObjectiveType.ESCORT, worldState.closestStructurePerType.get("Village").second() ? 50 : 0);
+        weight.put(ObjectiveType.DELIVER, 5);
         return weight;
     }
 

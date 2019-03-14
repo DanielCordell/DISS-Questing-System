@@ -4,6 +4,7 @@ import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.questing.capabilities.CapPlayerQuestData;
 import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
 import com.danielcordell.minequest.questing.enums.QuestState;
+import com.danielcordell.minequest.questing.message.ClearQuestMessage;
 import com.danielcordell.minequest.questing.message.MakeQuestMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -33,8 +34,12 @@ public class KeybindEventHandler {
             });
         }
         if (KeyBindings.keyBindings.get(1).isPressed()) {
-            EntityPlayerSP player = Minecraft.getMinecraft().player;
             MineQuest.networkWrapper.sendToServer(new MakeQuestMessage());
+        }
+        if (KeyBindings.keyBindings.get(2).isPressed()) {
+            MineQuest.networkWrapper.sendToServer(new ClearQuestMessage());
+            PlayerQuestData pqd = Minecraft.getMinecraft().player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
+            pqd.getQuests().forEach(quest -> pqd.removeQuest(quest.getQuestID()));
         }
     }
 }

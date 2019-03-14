@@ -12,6 +12,7 @@ import com.danielcordell.minequest.questing.intent.intents.IntentSetNPCFollow;
 import com.danielcordell.minequest.questing.intent.intents.IntentSpawnEntity;
 import com.danielcordell.minequest.questing.intent.params.PlayerRadiusPosParam;
 import com.danielcordell.minequest.questing.message.QuestSyncMessage;
+import com.danielcordell.minequest.questing.message.SyncEntityDataMessage;
 import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
 import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.objective.params.*;
@@ -21,19 +22,24 @@ import com.danielcordell.minequest.tileentities.QuestActionTileEntity;
 import com.danielcordell.minequest.tileentities.QuestStartTileEntity;
 import com.danielcordell.minequest.worlddata.WorldQuestData;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -174,7 +180,7 @@ public class DataHandler {
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.TRIGGER));
 
             int entityID = quest.addEntity(npc.getUniqueID());
-            params = new ParamsDeliver(checkpoint, "Give the boy some stuff").setParamDetails(new ItemStack(Items.STRING), 3, 0, world);
+            params = new ParamsDeliver(checkpoint, "Give the boy some stuff").setParamDetails(new ItemStack(Items.STRING), 3, 0, world, npc.getPosition());
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.DELIVER));
             String type = "Village";
             params = new ParamsEscort(checkpoint, "Take me places!").setParamDetails(entityID, world, type);
@@ -184,6 +190,17 @@ public class DataHandler {
             quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Items.APPLE, 4)));
             data.addQuest(quest);
             data.markDirty();
+        }
+    }
+
+    @SubscribeEvent
+    public static void onMobTick(LivingEvent.LivingUpdateEvent event) {
+        EntityLivingBase e = event.getEntityLiving();
+        if (MineQuest.isClient(event.getEntity().world.isRemote)) return;
+        NBTTagCompound entityData = e.getEntityData();
+        if (entityData.hasKey("inQuest") && !entityData.hasKey("synced") && e.ticksExisted > 20) {
+            MineQuest.networkWrapper.sendToAll(new SyncEntityDataMessage(entityData.getString("inQuest"), e.getEntityId()));
+            entityData.setBoolean("synced", true);
         }
     }
 }

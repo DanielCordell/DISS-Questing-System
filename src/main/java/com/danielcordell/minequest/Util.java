@@ -164,7 +164,7 @@ public class Util {
             if (count > randVal) break;
         }
         Item item = itemToGather.first();
-        int num = itemToGather.second()/2 + 2 * (randVal - (count - itemToGather.second()));
+        int num = itemToGather.second()/2 + (randVal - (count - itemToGather.second()));
         return new ItemStack(item, num > 0 ? num : 1);
     }
 

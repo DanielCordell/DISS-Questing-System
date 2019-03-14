@@ -12,6 +12,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -23,14 +25,14 @@ public class ObjectiveDeliver extends ObjectiveBase {
     private ItemStack item;
     private int count;
     private int questEntityID;
-    private EntityNPC npc;
+    private BlockPos nearby;
 
     public ObjectiveDeliver(ParamsDeliver params, ObjectiveType type) {
         super(params.checkpoint, params.description, params.state, params.optional, type);
         item = params.item;
         count = params.count;
         questEntityID = params.questEntityID;
-        npc = Util.getNPCFromQuestIDOrNull(questEntityID, params.world, quest);
+        nearby = params.nearby;
     }
 
     public ObjectiveDeliver(QuestCheckpoint checkpoint, ObjectiveType type, NBTTagCompound nbt) {
@@ -43,6 +45,7 @@ public class ObjectiveDeliver extends ObjectiveBase {
         nbt.setTag("item", item.serializeNBT());
         nbt.setInteger("count", count);
         nbt.setInteger("questEntityID", questEntityID);
+        nbt.setTag("pos", NBTUtil.createPosTag(nearby));
         return nbt;
     }
 
@@ -51,6 +54,7 @@ public class ObjectiveDeliver extends ObjectiveBase {
         item = new ItemStack((NBTTagCompound) nbt.getTag("item"));
         count = nbt.getInteger("count");
         questEntityID = nbt.getInteger("questEntityID");
+        nearby = NBTUtil.getPosFromTag((NBTTagCompound) nbt.getTag("pos"));
     }
 
     @Override
@@ -83,6 +87,6 @@ public class ObjectiveDeliver extends ObjectiveBase {
 
     @Override
     public String debugInfoPerObjective() {
-        return "Target - Give " + count + " " + I18n.format(item.getUnlocalizedName() + ".name") + " to NPC at position " + npc.getPosition();
+        return "Target - Give " + count + " " + I18n.format(item.getUnlocalizedName() + ".name") + " to NPC near position " + nearby;
     }
 }

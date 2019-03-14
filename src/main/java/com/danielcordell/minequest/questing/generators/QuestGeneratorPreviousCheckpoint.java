@@ -42,13 +42,16 @@ public class QuestGeneratorPreviousCheckpoint {
 
         //Determine Objective for first Checkpoint
         int max = objectiveWeights.values().stream().mapToInt(Integer::intValue).sum();
-        int randVal = world.rand.nextInt(max+1);
+        int randVal = rand.nextInt(max+1);
         ObjectiveType objectiveType = null;
         int count = 0;
         //TODO TEST THIS
+        MineQuest.logger.info("randVal: " + randVal);
+        MineQuest.logger.info("New Weights:");
         for (Map.Entry<ObjectiveType, Integer> entry : objectiveWeights.entrySet()) {
             count += entry.getValue();
             objectiveType = entry.getKey();
+            MineQuest.logger.info(entry.getKey().name() + ": " + entry.getValue());
             if (count > randVal) break;
         }
         if (objectiveType == null) {
@@ -91,7 +94,7 @@ public class QuestGeneratorPreviousCheckpoint {
             int numToKill = (worldState.overallDifficulty / 5) * (rand.nextInt(5)+2);
             numToKill = numToKill > 0 ? numToKill : 1;
             String nbt = quest.getName()+quest.getQuestID();
-            firstCheckpoint.addIntent(new IntentSpawnEntity(quest, entType, (int) (numToKill * 1.5), new PlayerRadiusPosParam(25), nbt, "Ambush"));
+            firstCheckpoint.addIntent(new IntentSpawnEntity(quest, entType, (int) (numToKill * 1.5), new PlayerRadiusPosParam(10), nbt, "Ambush"));
             params = new ParamsKillSpecific(firstCheckpoint, "Oh no, you're being attacked!").setParamDetails(nbt, numToKill);
         } else if (objectiveType == ObjectiveType.TRIGGER) {
             throw new NotImplementedException("Not implemented this objective yet");
@@ -129,10 +132,11 @@ public class QuestGeneratorPreviousCheckpoint {
 
             EntityNPC npc = new EntityNPC(worldState.world);
             BlockPos villagePos = worldState.closestStructurePerType.get("Village").first();
+            villagePos = worldState.world.getTopSolidOrLiquidBlock(villagePos);
             npc.setPosition(villagePos.getX(), villagePos.getY(), villagePos.getZ());
             worldState.world.spawnEntity(npc);
             int entID = quest.addEntity(npc.getUniqueID());
-            ((ParamsDeliver) params).setParamDetails(itemStack, itemStack.getCount(), entID, (WorldServer) worldState.world);
+            ((ParamsDeliver) params).setParamDetails(itemStack, itemStack.getCount(), entID, (WorldServer) worldState.world, npc.getPosition());
         }
         else {
             MineQuest.logger.error("Could not construct an objective, bad ObjectiveType");

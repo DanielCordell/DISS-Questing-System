@@ -10,6 +10,7 @@ public class KeyBindings {
 
     static {
         keyBindings.add(new KeyBinding("key.printquests.desc", Keyboard.KEY_R, "key.quests.category"));
-        keyBindings.add(new KeyBinding("key.makequest.desc", Keyboard.KEY_MINUS, "key.quest.category"));
+        keyBindings.add(new KeyBinding("key.makequest.desc", Keyboard.KEY_EQUALS, "key.quest.category"));
+        keyBindings.add(new KeyBinding("key.clearquest.desc", Keyboard.KEY_MINUS, "key.quest.category"));
     }
 }

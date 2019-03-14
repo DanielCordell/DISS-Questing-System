@@ -5,10 +5,20 @@ import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsKillSpecific;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
+
+import java.util.List;
 
 public class ObjectiveKillSpecific extends ObjectiveBase {
 
@@ -34,7 +44,7 @@ public class ObjectiveKillSpecific extends ObjectiveBase {
         if (state != QuestState.STARTED) return;
         LivingDeathEvent event = ((LivingDeathEvent) baseEvent);
         Entity entity = event.getEntity();
-        if (entity.getEntityData().hasKey(nbtTagToFind)) {
+        if (entity.getEntityData().getString("inQuest").equals(nbtTagToFind)) {
             numKilled++;
             if (numToKill == numKilled) {
                 completeObjective(entity.world);
@@ -56,6 +66,15 @@ public class ObjectiveKillSpecific extends ObjectiveBase {
         numToKill = nbt.getInteger("numToKill");
         numKilled = nbt.getInteger("numKilled");
         nbtTagToFind = nbt.getString("nbtTagToFind");
+    }
+
+    public List<EntityLivingBase> getKillEntitiesForClient(WorldClient world) {
+        BlockPos pos = Minecraft.getMinecraft().player.getPosition();
+        return world.getEntitiesWithinAABB(
+                EntityLivingBase.class,
+                new AxisAlignedBB(pos.getX() - 50, pos.getY() - 50, pos.getZ() - 50, pos.getX() + 50, pos.getY() + 50, pos.getZ() + 50),
+                it -> it.getEntityData().getString("inQuest").equals(nbtTagToFind)
+        );
     }
 
     @Override

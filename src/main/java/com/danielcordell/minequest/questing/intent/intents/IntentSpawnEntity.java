@@ -5,9 +5,14 @@ import com.danielcordell.minequest.Util;
 import com.danielcordell.minequest.questing.enums.IntentType;
 import com.danielcordell.minequest.questing.intent.Intent;
 import com.danielcordell.minequest.questing.intent.params.PosParamBase;
+import com.danielcordell.minequest.questing.message.SyncEntityDataMessage;
 import com.danielcordell.minequest.questing.quest.Quest;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -47,10 +52,13 @@ public class IntentSpawnEntity extends Intent {
                 EntityLiving entity = (EntityLiving) entityToSpawn.getConstructors()[0].newInstance(world);
                 BlockPos pos = posParam.getPos(world, quest);
                 entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
-                if (entityData != null) entity.getEntityData().setBoolean(entityData, true);
-                if (nametag != null) entity.setCustomNameTag(nametag);
-                entity.enablePersistence();
                 world.spawnEntity(entity);
+                entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
+                entity.enablePersistence();
+                if (nametag != null) entity.setCustomNameTag(nametag);
+                if (entityData != null) {
+                    entity.getEntityData().setString("inQuest", entityData);
+                }
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             MineQuest.logger.error(e);
