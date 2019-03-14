@@ -1,5 +1,6 @@
 package com.danielcordell.minequest.questing.objective.objectives;
 
+import com.danielcordell.minequest.Util;
 import com.danielcordell.minequest.entities.EntityNPC;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.enums.QuestState;
@@ -22,12 +23,14 @@ public class ObjectiveDeliver extends ObjectiveBase {
     private ItemStack item;
     private int count;
     private int questEntityID;
+    private EntityNPC npc;
 
     public ObjectiveDeliver(ParamsDeliver params, ObjectiveType type) {
         super(params.checkpoint, params.description, params.state, params.optional, type);
         item = params.item;
         count = params.count;
         questEntityID = params.questEntityID;
+        npc = Util.getNPCFromQuestIDOrNull(questEntityID, params.world, quest);
     }
 
     public ObjectiveDeliver(QuestCheckpoint checkpoint, ObjectiveType type, NBTTagCompound nbt) {
@@ -79,7 +82,7 @@ public class ObjectiveDeliver extends ObjectiveBase {
     }
 
     @Override
-    public String debugInfo() {
-        return "Target - Give " + count + " " + I18n.format(item.getUnlocalizedName() + ".name") + " to NPC.";
+    public String debugInfoPerObjective() {
+        return "Target - Give " + count + " " + I18n.format(item.getUnlocalizedName() + ".name") + " to NPC at position " + npc.getPosition();
     }
 }

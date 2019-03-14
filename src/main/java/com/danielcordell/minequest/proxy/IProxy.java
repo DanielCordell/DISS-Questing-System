@@ -20,6 +20,4 @@ public interface IProxy {
 
     @SubscribeEvent
     void serverStarting(FMLServerStartingEvent event);
-
-    EntityPlayer getPlayerEntityFromContext(MessageContext ctx);
 }

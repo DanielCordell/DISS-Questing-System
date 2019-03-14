@@ -15,24 +15,18 @@ import net.minecraft.world.World;
 import java.lang.reflect.InvocationTargetException;
 
 public class IntentSpawnEntity extends Intent {
-    private final boolean persistent;
     private final String nametag;
     private Class<? extends EntityLivingBase> entityToSpawn;
     private int numToSpawn;
     private String entityData;
     private PosParamBase posParam;
 
-    public IntentSpawnEntity(Quest quest, Class<? extends EntityLivingBase> entityToSpawn, int numToSpawn, PosParamBase posParam) {
-        this(quest, entityToSpawn, numToSpawn, posParam, false, null, null);
-    }
-
-    public IntentSpawnEntity(Quest quest, Class<? extends EntityLivingBase> entityToSpawn, int numToSpawn, PosParamBase posParam, boolean persistent, String entityData, String nametag) {
+    public IntentSpawnEntity(Quest quest, Class<? extends EntityLivingBase> entityToSpawn, int numToSpawn, PosParamBase posParam, String entityData, String nametag) {
         super(quest);
         this.entityToSpawn = entityToSpawn;
         this.numToSpawn = numToSpawn;
         this.posParam = posParam;
         this.entityData = entityData;
-        this.persistent = persistent;
         this.nametag = nametag;
     }
 
@@ -41,7 +35,6 @@ public class IntentSpawnEntity extends Intent {
                 Util.getEntityFromName(nbt.getString("entityToSpawn")),
                 nbt.getInteger("numToSpawn"),
                 PosParamBase.fromNBT((NBTTagCompound) nbt.getTag("posParam")),
-                nbt.getBoolean("persistent"),
                 nbt.hasKey("entityData") ? nbt.getString("entityData") : null,
                 nbt.hasKey("nametag") ? nbt.getString("nametag") : null
         );
@@ -56,7 +49,7 @@ public class IntentSpawnEntity extends Intent {
                 entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
                 if (entityData != null) entity.getEntityData().setBoolean(entityData, true);
                 if (nametag != null) entity.setCustomNameTag(nametag);
-                if (persistent) entity.enablePersistence();
+                entity.enablePersistence();
                 world.spawnEntity(entity);
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -70,7 +63,6 @@ public class IntentSpawnEntity extends Intent {
         nbt.setString("entityToSpawn", Util.getNameFromEntity(entityToSpawn));
         nbt.setInteger("numToSpawn", numToSpawn);
         nbt.setTag("posParam", posParam.toNBT());
-        nbt.setBoolean("persistent", persistent);
         if (entityData != null) nbt.setString("entityData", entityData);
         if (nametag != null) nbt.setString("nametag", nametag);
         return nbt;

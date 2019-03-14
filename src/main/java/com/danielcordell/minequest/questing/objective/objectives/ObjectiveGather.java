@@ -55,13 +55,13 @@ public class ObjectiveGather extends ObjectiveBase {
             if (itemStack.getItem() == item.getItem())
                 currentCount += itemStack.getCount();
         }
-        if (currentCount == count) {
+        if (currentCount >= count) {
             completeObjective(event.player.world);
         }
     }
 
     @Override
-    public String debugInfo() {
+    public String debugInfoPerObjective() {
         return "Target - Gather " + count + " " + I18n.format(item.getUnlocalizedName() + ".name");
     }
 }

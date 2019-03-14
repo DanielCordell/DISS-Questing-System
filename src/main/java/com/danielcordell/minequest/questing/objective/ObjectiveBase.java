@@ -69,7 +69,11 @@ public abstract class ObjectiveBase {
 
     public abstract void update(Event baseEvent);
 
-    public abstract String debugInfo();
+    public String debugInfo() {
+        return description + ": " + debugInfoPerObjective();
+    }
+
+    public abstract String debugInfoPerObjective();
 
     protected void completeObjective(World world) {
         state = QuestState.COMPLETED;

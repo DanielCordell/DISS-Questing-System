@@ -14,10 +14,11 @@ public class PlayerQuestData {
     ArrayList<Quest> playerQuests = new ArrayList<>();
 
     public void startQuest(EntityPlayer player, Quest quest) {
-        Quest clientQuest = QuestBuilder.fromNBT(quest.toNBT());
-        clientQuest.setPlayer(player);
-        clientQuest.start(player.world);
-        player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null).addQuest(clientQuest);
+        //Quest Duplication in case it's a global quest and not a player-specific one
+        Quest dupeQuest = QuestBuilder.fromNBT(quest.toNBT());
+        dupeQuest.setPlayer(player);
+        dupeQuest.start(player.world);
+        addQuest(dupeQuest);
     }
 
     public int numberOfQuests() {

@@ -59,7 +59,7 @@ public class ObjectiveKillSpecific extends ObjectiveBase {
     }
 
     @Override
-    public String debugInfo() {
+    public String debugInfoPerObjective() {
         return "Target - Specific Entities" + ": " + numKilled + "/" + numToKill;
     }
 

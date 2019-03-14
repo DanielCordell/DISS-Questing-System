@@ -5,6 +5,8 @@ import com.danielcordell.minequest.core.ModEntities;
 import com.danielcordell.minequest.proxy.IProxy;
 import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
 import com.danielcordell.minequest.questing.capabilities.StoragePlayerQuestData;
+import com.danielcordell.minequest.questing.message.MakeQuestMessage;
+import com.danielcordell.minequest.questing.message.MakeQuestMessageHandler;
 import com.danielcordell.minequest.questing.message.QuestSyncMessage;
 import com.danielcordell.minequest.questing.message.QuestSyncMessageHandler;
 import com.danielcordell.minequest.tileentities.QuestActionTileEntity;
@@ -60,6 +62,7 @@ public class MineQuest {
         logger.info("init");
         CapabilityManager.INSTANCE.register(PlayerQuestData.class, new StoragePlayerQuestData(), PlayerQuestData::new);
         networkWrapper.registerMessage(QuestSyncMessageHandler.class, QuestSyncMessage.class, id++, Side.CLIENT);
+        networkWrapper.registerMessage(MakeQuestMessageHandler.class, MakeQuestMessage.class, id++, Side.SERVER);
         proxy.init(event);
     }
 

@@ -49,7 +49,7 @@ public class WorldState {
 
         worldState.biome = world.getBiome(pos);
         worldState.nearbyMobs = world.getEntitiesWithinAABB(EntityLiving.class,
-                new AxisAlignedBB(pos.getX() - 128, 0, pos.getZ() - 128, pos.getX() + 128, 255, pos.getZ() + 128),
+                new AxisAlignedBB(pos.getX() - 128, player.posY - 20, pos.getZ() - 128, pos.getX() + 128, player.posY + 20, pos.getZ() + 128),
                 entity -> entity instanceof IMob
         );
         worldState.inOrNextToSlimeChunk = Arrays.stream(chunks).anyMatch(chunk -> chunk.getRandomWithSeed(987234911L).nextInt(10) == 0);

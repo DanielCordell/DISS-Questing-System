@@ -1,6 +1,8 @@
 package com.danielcordell.minequest.questing.enums;
 
 import com.danielcordell.minequest.questing.generators.WorldState;
+import com.mojang.realmsclient.util.Pair;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.Arrays;
@@ -40,14 +42,16 @@ public enum ObjectiveType {
     //Get Default Objective Weights
     public static HashMap<ObjectiveType, Integer> getObjectiveWeightMap(WorldState worldState) {
         HashMap<ObjectiveType, Integer> weight = new HashMap<>();
-        weight.put(ObjectiveType.KILL_TYPE, (int) (worldState.nearbySpawners.size() * (0.1 * worldState.nearbyMobs.size())) + (worldState.inOrNextToSlimeChunk ? 2 : 0));
-        weight.put(ObjectiveType.KILL_SPECIFIC, worldState.nearbySpawners.size());
-        weight.put(ObjectiveType.GATHER, 5);
+        int baseVal = (int) ((worldState.nearbySpawners.size() + 1) * (0.1 * worldState.nearbyMobs.stream().filter(it -> it instanceof IMob).count())) + (worldState.inOrNextToSlimeChunk ? 2 : 0);
+        weight.put(ObjectiveType.KILL_TYPE, baseVal < 6 ? 6 : baseVal);
+        weight.put(ObjectiveType.KILL_SPECIFIC, weight.get(ObjectiveType.KILL_TYPE));
+        weight.put(ObjectiveType.GATHER, 6);
         weight.put(ObjectiveType.TRIGGER, 0);
+        weight.put(ObjectiveType.ESCORT, worldState.closestStructurePerType.values().stream().anyMatch(Pair::second) ? 7 : 0);
         weight.put(ObjectiveType.SEARCH, ((int) worldState.closestStructurePerType.values()
                 .stream()
                 // If a position exists, and it's < 10000 away from the player, increase the probability of a locate quest.
-                .filter(it -> it != null && Math.sqrt(it.first().distanceSq(worldState.playerPos)) < 10000)
+                .filter(it -> it != null && Math.sqrt(it.first().distanceSq(worldState.playerPos)) < 800)
                 .count())
         );
 

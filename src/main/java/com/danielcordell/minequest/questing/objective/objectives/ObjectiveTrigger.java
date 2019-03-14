@@ -46,7 +46,7 @@ public class ObjectiveTrigger extends ObjectiveBase {
     }
 
     @Override
-    public String debugInfo() {
+    public String debugInfoPerObjective() {
         return "Target - Interact with Action Block: " + actionBlockID;
     }
 }

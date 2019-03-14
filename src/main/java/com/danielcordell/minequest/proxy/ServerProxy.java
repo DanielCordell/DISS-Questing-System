@@ -31,9 +31,4 @@ public class ServerProxy implements IProxy {
     public void serverStarting(FMLServerStartingEvent event) {
         MineQuest.logger.info("Server starting.");
     }
-
-    @Override
-    public EntityPlayer getPlayerEntityFromContext(MessageContext ctx) {
-        return ctx.getServerHandler().player;
-    }
 }

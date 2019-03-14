@@ -79,10 +79,10 @@ public class DataHandler {
                 QuestStartTileEntity te = (QuestStartTileEntity) world.getTileEntity(position);
                 wqd.getImmutableQuests().stream().filter(quest -> quest.getQuestID() == te.getQuestID()).forEach(quest -> {
                     if (!pqd.containsQuest(quest.getQuestID())) {
+                        pqd.startQuest(player, quest);
                         MineQuest.logger.info("Started New Quest!");
                         MineQuest.logger.info("Quest: " + quest.toNBT());
                         player.sendMessage(new TextComponentString("New Quest Started: " + quest.getName()));
-                        pqd.startQuest(player, quest);
                     }
                 });
             }
@@ -145,7 +145,7 @@ public class DataHandler {
             //Objective 2, kill 3 entities with the tag.
             params = new ParamsKillSpecific(checkpoint, "Kill 3 Special Mobs").setParamDetails(quest.getName(), 3);
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.KILL_SPECIFIC));
-            Intent intent = new IntentSpawnEntity(quest, EntitySpider.class, 3, new PlayerRadiusPosParam(10), true, quest.getName(), "TestEntity");
+            Intent intent = new IntentSpawnEntity(quest, EntitySpider.class, 3, new PlayerRadiusPosParam(10), quest.getName(), "TestEntity");
             checkpoint.addIntent(intent);
             quest.addCheckpoint(checkpoint);
 
@@ -174,7 +174,7 @@ public class DataHandler {
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.TRIGGER));
 
             int entityID = quest.addEntity(npc.getUniqueID());
-            params = new ParamsDeliver(checkpoint, "Give the boy some stuff").setParamDetails(new ItemStack(Items.STRING), 3, 0);
+            params = new ParamsDeliver(checkpoint, "Give the boy some stuff").setParamDetails(new ItemStack(Items.STRING), 3, 0, world);
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.DELIVER));
             String type = "Village";
             params = new ParamsEscort(checkpoint, "Take me places!").setParamDetails(entityID, world, type);

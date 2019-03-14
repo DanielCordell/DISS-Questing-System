@@ -59,7 +59,7 @@ public class ObjectiveKillType extends ObjectiveBase {
     }
 
     @Override
-    public String debugInfo() {
+    public String debugInfoPerObjective() {
         return "Target - " + Util.getNameFromEntity(entityType) + ": " + numKilled + "/" + numToKill;
     }
 

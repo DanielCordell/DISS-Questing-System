@@ -50,7 +50,7 @@ public class ObjectiveSearch extends ObjectiveBase {
     }
 
     @Override
-    public String debugInfo() {
+    public String debugInfoPerObjective() {
         return "Target - Find a " + structureType;
     }
 }

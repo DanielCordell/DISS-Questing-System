@@ -39,11 +39,6 @@ public class ClientProxy implements IProxy {
 
     }
 
-    @Override
-    public EntityPlayer getPlayerEntityFromContext(MessageContext ctx) {
-        return ctx.side.isClient() ? Minecraft.getMinecraft().player : MineQuest.proxy.getPlayerEntityFromContext(ctx);
-    }
-
     @SubscribeEvent
     public static void registerRenders(ModelRegistryEvent event) {
         ModBlocks.questActionBlock.initModel();

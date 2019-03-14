@@ -4,8 +4,10 @@ import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.WorldServer;
 
 public class ParamsDeliver extends ObjectiveParamsBase {
+    public WorldServer world;
     public ItemStack item;
     public int count;
     public int questEntityID;
@@ -22,10 +24,11 @@ public class ParamsDeliver extends ObjectiveParamsBase {
         super(questCheckpoint, description, optional, state);
     }
 
-    public ParamsDeliver setParamDetails(ItemStack item, int count, int questEntityID) {
+    public ParamsDeliver setParamDetails(ItemStack item, int count, int questEntityID, WorldServer world) {
         this.item = item;
         this.count = count;
         this.questEntityID = questEntityID;
+        this.world = world;
         return this;
     }
 }

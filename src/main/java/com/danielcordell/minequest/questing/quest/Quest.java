@@ -60,6 +60,10 @@ public class Quest {
         return newEmptyQuest(world, "");
     }
 
+    public void setQuestName(String questName) {
+        this.questName = questName;
+    }
+
     public NBTTagCompound toNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setInteger("questID", questID);
@@ -213,5 +217,9 @@ public class Quest {
     public void addFinishIntent(Intent intent) {
         onFinishIntents.add(intent);
         setDirty();
+    }
+
+    public Collection<UUID> getEntities() {
+        return entityMap.values();
     }
 }
