@@ -3,9 +3,7 @@ package com.danielcordell.minequest.questing.generators;
 import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.Util;
 import com.danielcordell.minequest.entities.EntityNPC;
-import com.danielcordell.minequest.questing.capabilities.CapPlayerQuestData;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
-import com.danielcordell.minequest.questing.intent.IntentBuilder;
 import com.danielcordell.minequest.questing.intent.intents.IntentGiveItemStack;
 import com.danielcordell.minequest.questing.intent.intents.IntentSpawnEntity;
 import com.danielcordell.minequest.questing.intent.params.PlayerRadiusPosParam;
@@ -15,8 +13,6 @@ import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.objective.params.*;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
-import com.mojang.realmsclient.util.Pair;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -109,11 +105,12 @@ public class QuestGeneratorPreviousCheckpoint {
             //?Todo pick an NPC in the world, if there is an NPC NOT currently in an open quest and not too far away (farther than closest village) then use them, otherwise make a new one at the closest village.
             EntityNPC npc = new EntityNPC(worldState.world);
             BlockPos villagePos = worldState.closestStructurePerType.get("Village").first();
+            villagePos = worldState.world.getTopSolidOrLiquidBlock(villagePos);
             npc.setPosition(villagePos.getX(), villagePos.getY(), villagePos.getZ());
             worldState.world.spawnEntity(npc);
             int entID = quest.addEntity(npc.getUniqueID());
 
-            ((ParamsEscort) params).setParamDetails(entID, (WorldServer) worldState.world, structure);
+            ((ParamsEscort) params).setParamDetails(entID, (WorldServer) worldState.world, structure, villagePos);
         } else if (objectiveType == ObjectiveType.GATHER) {
             ItemStack itemStack = Util.getGatherFromDimAndDifficulty(rand, worldState.dimension, worldState.overallDifficulty);
             params = new ParamsGather(firstCheckpoint, "Gather some Resources!").setParamDetails(itemStack, itemStack.getCount());
@@ -126,7 +123,7 @@ public class QuestGeneratorPreviousCheckpoint {
             params = new ParamsSearch(firstCheckpoint, "Search for a " + structure + "!").setParamDetails(structure);
         } else if (objectiveType == ObjectiveType.DELIVER) {
             ItemStack itemStack = Util.getGatherFromDimAndDifficulty(rand, worldState.dimension, worldState.overallDifficulty);
-
+            // Todo delive ronly takes exact amounts that is WRONG
             //?Todo pick an NPC, if there is an NPC NOT currently in an open quest then use them, otherwise make a new one at the closest village.
             params = new ParamsDeliver(firstCheckpoint, "Deliver to an NPC!");
 

@@ -8,11 +8,18 @@ import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntitySpectralArrow;
+import net.minecraft.init.MobEffects;
+import net.minecraft.init.PotionTypes;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemSpectralArrow;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.potion.PotionType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -33,6 +40,7 @@ public class EntityNPC extends EntityMob {
         this.setSize(0.6f, 1.95f);
         this.dataManager.register(NPC_TYPE, new Random().nextInt(4));
         this.dataManager.register(NPC_FOLLOW, Optional.absent());
+        this.addPotionEffect(new PotionEffect(MobEffects.GLOWING, -1));
     }
 
     @Override

@@ -21,7 +21,7 @@ public class ObjectiveEscort extends ObjectiveBase {
     private BlockPos pos;
     private int questEntityID;
     private String structureType;
-    private EntityNPC questEntity;
+    private BlockPos nearby;
 
     public ObjectiveEscort(ParamsEscort params, ObjectiveType type) {
         super(params.checkpoint, params.description, params.state, params.optional, type);
@@ -34,7 +34,7 @@ public class ObjectiveEscort extends ObjectiveBase {
         pos = world.getChunkProvider().getNearestStructurePos(world, structureType,
                 new BlockPos(world.rand.nextInt(5000) - 2500, world.getSeaLevel(), world.rand.nextInt(5000) - 2500), true
         );
-        questEntity = Util.getNPCFromQuestIDOrNull(questEntityID, world, quest);
+        nearby = params.nearby;
     }
 
     public ObjectiveEscort(QuestCheckpoint checkpoint, ObjectiveType type, NBTTagCompound nbt) {
@@ -84,13 +84,13 @@ public class ObjectiveEscort extends ObjectiveBase {
 
     @Override
     protected void completeObjective(World world) {
-        EntityNPC npc = questEntity;
+        EntityNPC npc = Util.getNPCFromQuestIDOrNull(questEntityID, world, quest);;
         npc.clearNPCFollow();
         super.completeObjective(world);
     }
 
     @Override
     public String debugInfoPerObjective() {
-        return "Target - Take NPC at Position " + questEntity.getPosition() +" to the + " + structureType + " at Position: " + pos;
+        return "Target - Take NPC near Position " + nearby +" to the + " + structureType + " at Position: " + pos;
     }
 }
