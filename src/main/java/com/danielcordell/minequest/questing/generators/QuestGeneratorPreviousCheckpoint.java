@@ -19,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldServer;
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -104,13 +105,19 @@ public class QuestGeneratorPreviousCheckpoint {
             }
             //?Todo pick an NPC in the world, if there is an NPC NOT currently in an open quest and not too far away (farther than closest village) then use them, otherwise make a new one at the closest village.
             EntityNPC npc = new EntityNPC(worldState.world);
-            BlockPos villagePos = worldState.closestStructurePerType.get("Village").first();
-            villagePos = worldState.world.getTopSolidOrLiquidBlock(villagePos);
-            npc.setPosition(villagePos.getX(), villagePos.getY(), villagePos.getZ());
+            npc.changeDimension(worldState.dimension);
+            BlockPos spawnPos;
+            if (worldState.dimension == DimensionType.OVERWORLD.getId()) {
+                spawnPos = worldState.closestStructurePerType.get("Village").first();
+                spawnPos = worldState.world.getTopSolidOrLiquidBlock(spawnPos);
+            } else {
+                spawnPos = worldState.playerPos.add(0, 0.5, 0);
+            }
+            npc.setPosition(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
             worldState.world.spawnEntity(npc);
             int entID = quest.addEntity(npc.getUniqueID());
 
-            ((ParamsEscort) params).setParamDetails(entID, (WorldServer) worldState.world, structure, villagePos);
+            ((ParamsEscort) params).setParamDetails(entID, (WorldServer) worldState.world, structure, spawnPos);
         } else if (objectiveType == ObjectiveType.GATHER) {
             ItemStack itemStack = Util.getGatherFromDimAndDifficulty(rand, worldState.dimension, worldState.overallDifficulty);
             params = new ParamsGather(firstCheckpoint, "Gather some Resources!").setParamDetails(itemStack, itemStack.getCount());
@@ -123,7 +130,6 @@ public class QuestGeneratorPreviousCheckpoint {
             params = new ParamsSearch(firstCheckpoint, "Search for a " + structure + "!").setParamDetails(structure);
         } else if (objectiveType == ObjectiveType.DELIVER) {
             ItemStack itemStack = Util.getGatherFromDimAndDifficulty(rand, worldState.dimension, worldState.overallDifficulty);
-            // Todo delive ronly takes exact amounts that is WRONG
             //?Todo pick an NPC, if there is an NPC NOT currently in an open quest then use them, otherwise make a new one at the closest village.
             params = new ParamsDeliver(firstCheckpoint, "Deliver to an NPC!");
 

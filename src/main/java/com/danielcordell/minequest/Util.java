@@ -8,6 +8,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.*;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
@@ -190,5 +191,23 @@ public class Util {
 
     public static String generateQuestName(Quest quest) {
         return "The Quest for Glory!";
+    }
+
+    public static void removeItemCountFromInventory(InventoryPlayer inv, Item item, int count) {
+        int size = inv.getSizeInventory();
+        int currentTotal = 0;
+        for (int i = 0; i < size; ++i) {
+            ItemStack current = inv.getStackInSlot(i);
+            if (current.getItem() != item) continue;
+            if (currentTotal + current.getCount() > count) {
+                current.setCount(current.getCount() - (count - currentTotal));
+                break;
+            }
+            else {
+                currentTotal += current.getCount();
+                inv.removeStackFromSlot(i);
+                if (currentTotal == count) break;
+            }
+        }
     }
 }

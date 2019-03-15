@@ -4,7 +4,9 @@ import com.danielcordell.minequest.questing.generators.WorldState;
 import com.mojang.realmsclient.util.Pair;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
@@ -56,7 +58,8 @@ public enum ObjectiveType {
         weight.put(ObjectiveType.SEARCH, (searchWeight));
 
         //boolean isPlayerInsideStructure = worldState.closestStructurePerType.entrySet().stream().anyMatch(it -> it.getValue().second() && it.getKey().equals("Temple") && worldState.inWater);
-        weight.put(ObjectiveType.ESCORT, worldState.closestStructurePerType.get("Village").second() ? 50 : 0);
+        int escortWeight = worldState.closestStructurePerType.get("Village").second() ? 40 : worldState.dimension != DimensionType.OVERWORLD.getId() ? 10 : 0;
+        weight.put(ObjectiveType.ESCORT,  escortWeight);
         weight.put(ObjectiveType.DELIVER, 5);
         return weight;
     }

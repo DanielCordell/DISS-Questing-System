@@ -76,8 +76,10 @@ public class ObjectiveDeliver extends ObjectiveBase {
             if (itemStack.getItem() == item.getItem())
                 currentCount.put(i, itemStack.getCount());
         }
-        if (currentCount.values().stream().mapToInt(i -> i).sum() == count) {
-            currentCount.keySet().forEach(inv::removeStackFromSlot);
+        if (currentCount.values().stream().mapToInt(i -> i).sum() >= count) {
+
+            Util.removeItemCountFromInventory(inv, item.getItem(), count);
+
             completeObjective(event.getWorld());
             quest.setDirty();
         } else {
