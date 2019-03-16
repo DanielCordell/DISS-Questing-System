@@ -2,11 +2,14 @@ package com.danielcordell.minequest.questing.handler;
 
 
 import com.danielcordell.minequest.MineQuest;
+import com.danielcordell.minequest.Util;
 import com.danielcordell.minequest.events.ActionBlockTriggeredEvent;
 import com.danielcordell.minequest.questing.capabilities.CapPlayerQuestData;
 import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -30,6 +33,7 @@ public class QuestTriggerHandler {
 
     @SubscribeEvent
     public static void onPlayerUpdate(TickEvent.PlayerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) return;
         if (MineQuest.isClient(event.player.world.isRemote)) return;
         EntityPlayer player = event.player;
         World world = player.world;
@@ -53,6 +57,7 @@ public class QuestTriggerHandler {
     @SubscribeEvent
     public static void onEntityRightClick(PlayerInteractEvent.EntityInteract event) {
         if (MineQuest.isClient(event.getWorld().isRemote)) return;
+        if (event.getHand() == EnumHand.OFF_HAND) return;
         PlayerQuestData pqd = event.getEntityPlayer().getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
         if (pqd == null) return;
         pqd.updateAllCurrentObjectives(event);

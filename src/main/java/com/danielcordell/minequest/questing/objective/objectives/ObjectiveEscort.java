@@ -8,6 +8,8 @@ import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsEscort;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
+import net.minecraft.advancements.critereon.NBTPredicate;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -28,7 +30,6 @@ public class ObjectiveEscort extends ObjectiveBase {
         questEntityID = params.questEntityID;
         structureType = params.type;
 
-        //Random
         WorldServer world = params.world;
         String structureType = params.type;
         pos = world.getChunkProvider().getNearestStructurePos(world, structureType,
@@ -90,7 +91,9 @@ public class ObjectiveEscort extends ObjectiveBase {
     }
 
     @Override
-    public String debugInfoPerObjective() {
-        return "Target - Take NPC near Position " + nearby +" to the + " + structureType + " at Position: " + pos;
+    public String getSPObjectiveInfo(EntityPlayerSP player) {
+        String direction = Util.getDirectionFromPositions(player.getPosition(), pos);
+        double distance = player.getPosition().getDistance(pos.getX(), pos.getY(), pos.getZ());
+        return "Take NPC near Position " + nearby +" to the + " + structureType + " " + direction + " of here. (" + distance + "m)";
     }
 }

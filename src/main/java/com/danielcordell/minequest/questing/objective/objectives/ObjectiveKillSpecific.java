@@ -6,6 +6,7 @@ import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsKillSpecific;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -78,8 +79,8 @@ public class ObjectiveKillSpecific extends ObjectiveBase {
     }
 
     @Override
-    public String debugInfoPerObjective() {
-        return "Target - Specific Entities" + ": " + numKilled + "/" + numToKill;
+    public String getSPObjectiveInfo(EntityPlayerSP player) {
+        return "Specific Entities" + ": " + numKilled + "/" + numToKill;
     }
 
 }

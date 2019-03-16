@@ -7,6 +7,7 @@ import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsDeliver;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -83,12 +84,14 @@ public class ObjectiveDeliver extends ObjectiveBase {
             completeObjective(event.getWorld());
             quest.setDirty();
         } else {
-            event.getEntityPlayer().sendMessage(new TextComponentString("You do not have enough " + I18n.format(item.getUnlocalizedName())));
+            event.getEntityPlayer().sendMessage(new TextComponentString("You do not have enough " + I18n.format(item.getUnlocalizedName() + ".name")));
         }
     }
 
     @Override
-    public String debugInfoPerObjective() {
-        return "Target - Give " + count + " " + I18n.format(item.getUnlocalizedName() + ".name") + " to NPC near position " + nearby;
+    public String getSPObjectiveInfo(EntityPlayerSP player) {
+        String direction = Util.getDirectionFromPositions(player.getPosition(), nearby);
+        double distance = player.getPosition().getDistance(nearby.getX(), nearby.getY(), nearby.getZ());
+        return "Give " + count + " " + I18n.format(item.getUnlocalizedName() + ".name") + " to NPC " + direction + " of here.  (" + distance + "m)";
     }
 }

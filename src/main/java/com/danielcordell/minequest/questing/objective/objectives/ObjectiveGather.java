@@ -5,6 +5,7 @@ import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsGather;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -61,7 +62,7 @@ public class ObjectiveGather extends ObjectiveBase {
     }
 
     @Override
-    public String debugInfoPerObjective() {
-        return "Target - Gather " + count + " " + I18n.format(item.getUnlocalizedName() + ".name");
+    public String getSPObjectiveInfo(EntityPlayerSP player) {
+        return "Gather " + count + " " + I18n.format(item.getUnlocalizedName() + ".name");
     }
 }

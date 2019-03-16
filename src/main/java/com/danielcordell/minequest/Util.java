@@ -15,6 +15,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -209,5 +210,18 @@ public class Util {
                 if (currentTotal == count) break;
             }
         }
+    }
+
+    public static String getDirectionFromPositions(BlockPos playerPos, BlockPos targetPos) {
+        double angle = Math.toDegrees(Math.atan2(targetPos.getZ() - playerPos.getZ(), targetPos.getX() - playerPos.getX()));
+        if (angle <= 22.5 && angle > -22.5) return "East";
+        if (angle <= 67.5 && angle > 22.5) return "South East";
+        if (angle <= 112.5 && angle > 67.5) return "South";
+        if (angle <= 157.5 && angle > 112.5) return "South West";
+        if (angle > 157.5 || angle <= -157.5) return "West";
+        if (angle > -157.5 && angle <= -112.5) return "North West";
+        if (angle > -112.5 && angle <= -67.5) return "North";
+        if (angle > -67.5 && angle <= -22.5) return "North East";
+        else return "Invalid Direction - Fix";
     }
 }

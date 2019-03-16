@@ -4,6 +4,7 @@ import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketTitle;
@@ -69,11 +70,7 @@ public abstract class ObjectiveBase {
 
     public abstract void update(Event baseEvent);
 
-    public String debugInfo() {
-        return description + ": " + debugInfoPerObjective();
-    }
-
-    public abstract String debugInfoPerObjective();
+    public abstract String getSPObjectiveInfo(EntityPlayerSP player);
 
     protected void completeObjective(World world) {
         state = QuestState.COMPLETED;

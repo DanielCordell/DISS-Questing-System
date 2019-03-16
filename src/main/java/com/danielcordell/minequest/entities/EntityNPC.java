@@ -40,7 +40,7 @@ public class EntityNPC extends EntityMob {
         this.setSize(0.6f, 1.95f);
         this.dataManager.register(NPC_TYPE, new Random().nextInt(4));
         this.dataManager.register(NPC_FOLLOW, Optional.absent());
-        this.addPotionEffect(new PotionEffect(MobEffects.GLOWING, -1));
+        this.addPotionEffect(new PotionEffect(MobEffects.GLOWING, Integer.MAX_VALUE));
     }
 
     @Override

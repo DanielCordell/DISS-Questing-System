@@ -8,14 +8,11 @@ import com.danielcordell.minequest.questing.message.ClearQuestMessage;
 import com.danielcordell.minequest.questing.message.MakeQuestMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import javax.swing.text.JTextComponent;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(modid = MineQuest.MODID)
@@ -29,7 +26,7 @@ public class KeybindEventHandler {
             pqd.getQuests().forEach(quest -> {
                 player.sendChatMessage(quest.getName() + " - Status: " + quest.getState().name());
                 if (quest.getState() == QuestState.STARTED) {
-                    quest.getCurrentCheckpointObjectives().forEach(chkpnt -> player.sendChatMessage("__" + chkpnt.debugInfo()));
+                    quest.getCurrentCheckpointObjectives().forEach(chkpnt -> player.sendChatMessage("__" + chkpnt.getSPObjectiveInfo(Minecraft.getMinecraft().player)));
                 }
             });
         }

@@ -5,6 +5,7 @@ import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsSearch;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
@@ -50,7 +51,7 @@ public class ObjectiveSearch extends ObjectiveBase {
     }
 
     @Override
-    public String debugInfoPerObjective() {
-        return "Target - Find a " + structureType;
+    public String getSPObjectiveInfo(EntityPlayerSP player) {
+        return "Find a " + structureType;
     }
 }

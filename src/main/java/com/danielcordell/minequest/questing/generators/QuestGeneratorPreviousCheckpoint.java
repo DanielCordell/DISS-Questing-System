@@ -37,12 +37,13 @@ public class QuestGeneratorPreviousCheckpoint {
         WorldState worldState = WorldState.getWorldState(world, player);
         HashMap<ObjectiveType, Integer> objectiveWeights = ObjectiveType.getObjectiveWeightMap(worldState);
 
+        MineQuest.logger.info("Difficulty: " + worldState.overallDifficulty);
+
         //Determine Objective for first Checkpoint
         int max = objectiveWeights.values().stream().mapToInt(Integer::intValue).sum();
         int randVal = rand.nextInt(max+1);
         ObjectiveType objectiveType = null;
         int count = 0;
-        //TODO TEST THIS
         MineQuest.logger.info("randVal: " + randVal);
         MineQuest.logger.info("New Weights:");
         for (Map.Entry<ObjectiveType, Integer> entry : objectiveWeights.entrySet()) {
@@ -91,7 +92,7 @@ public class QuestGeneratorPreviousCheckpoint {
             int numToKill = (worldState.overallDifficulty / 5) * (rand.nextInt(5)+2);
             numToKill = numToKill > 0 ? numToKill : 1;
             String nbt = quest.getName()+quest.getQuestID();
-            firstCheckpoint.addIntent(new IntentSpawnEntity(quest, entType, (int) (numToKill * 1.5), new PlayerRadiusPosParam(10), nbt, "Ambush"));
+            firstCheckpoint.addIntent(new IntentSpawnEntity(quest, entType, (int) (numToKill * 1.5), new PlayerRadiusPosParam(10), nbt, "Ambush",  worldState.overallDifficulty / 5));
             params = new ParamsKillSpecific(firstCheckpoint, "Oh no, you're being attacked!").setParamDetails(nbt, numToKill);
         } else if (objectiveType == ObjectiveType.TRIGGER) {
             throw new NotImplementedException("Not implemented this objective yet");
@@ -109,7 +110,7 @@ public class QuestGeneratorPreviousCheckpoint {
             BlockPos spawnPos;
             if (worldState.dimension == DimensionType.OVERWORLD.getId()) {
                 spawnPos = worldState.closestStructurePerType.get("Village").first();
-                spawnPos = worldState.world.getTopSolidOrLiquidBlock(spawnPos);
+                spawnPos = worldState.world.getTopSolidOrLiquidBlock(spawnPos).add(0, 1, 0);
             } else {
                 spawnPos = worldState.playerPos.add(0, 0.5, 0);
             }

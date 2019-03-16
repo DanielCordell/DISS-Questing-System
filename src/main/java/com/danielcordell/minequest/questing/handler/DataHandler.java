@@ -151,7 +151,7 @@ public class DataHandler {
             //Objective 2, kill 3 entities with the tag.
             params = new ParamsKillSpecific(checkpoint, "Kill 3 Special Mobs").setParamDetails(quest.getName(), 3);
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.KILL_SPECIFIC));
-            Intent intent = new IntentSpawnEntity(quest, EntitySpider.class, 3, new PlayerRadiusPosParam(10), quest.getName(), "TestEntity");
+            Intent intent = new IntentSpawnEntity(quest, EntitySpider.class, 3, new PlayerRadiusPosParam(10), quest.getName(), "TestEntity", 4);
             checkpoint.addIntent(intent);
             quest.addCheckpoint(checkpoint);
 

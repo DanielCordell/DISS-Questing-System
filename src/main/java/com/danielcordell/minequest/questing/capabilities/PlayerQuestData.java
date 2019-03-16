@@ -3,7 +3,13 @@ package com.danielcordell.minequest.questing.capabilities;
 import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestBuilder;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.play.server.SPacketTitle;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.ArrayList;
@@ -19,6 +25,14 @@ public class PlayerQuestData {
         dupeQuest.setPlayer(player);
         dupeQuest.start(player.world);
         addQuest(dupeQuest);
+
+        EntityPlayerMP playerMP = ((EntityPlayerMP) player);
+
+        SPacketTitle packet = new SPacketTitle(SPacketTitle.Type.TITLE, new TextComponentString("Quest Started").setStyle(new Style().setColor(TextFormatting.WHITE)));
+        playerMP.connection.sendPacket(packet);
+        packet = new SPacketTitle(SPacketTitle.Type.SUBTITLE, new TextComponentString(quest.getName()).setStyle(new Style().setColor(TextFormatting.GRAY).setItalic(true)));
+        playerMP.connection.sendPacket(packet);
+
     }
 
     public int numberOfQuests() {

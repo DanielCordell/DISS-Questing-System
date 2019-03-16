@@ -6,6 +6,7 @@ import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsKillType;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -59,8 +60,8 @@ public class ObjectiveKillType extends ObjectiveBase {
     }
 
     @Override
-    public String debugInfoPerObjective() {
-        return "Target - " + Util.getNameFromEntity(entityType) + ": " + numKilled + "/" + numToKill;
+    public String getSPObjectiveInfo(EntityPlayerSP player) {
+        return Util.getNameFromEntity(entityType) + ": " + numKilled + "/" + numToKill;
     }
 
 }

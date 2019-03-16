@@ -6,6 +6,7 @@ import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsTrigger;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
@@ -46,7 +47,7 @@ public class ObjectiveTrigger extends ObjectiveBase {
     }
 
     @Override
-    public String debugInfoPerObjective() {
-        return "Target - Interact with Action Block: " + actionBlockID;
+    public String getSPObjectiveInfo(EntityPlayerSP player) {
+        return "Interact with Action Block: " + actionBlockID;
     }
 }
