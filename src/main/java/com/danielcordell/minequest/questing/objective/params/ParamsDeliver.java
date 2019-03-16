@@ -8,7 +8,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 
 public class ParamsDeliver extends ObjectiveParamsBase {
-    public WorldServer world;
     public ItemStack item;
     public int count;
     public int questEntityID;
@@ -26,11 +25,10 @@ public class ParamsDeliver extends ObjectiveParamsBase {
         super(questCheckpoint, description, optional, state);
     }
 
-    public ParamsDeliver setParamDetails(ItemStack item, int count, int questEntityID, WorldServer world, BlockPos nearby) {
+    public ParamsDeliver setParamDetails(ItemStack item, int count, int questEntityID, BlockPos nearby) {
         this.item = item;
         this.count = count;
         this.questEntityID = questEntityID;
-        this.world = world;
         this.nearby = nearby;
         return this;
     }

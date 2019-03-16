@@ -6,10 +6,12 @@ import com.danielcordell.minequest.entities.EntityNPC;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
+import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsEscort;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import net.minecraft.advancements.critereon.NBTPredicate;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.command.CommandLocate;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -95,5 +97,10 @@ public class ObjectiveEscort extends ObjectiveBase {
         String direction = Util.getDirectionFromPositions(player.getPosition(), pos);
         double distance = player.getPosition().getDistance(pos.getX(), pos.getY(), pos.getZ());
         return "Take NPC near Position " + nearby +" to the + " + structureType + " " + direction + " of here. (" + distance + "m)";
+    }
+
+    @Override
+    public ObjectiveParamsBase getParams() {
+        return new ParamsEscort(checkpoint, description, optional, state).setParamDetails(questEntityID, null, structureType,  nearby);
     }
 }

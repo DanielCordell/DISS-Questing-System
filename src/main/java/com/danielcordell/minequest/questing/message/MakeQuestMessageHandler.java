@@ -20,9 +20,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class MakeQuestMessageHandler implements IMessageHandler<MakeQuestMessage, IMessage> {
     @Override
     public IMessage onMessage(MakeQuestMessage message, MessageContext ctx) {
-        EntityPlayer player = ctx.getServerHandler().player;
+        EntityPlayerMP player = ctx.getServerHandler().player;
         PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
-        Quest quest = QuestGeneratorPreviousCheckpoint.generate((WorldServer) player.world, (EntityPlayerMP) player);
+        Quest quest = QuestGeneratorPreviousCheckpoint.generate((WorldServer) player.world, player);
         pqd.startQuest(player, quest);
         MineQuest.logger.info("Generated quest for player " + player.getName());
         return null;

@@ -4,6 +4,7 @@ import com.danielcordell.minequest.events.ActionBlockTriggeredEvent;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
+import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsTrigger;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -49,5 +50,10 @@ public class ObjectiveTrigger extends ObjectiveBase {
     @Override
     public String getSPObjectiveInfo(EntityPlayerSP player) {
         return "Interact with Action Block: " + actionBlockID;
+    }
+
+    @Override
+    public ObjectiveParamsBase getParams() {
+        return new ParamsTrigger(checkpoint, description, optional, state).setParamDetails(actionBlockID);
     }
 }

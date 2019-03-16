@@ -72,6 +72,8 @@ public abstract class ObjectiveBase {
 
     public abstract String getSPObjectiveInfo(EntityPlayerSP player);
 
+    public abstract ObjectiveParamsBase getParams();
+
     protected void completeObjective(World world) {
         state = QuestState.COMPLETED;
         EntityPlayerMP player = (EntityPlayerMP) world.getPlayerEntityByUUID(quest.getPlayerID());

@@ -5,6 +5,7 @@ import com.danielcordell.minequest.entities.EntityNPC;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
+import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsDeliver;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -93,5 +94,10 @@ public class ObjectiveDeliver extends ObjectiveBase {
         String direction = Util.getDirectionFromPositions(player.getPosition(), nearby);
         double distance = player.getPosition().getDistance(nearby.getX(), nearby.getY(), nearby.getZ());
         return "Give " + count + " " + I18n.format(item.getUnlocalizedName() + ".name") + " to NPC " + direction + " of here.  (" + distance + "m)";
+    }
+
+    @Override
+    public ObjectiveParamsBase getParams() {
+        return new ParamsDeliver(checkpoint, description, optional, state).setParamDetails(item, count, questEntityID, nearby);
     }
 }

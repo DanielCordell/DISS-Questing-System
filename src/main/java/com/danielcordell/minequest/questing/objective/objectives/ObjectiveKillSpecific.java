@@ -3,6 +3,7 @@ package com.danielcordell.minequest.questing.objective.objectives;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
+import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.objective.params.ParamsKillSpecific;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import net.minecraft.client.Minecraft;
@@ -81,6 +82,11 @@ public class ObjectiveKillSpecific extends ObjectiveBase {
     @Override
     public String getSPObjectiveInfo(EntityPlayerSP player) {
         return "Specific Entities" + ": " + numKilled + "/" + numToKill;
+    }
+
+    @Override
+    public ObjectiveParamsBase getParams() {
+        return new ParamsKillSpecific(checkpoint, description, optional, state).setParamDetails(nbtTagToFind, numToKill);
     }
 
 }

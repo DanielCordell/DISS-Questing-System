@@ -23,10 +23,9 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldServer;
 import org.apache.commons.lang3.NotImplementedException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class QuestGeneratorPreviousCheckpoint {
     private static Random rand = new Random(System.currentTimeMillis());
@@ -61,11 +60,22 @@ public class QuestGeneratorPreviousCheckpoint {
         ObjectiveBase objective = makeObjectiveFromWorldState(objectiveType, worldState, firstCheckpoint);
         firstCheckpoint.addObjective(objective);
         quest.addCheckpoint(firstCheckpoint);
+
+        QuestCheckpoint chkpnt = firstCheckpoint;
+        for (int i = 0; i < worldState.overallDifficulty / 4; ++i) {
+            chkpnt = iterate(worldState, chkpnt, quest);
+            quest.addCheckpoint(chkpnt);
+        }
+
         quest.addFinishIntent(new IntentGiveItemStack(quest, Util.getRewardFromDifficulty(rand, worldState.overallDifficulty)));
 
         quest.setQuestName(Util.generateQuestName(quest));
 
         return quest;
+    }
+
+    private static QuestCheckpoint iterate(WorldState worldState, QuestCheckpoint chkpnt) {
+        List<ObjectiveParamsBase> params = chkpnt.getObjectives().stream().map(ObjectiveBase::getParams).collect(Collectors.toList());
     }
 
     private static ObjectiveBase makeObjectiveFromWorldState(ObjectiveType objectiveType, WorldState worldState, QuestCheckpoint firstCheckpoint) {
