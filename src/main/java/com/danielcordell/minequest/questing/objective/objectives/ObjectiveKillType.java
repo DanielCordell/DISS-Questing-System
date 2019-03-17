@@ -67,7 +67,7 @@ public class ObjectiveKillType extends ObjectiveBase {
 
     @Override
     public ObjectiveParamsBase getParams() {
-        return new ParamsKillType(checkpoint, description, optional, state).setParamDetails(entityType, numToKill);
+        return new ParamsKillType(checkpoint, getDescription(), optional, state).setParamDetails(entityType, numToKill);
     }
 
 }

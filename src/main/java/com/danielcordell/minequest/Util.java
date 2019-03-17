@@ -57,10 +57,11 @@ public class Util {
     // A list of Items and their rarities
     public static ArrayList<Pair<ItemStack, Integer>> rewardItemRarities = new ArrayList<>();
     static {
-        rewardItemRarities.add(Pair.of(new ItemStack(Items.WHEAT), 20));
-        rewardItemRarities.add(Pair.of(new ItemStack(Items.MELON), 18));
-        rewardItemRarities.add(Pair.of(new ItemStack(Items.IRON_INGOT), 16));
-        rewardItemRarities.add(Pair.of(new ItemStack(Items.GOLD_INGOT), 14));
+        rewardItemRarities.add(Pair.of(new ItemStack(Blocks.LOG), 20));
+        rewardItemRarities.add(Pair.of(new ItemStack(Items.WHEAT), 17));
+        rewardItemRarities.add(Pair.of(new ItemStack(Items.MELON), 15));
+        rewardItemRarities.add(Pair.of(new ItemStack(Items.IRON_INGOT), 14));
+        rewardItemRarities.add(Pair.of(new ItemStack(Items.GOLD_INGOT), 12));
         ItemStack itemStack = new ItemStack(Items.IRON_SWORD);
         itemStack.addEnchantment(Enchantments.SHARPNESS, 2);
         rewardItemRarities.add(Pair.of(itemStack, 8));
@@ -78,10 +79,11 @@ public class Util {
 
     public static ArrayList<Pair<Item, Integer>> overworldItemDifficulties = new ArrayList<>();
     static {
+        overworldItemDifficulties.add(Pair.of(new ItemBlock(Blocks.LOG), 20));
         overworldItemDifficulties.add(Pair.of(Items.WHEAT, 20));
-        overworldItemDifficulties.add(Pair.of(Items.MELON, 18));
         overworldItemDifficulties.add(Pair.of(Items.COAL, 18));
         overworldItemDifficulties.add(Pair.of(Items.IRON_INGOT, 16));
+        overworldItemDifficulties.add(Pair.of(Items.MELON, 15));
         overworldItemDifficulties.add(Pair.of(Items.GOLD_INGOT, 14));
         overworldItemDifficulties.add(Pair.of(Items.REDSTONE, 11));
         overworldItemDifficulties.add(Pair.of(Items.DIAMOND, 8));
@@ -166,14 +168,14 @@ public class Util {
             if (count > randVal) break;
         }
         Item item = itemToGather.first();
-        int num = itemToGather.second()/2 + (randVal - (count - itemToGather.second()));
+        int num = itemToGather.second()/2 + (randVal - (count - itemToGather.second()))/2;
         return new ItemStack(item, num > 0 ? num : 1);
     }
 
     public static ItemStack getRewardFromDifficulty(Random rand, int overallDifficulty) {
         int finalOverallDifficulty = overallDifficulty > 0 ? overallDifficulty : 1;
         Collection<Pair<ItemStack, Integer>> filteredItemRarities = rewardItemRarities.stream().filter(it -> it.second()/5 > (20 - finalOverallDifficulty)).collect(Collectors.toCollection(ArrayList::new));
-        int max = rewardItemRarities.stream().map(Pair::second).mapToInt(Integer::intValue).sum();
+        int max = filteredItemRarities.stream().map(Pair::second).mapToInt(Integer::intValue).sum();
         int randVal = rand.nextInt(max);
 
         int count = 0;

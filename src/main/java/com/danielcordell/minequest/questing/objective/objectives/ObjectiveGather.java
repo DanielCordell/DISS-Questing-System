@@ -69,6 +69,6 @@ public class ObjectiveGather extends ObjectiveBase {
 
     @Override
     public ObjectiveParamsBase getParams() {
-        return new ParamsGather(checkpoint, description, optional, state).setParamDetails(item, count);
+        return new ParamsGather(checkpoint, getDescription(), optional, state).setParamDetails(item, count);
     }
 }

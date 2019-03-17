@@ -92,12 +92,12 @@ public class ObjectiveDeliver extends ObjectiveBase {
     @Override
     public String getSPObjectiveInfo(EntityPlayerSP player) {
         String direction = Util.getDirectionFromPositions(player.getPosition(), nearby);
-        double distance = player.getPosition().getDistance(nearby.getX(), nearby.getY(), nearby.getZ());
+        int distance = (int) Math.round(player.getPosition().getDistance(nearby.getX(), nearby.getY(), nearby.getZ()));
         return "Give " + count + " " + I18n.format(item.getUnlocalizedName() + ".name") + " to NPC " + direction + " of here.  (" + distance + "m)";
     }
 
     @Override
     public ObjectiveParamsBase getParams() {
-        return new ParamsDeliver(checkpoint, description, optional, state).setParamDetails(item, count, questEntityID, nearby);
+        return new ParamsDeliver(checkpoint, getDescription(), optional, state).setParamDetails(item, count, questEntityID, nearby);
     }
 }

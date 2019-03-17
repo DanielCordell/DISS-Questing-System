@@ -13,6 +13,7 @@ import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.objective.params.*;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
+import net.minecraft.command.server.CommandMessageRaw;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -52,8 +53,9 @@ public class QuestGeneratorPreviousCheckpoint {
             if (count > randVal) break;
         }
         if (objectiveType == null) {
-            MineQuest.logger.error("Quest could not be generated! Starting 'objectiveType' is null!");
-            return null;
+            MineQuest.logger.error("Starting 'objectiveType' is null!");
+            MineQuest.logger.error("Defaulting to KillType");
+            objectiveType = ObjectiveType.KILL_TYPE;
         }
 
 
@@ -62,10 +64,11 @@ public class QuestGeneratorPreviousCheckpoint {
         quest.addCheckpoint(firstCheckpoint);
 
         QuestCheckpoint chkpnt = firstCheckpoint;
-        for (int i = 0; i < worldState.overallDifficulty / 4; ++i) {
-            chkpnt = iterate(worldState, chkpnt, quest);
+        /*for (int i = 0; i < worldState.overallDifficulty / 4; ++i) {
+            chkpnt = iterate(worldState, chkpnt);
             quest.addCheckpoint(chkpnt);
         }
+        */
 
         quest.addFinishIntent(new IntentGiveItemStack(quest, Util.getRewardFromDifficulty(rand, worldState.overallDifficulty)));
 
@@ -75,7 +78,29 @@ public class QuestGeneratorPreviousCheckpoint {
     }
 
     private static QuestCheckpoint iterate(WorldState worldState, QuestCheckpoint chkpnt) {
-        List<ObjectiveParamsBase> params = chkpnt.getObjectives().stream().map(ObjectiveBase::getParams).collect(Collectors.toList());
+        List<ObjectiveParamsBase> prevParams = chkpnt.getObjectives().stream().map(ObjectiveBase::getParams).collect(Collectors.toList());
+        HashMap<ObjectiveType, Integer> objectiveWeightMap = ObjectiveType.getObjectiveWeightMap();
+
+        prevParams.forEach(param -> {
+            if (param instanceof ParamsKillType || param instanceof ParamsKillSpecific) {
+                //Has just been told to kill something
+            }
+            if (param instanceof ParamsGather || param instanceof ParamsDeliver) {
+                //Has just been told to gather something.
+            }
+            if (param instanceof ParamsSearch || param instanceof ParamsEscort) {
+                //Has just been told to go somewhere
+            }
+            if (param instanceof ParamsTrigger) {
+
+            }
+        });
+
+        int numberOfObjectives = worldState.overallDifficulty/4 + rand.nextInt(worldState.overallDifficulty/4);
+        for (int i = 0; i < numberOfObjectives; ++i) {
+
+        }
+        return chkpnt;
     }
 
     private static ObjectiveBase makeObjectiveFromWorldState(ObjectiveType objectiveType, WorldState worldState, QuestCheckpoint firstCheckpoint) {
@@ -91,7 +116,7 @@ public class QuestGeneratorPreviousCheckpoint {
                 params = new ParamsKillType(firstCheckpoint, "You're near a Spawner, kill some " + spawner.getSpawnerBaseLogic().getSpawnerEntity().getName() + "s!").setParamDetails(spawnerEntity, worldState.overallDifficulty / 2 + 5);
             }
             else {
-                int numToKill = (rand.nextInt(3) + 1) * worldState.overallDifficulty / 2;
+                int numToKill = (rand.nextInt(3) + 3) * worldState.overallDifficulty / 2;
                 numToKill = numToKill > 0 ? numToKill : 1;
                 params = new ParamsKillType(firstCheckpoint, "Kill some enemies!").setParamDetails(
                         Util.getRandomEnemyFromDimension(rand, worldState.dimension), numToKill
@@ -99,10 +124,10 @@ public class QuestGeneratorPreviousCheckpoint {
             }
         } else if (objectiveType == ObjectiveType.KILL_SPECIFIC) {
             Class<? extends EntityLivingBase> entType = Util.getRandomEnemyFromDimension(rand, worldState.dimension);
-            int numToKill = (worldState.overallDifficulty / 5) * (rand.nextInt(5)+2);
+            int numToKill = (worldState.overallDifficulty / 4) * (rand.nextInt(5)+4);
             numToKill = numToKill > 0 ? numToKill : 1;
             String nbt = quest.getName()+quest.getQuestID();
-            firstCheckpoint.addIntent(new IntentSpawnEntity(quest, entType, (int) (numToKill * 1.5), new PlayerRadiusPosParam(10), nbt, "Ambush",  worldState.overallDifficulty / 5));
+            firstCheckpoint.addIntent(new IntentSpawnEntity(quest, entType, (int) (Math.ceil(numToKill * 1.5)), new PlayerRadiusPosParam(10), nbt, "Ambush",  worldState.overallDifficulty / 5));
             params = new ParamsKillSpecific(firstCheckpoint, "Oh no, you're being attacked!").setParamDetails(nbt, numToKill);
         } else if (objectiveType == ObjectiveType.TRIGGER) {
             throw new NotImplementedException("Not implemented this objective yet");
@@ -150,7 +175,7 @@ public class QuestGeneratorPreviousCheckpoint {
             npc.setPosition(villagePos.getX(), villagePos.getY(), villagePos.getZ());
             worldState.world.spawnEntity(npc);
             int entID = quest.addEntity(npc.getUniqueID());
-            ((ParamsDeliver) params).setParamDetails(itemStack, itemStack.getCount(), entID, (WorldServer) worldState.world, npc.getPosition());
+            ((ParamsDeliver) params).setParamDetails(itemStack, itemStack.getCount(), entID, npc.getPosition());
         }
         else {
             MineQuest.logger.error("Could not construct an objective, bad ObjectiveType");

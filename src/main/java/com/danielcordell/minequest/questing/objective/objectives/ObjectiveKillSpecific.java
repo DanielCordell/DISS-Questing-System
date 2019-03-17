@@ -11,12 +11,9 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.IMob;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
@@ -86,7 +83,7 @@ public class ObjectiveKillSpecific extends ObjectiveBase {
 
     @Override
     public ObjectiveParamsBase getParams() {
-        return new ParamsKillSpecific(checkpoint, description, optional, state).setParamDetails(nbtTagToFind, numToKill);
+        return new ParamsKillSpecific(checkpoint, getDescription(), optional, state).setParamDetails(nbtTagToFind, numToKill);
     }
 
 }

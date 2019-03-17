@@ -60,6 +60,10 @@ public abstract class ObjectiveBase {
         return quest;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     public ObjectiveType getType() {
         return type;
     }
@@ -71,6 +75,7 @@ public abstract class ObjectiveBase {
     public abstract void update(Event baseEvent);
 
     public abstract String getSPObjectiveInfo(EntityPlayerSP player);
+
 
     public abstract ObjectiveParamsBase getParams();
 
@@ -84,4 +89,5 @@ public abstract class ObjectiveBase {
         player.connection.sendPacket(packet);
         quest.setDirty();
     }
+
 }

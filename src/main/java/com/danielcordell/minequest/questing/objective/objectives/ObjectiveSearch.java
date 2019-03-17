@@ -58,6 +58,6 @@ public class ObjectiveSearch extends ObjectiveBase {
 
     @Override
     public ObjectiveParamsBase getParams() {
-        return new ParamsSearch(checkpoint, description, optional, state).setParamDetails(structureType);
+        return new ParamsSearch(checkpoint, getDescription(), optional, state).setParamDetails(structureType);
     }
 }

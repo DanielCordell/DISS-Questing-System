@@ -54,6 +54,6 @@ public class ObjectiveTrigger extends ObjectiveBase {
 
     @Override
     public ObjectiveParamsBase getParams() {
-        return new ParamsTrigger(checkpoint, description, optional, state).setParamDetails(actionBlockID);
+        return new ParamsTrigger(checkpoint, getDescription(), optional, state).setParamDetails(actionBlockID);
     }
 }

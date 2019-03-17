@@ -180,7 +180,7 @@ public class DataHandler {
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.TRIGGER));
 
             int entityID = quest.addEntity(npc.getUniqueID());
-            params = new ParamsDeliver(checkpoint, "Give the boy some stuff").setParamDetails(new ItemStack(Items.STRING), 3, 0, world, npc.getPosition());
+            params = new ParamsDeliver(checkpoint, "Give the boy some stuff").setParamDetails(new ItemStack(Items.STRING), 3, 0, npc.getPosition());
             checkpoint.addObjective(ObjectiveBuilder.fromParams(params, ObjectiveType.DELIVER));
             String type = "Village";
             params = new ParamsEscort(checkpoint, "Take me places!").setParamDetails(entityID, world, type, npc.getPosition());

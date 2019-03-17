@@ -41,12 +41,23 @@ public enum ObjectiveType {
         return vals[rand.nextInt(vals.length)];
     }
 
+    public static HashMap<ObjectiveType, Integer> getObjectiveWeightMap() {
+        HashMap<ObjectiveType, Integer> weight = new HashMap<>();
+        weight.put(ObjectiveType.KILL_TYPE, 0);
+        weight.put(ObjectiveType.KILL_SPECIFIC, 0);
+        weight.put(ObjectiveType.GATHER, 0);
+        weight.put(ObjectiveType.TRIGGER, 0);
+        weight.put(ObjectiveType.SEARCH, 0);
+        weight.put(ObjectiveType.ESCORT,  0);
+        weight.put(ObjectiveType.DELIVER, 0);
+        return weight;
+    }
     //Get Default Objective Weights
     public static HashMap<ObjectiveType, Integer> getObjectiveWeightMap(WorldState worldState) {
-        HashMap<ObjectiveType, Integer> weight = new HashMap<>();
+        HashMap<ObjectiveType, Integer> weight = getObjectiveWeightMap();
         int baseVal = (int) ((worldState.nearbySpawners.size() + 1) * (0.1 * worldState.nearbyMobs.stream().filter(it -> it instanceof IMob).count())) + (worldState.inOrNextToSlimeChunk ? 2 : 0);
         weight.put(ObjectiveType.KILL_TYPE, baseVal < 6 ? 6 : baseVal > 12 ? 12 : baseVal);
-        weight.put(ObjectiveType.KILL_SPECIFIC, weight.get(ObjectiveType.KILL_TYPE));
+        weight.put(ObjectiveType.KILL_SPECIFIC, weight.get(ObjectiveType.KILL_TYPE)/2);
         weight.put(ObjectiveType.GATHER, 6);
         weight.put(ObjectiveType.TRIGGER, 0);
         int searchWeight = (int) worldState.closestStructurePerType.values()
