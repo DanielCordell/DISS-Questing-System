@@ -4,8 +4,10 @@ import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 
+import java.util.UUID;
+
 public class ParamsTrigger extends ObjectiveParamsBase {
-    public int actionBlockID;
+    public UUID actionBlockID;
 
     public ParamsTrigger(QuestCheckpoint questCheckpoint, String description) {
         super(questCheckpoint, description);
@@ -19,7 +21,7 @@ public class ParamsTrigger extends ObjectiveParamsBase {
         super(questCheckpoint, description, optional, state);
     }
 
-    public ParamsTrigger setParamDetails(int actionBlockID) {
+    public ParamsTrigger setParamDetails(UUID actionBlockID) {
         this.actionBlockID = actionBlockID;
         return this;
     }

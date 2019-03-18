@@ -9,7 +9,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ModEntities {
-    static int id = 0;
+    private static int id = 0;
 
     public static void init() {
         // Every entity in our mod has an ID (local to this mod)

@@ -1,33 +1,38 @@
 package com.danielcordell.minequest.tileentities;
 
+import com.danielcordell.minequest.Util;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 
-public class QuestActionTileEntity extends TileEntity {
+import java.util.UUID;
 
-    private int actionBlockID = -1;
+public class QuestActionTileEntity extends TileEntity {
+    private UUID actionBlockID = Util.emptyUUID;
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        actionBlockID = compound.getInteger("actionBlockID");
+
+        actionBlockID = NBTUtil.getUUIDFromTag((NBTTagCompound) compound.getTag("actionBlockID"));
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound.setInteger("actionBlockID", actionBlockID);
+
+        compound.setTag("actionBlockID", NBTUtil.createUUIDTag(actionBlockID));
         return super.writeToNBT(compound);
     }
 
-    public int getActionBlockID() {
-        return actionBlockID;
-    }
-
     public boolean isAssignedTrigger() {
-        return actionBlockID != -1;
+        return actionBlockID.compareTo(Util.emptyUUID) == 0;
     }
 
-    public void setActionBlockID(int questID) {
+    public void setActionBlockID(UUID questID) {
         this.actionBlockID = questID;
+    }
+
+    public UUID getActionBlockID() {
+        return actionBlockID;
     }
 }

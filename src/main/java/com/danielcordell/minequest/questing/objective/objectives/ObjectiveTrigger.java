@@ -9,12 +9,15 @@ import com.danielcordell.minequest.questing.objective.params.ParamsTrigger;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraftforge.fml.common.eventhandler.Event;
+
+import java.util.UUID;
 
 
 public class ObjectiveTrigger extends ObjectiveBase {
 
-    private int actionBlockID;
+    private UUID actionBlockID;
 
     public ObjectiveTrigger(ParamsTrigger params, ObjectiveType type) {
         super(params.checkpoint, params.description, params.state, params.optional, type);
@@ -28,13 +31,13 @@ public class ObjectiveTrigger extends ObjectiveBase {
 
     @Override
     protected NBTTagCompound objectiveSpecificToNBT(NBTTagCompound nbt) {
-        nbt.setInteger("actionBlockID", actionBlockID);
+        nbt.setTag("actionBlockID", NBTUtil.createUUIDTag(actionBlockID));
         return nbt;
     }
 
     @Override
     public void objectiveSpecificFromNBT(NBTTagCompound nbt) {
-        actionBlockID = nbt.getInteger("actionBlockID");
+        actionBlockID = NBTUtil.getUUIDFromTag((NBTTagCompound) nbt.getTag("actionBlockID"));
     }
 
     @Override
@@ -42,7 +45,7 @@ public class ObjectiveTrigger extends ObjectiveBase {
         if (!(baseEvent instanceof ActionBlockTriggeredEvent)) return;
         if (state != QuestState.STARTED) return;
         ActionBlockTriggeredEvent event = ((ActionBlockTriggeredEvent) baseEvent);
-        if (event.actionBlockID == actionBlockID) {
+        if (event.actionBlockID.compareTo(actionBlockID) == 0) {
             completeObjective(event.world);
         }
     }

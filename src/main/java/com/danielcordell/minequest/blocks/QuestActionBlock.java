@@ -1,5 +1,6 @@
 package com.danielcordell.minequest.blocks;
 
+import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.events.ActionBlockTriggeredEvent;
 import com.danielcordell.minequest.tileentities.QuestActionTileEntity;
 import net.minecraft.block.Block;
@@ -15,6 +16,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.UUID;
 
 
 public class QuestActionBlock extends Block implements ITileEntityProvider {
@@ -37,8 +40,9 @@ public class QuestActionBlock extends Block implements ITileEntityProvider {
     @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
         if (worldIn.isBlockPowered(pos)) {
-            int actionBlockID = ((QuestActionTileEntity) worldIn.getTileEntity(pos)).getActionBlockID();
+            UUID actionBlockID = ((QuestActionTileEntity) worldIn.getTileEntity(pos)).getActionBlockID();
             MinecraftForge.EVENT_BUS.post(new ActionBlockTriggeredEvent(worldIn, actionBlockID));
+            MineQuest.logger.info("Action Block Triggered");
         }
     }
 }

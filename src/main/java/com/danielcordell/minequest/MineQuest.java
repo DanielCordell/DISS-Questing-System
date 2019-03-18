@@ -8,6 +8,7 @@ import com.danielcordell.minequest.questing.capabilities.StoragePlayerQuestData;
 import com.danielcordell.minequest.questing.message.*;
 import com.danielcordell.minequest.tileentities.QuestActionTileEntity;
 import com.danielcordell.minequest.tileentities.QuestStartTileEntity;
+import com.danielcordell.minequest.worldgenerator.DungeonGenerator;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -62,6 +63,8 @@ public class MineQuest {
         networkWrapper.registerMessage(MakeQuestMessageHandler.class, MakeQuestMessage.class, id++, Side.SERVER);
         networkWrapper.registerMessage(ClearQuestMessageHandler.class, ClearQuestMessage.class, id++, Side.SERVER);
         networkWrapper.registerMessage(SyncEntityDataMessageHandler.class, SyncEntityDataMessage.class, id++, Side.CLIENT);
+
+        GameRegistry.registerWorldGenerator(new DungeonGenerator(), 5);
         proxy.init(event);
     }
 
