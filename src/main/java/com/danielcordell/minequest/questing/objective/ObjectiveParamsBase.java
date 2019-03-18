@@ -6,7 +6,7 @@ import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 public abstract class ObjectiveParamsBase {
     public final QuestCheckpoint checkpoint;
 
-    public final String description;
+    public String description;
     public final QuestState state;
     public final boolean optional;
 

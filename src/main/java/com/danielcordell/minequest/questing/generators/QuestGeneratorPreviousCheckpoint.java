@@ -2,34 +2,34 @@ package com.danielcordell.minequest.questing.generators;
 
 import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.Util;
-import com.danielcordell.minequest.entities.EntityNPC;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.intent.intents.IntentGiveItemStack;
-import com.danielcordell.minequest.questing.intent.intents.IntentSpawnEntity;
-import com.danielcordell.minequest.questing.intent.params.PlayerRadiusPosParam;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
 import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
+import com.danielcordell.minequest.questing.objective.objectives.ObjectiveTrigger;
 import com.danielcordell.minequest.questing.objective.params.*;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
-import net.minecraft.command.server.CommandMessageRaw;
+import com.mojang.realmsclient.util.Pair;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class QuestGeneratorPreviousCheckpoint {
-    private static Random rand = new Random(System.currentTimeMillis());
 
     public static Quest generate(WorldServer world, EntityPlayerMP player) {
         Quest quest = Quest.newEmptyQuest(world);
@@ -41,7 +41,7 @@ public class QuestGeneratorPreviousCheckpoint {
 
         //Determine Objective for first Checkpoint
         int max = objectiveWeights.values().stream().mapToInt(Integer::intValue).sum();
-        int randVal = rand.nextInt(max+1);
+        int randVal = ObjectiveGenerator.rand.nextInt(max+1);
         ObjectiveType objectiveType = null;
         int count = 0;
         MineQuest.logger.info("randVal: " + randVal);
@@ -70,114 +70,153 @@ public class QuestGeneratorPreviousCheckpoint {
         }
         */
 
-        quest.addFinishIntent(new IntentGiveItemStack(quest, Util.getRewardFromDifficulty(rand, worldState.overallDifficulty)));
+        quest.addFinishIntent(new IntentGiveItemStack(quest, Util.getRewardFromDifficulty(ObjectiveGenerator.rand, worldState.overallDifficulty)));
 
         quest.setQuestName(Util.generateQuestName(quest));
 
         return quest;
     }
 
-    private static QuestCheckpoint iterate(WorldState worldState, QuestCheckpoint chkpnt) {
-        List<ObjectiveParamsBase> prevParams = chkpnt.getObjectives().stream().map(ObjectiveBase::getParams).collect(Collectors.toList());
+    private static QuestCheckpoint iterate(WorldState worldState, QuestCheckpoint prevCheckpoint) {
+        List<ObjectiveParamsBase> prevParams = prevCheckpoint.getObjectives().stream().map(ObjectiveBase::getParams).collect(Collectors.toList());
         HashMap<ObjectiveType, Integer> objectiveWeightMap = ObjectiveType.getObjectiveWeightMap();
+        QuestCheckpoint newCheckpoint = new QuestCheckpoint(prevCheckpoint.getQuest());
 
-        prevParams.forEach(param -> {
-            if (param instanceof ParamsKillType || param instanceof ParamsKillSpecific) {
-                //Has just been told to kill something
-            }
-            if (param instanceof ParamsGather || param instanceof ParamsDeliver) {
-                //Has just been told to gather something.
-            }
-            if (param instanceof ParamsSearch || param instanceof ParamsEscort) {
-                //Has just been told to go somewhere
-            }
-        });
-
-        int numberOfObjectives = worldState.overallDifficulty/4 + rand.nextInt(worldState.overallDifficulty/4);
+        int numberOfObjectives = worldState.overallDifficulty/4 + ObjectiveGenerator.rand.nextInt(worldState.overallDifficulty/4);
+        int[] numToGeneratePerOriginal = new int[prevParams.size()];
         for (int i = 0; i < numberOfObjectives; ++i) {
-
+            numToGeneratePerOriginal[i%prevParams.size()]++;
         }
-        return chkpnt;
+
+        ArrayList<Item> allItemsUsed = new ArrayList<>();
+
+        for (int i = 0; i < prevParams.size(); ++i) {
+            for (int j = 0; j < numToGeneratePerOriginal[i]; ++j) {
+                ObjectiveParamsBase param = prevParams.get(i);
+                ObjectiveParamsBase newParams = null;
+                if (param instanceof ParamsKillType) {
+                    //Has just been told to kill something
+                }
+                else if (param instanceof ParamsKillSpecific) {
+
+                }
+                else if (param instanceof ParamsGather) {
+                    ItemStack itemStack = ((ParamsGather) param).item;
+                    if (ObjectiveGenerator.rand.nextInt(4) == 0) {
+                        // Deliver the gathered items to an NPC
+                        newParams = ObjectiveGenerator.generateDeliverObjective(newCheckpoint, worldState, ((ParamsGather) param).item);
+                    } else {
+                        List<IRecipe> allRecipes = ForgeRegistries.RECIPES.getEntries()
+                                .stream()
+                                .map(Map.Entry::getValue)
+                                .collect(Collectors.toList());
+                        Collections.shuffle(allRecipes);
+                        IRecipe recipe = null;
+                        for (IRecipe iRecipe : allRecipes) {
+                            List<Item> items = iRecipe.getIngredients()
+                                    .stream()
+                                    .map(Ingredient::getMatchingStacks)
+                                    .flatMap(Arrays::stream)
+                                    .map(ItemStack::getItem)
+                                    .collect(Collectors.toList());
+                            Item item = itemStack.getItem();
+                            if (items.contains(item) && !allItemsUsed.contains(item)) {
+                                recipe = iRecipe;
+                                allItemsUsed.add(item);
+                                break;
+                            }
+                        }
+                        if (recipe == null)
+                            newParams = ObjectiveGenerator.generateDeliverObjective(newCheckpoint, worldState, itemStack);
+                        else
+                            newParams = ObjectiveGenerator.generateGatherObjective(newCheckpoint, recipe.getRecipeOutput());
+                    }
+                }
+                else if (param instanceof ParamsDeliver) {
+                    if (ObjectiveGenerator.rand.nextInt(2) == 0) {
+                        // Deliver something else to the same NPC.
+                        ItemStack item = Util.getGatherFromDimAndDifficulty(ObjectiveGenerator.rand, worldState.dimension, worldState.overallDifficulty);
+                        newParams = ObjectiveGenerator.generateDeliverObjective(newCheckpoint, worldState, item);
+                        newParams.description = "Gather the NPC some more items!";
+                    } else {
+                        // Take that NPC somewhere (not a village).
+                        List<Pair<String, Double>> structures = worldState.closestStructurePerType
+                                .entrySet()
+                                .stream()
+                                .filter(it -> !it.getKey().equalsIgnoreCase("village") && !it.getValue().second())
+                                .map(it -> new Pair<>(it.getKey(), Math.sqrt(worldState.playerPos.distanceSq(it.getValue().first()))))
+                                .sorted(Comparator.comparing(Pair::second))
+                                .collect(Collectors.toList());
+                        String structure = structures.get(0).first();
+                        newParams = ObjectiveGenerator.generateEscortObjective(newCheckpoint, worldState, structure);
+                        newParams.description = "Now the NPC is stocked up, escort them to a " + structure;
+                    }
+                }
+                else if (param instanceof ParamsSearch || param instanceof ParamsEscort) {
+                    //Has just been told to go somewhere
+                }
+                else {
+                    newParams = ObjectiveGenerator.generateGatherObjective(newCheckpoint, new ItemStack(Items.APPLE));
+                }
+                newCheckpoint.addObjective(ObjectiveBuilder.fromParams(newParams));
+            }
+        }
+        return newCheckpoint;
     }
 
     private static ObjectiveBase makeObjectiveFromWorldState(ObjectiveType objectiveType, WorldState worldState, QuestCheckpoint firstCheckpoint) {
         Quest quest = firstCheckpoint.getQuest();
         ObjectiveParamsBase params;
         if (objectiveType == ObjectiveType.KILL_TYPE) {
-            if (worldState.inOrNextToSlimeChunk & rand.nextInt(8) == 0)
+            if (worldState.inOrNextToSlimeChunk & ObjectiveGenerator.rand.nextInt(8) == 0)
                 params = new ParamsKillType(firstCheckpoint, "You're near a Slime Chunk, kill some slimes!").setParamDetails(EntitySlime.class, worldState.overallDifficulty);
             else if (!worldState.nearbySpawners.isEmpty()){
-                BlockPos pos = worldState.nearbySpawners.get(rand.nextInt(worldState.nearbySpawners.size()));
+                BlockPos pos = worldState.nearbySpawners.get(ObjectiveGenerator.rand.nextInt(worldState.nearbySpawners.size()));
                 TileEntityMobSpawner spawner = (TileEntityMobSpawner) worldState.world.getTileEntity(pos);
                 Class<? extends EntityLivingBase> spawnerEntity = spawner.getSpawnerBaseLogic().getCachedEntity().getClass().asSubclass(EntityLivingBase.class);
                 params = new ParamsKillType(firstCheckpoint, "You're near a Spawner, kill some " + Util.getPrintableNameFromEntity(spawnerEntity) + "s!").setParamDetails(spawnerEntity, worldState.overallDifficulty / 2 + 5);
             }
             else {
-                int numToKill = (rand.nextInt(3) + 3) * worldState.overallDifficulty / 2;
+                int numToKill = (ObjectiveGenerator.rand.nextInt(3) + 3) * worldState.overallDifficulty / 2;
                 numToKill = numToKill > 0 ? numToKill : 1;
                 params = new ParamsKillType(firstCheckpoint, "Kill some enemies!").setParamDetails(
-                        Util.getRandomEnemyFromDimension(rand, worldState.dimension), numToKill
+                        Util.getRandomEnemyFromDimension(ObjectiveGenerator.rand, worldState.dimension), numToKill
                 );
             }
         } else if (objectiveType == ObjectiveType.KILL_SPECIFIC) {
-            Class<? extends EntityLivingBase> entType = Util.getRandomEnemyFromDimension(rand, worldState.dimension);
-            int numToKill = (worldState.overallDifficulty / 4) * (rand.nextInt(5)+4);
-            numToKill = numToKill > 0 ? numToKill : 1;
-            String nbt = quest.getName()+quest.getQuestID();
-            firstCheckpoint.addIntent(new IntentSpawnEntity(quest, entType, numToKill, new PlayerRadiusPosParam(10), nbt, "Ambush",  worldState.overallDifficulty / 5));
-            params = new ParamsKillSpecific(firstCheckpoint, "Oh no, you're being attacked!").setParamDetails(nbt, numToKill);
+            Class<? extends EntityLivingBase> entType = Util.getRandomEnemyFromDimension(ObjectiveGenerator.rand, worldState.dimension);
+            params = ObjectiveGenerator.generateKillSpecificObjective(firstCheckpoint, worldState, entType);
         } else if (objectiveType == ObjectiveType.TRIGGER) {
             throw new NotImplementedException("Not implemented this objective yet");
             //params = new ParamsKillSpecific(firstCheckpoint, "Trigger something!");
         } else if (objectiveType == ObjectiveType.ESCORT) {
-            params = new ParamsEscort(firstCheckpoint, "Escort the NPC!");
             List<String> structures = Util.getStructuresFromDimension(worldState.dimension);
             String structure = null;
             while (structure == null || worldState.closestStructurePerType.get(structure).second()) {
-                structure = structures.get(rand.nextInt(structures.size()));
+                structure = structures.get(ObjectiveGenerator.rand.nextInt(structures.size()));
             }
             //?Todo pick an NPC in the world, if there is an NPC NOT currently in an open quest and not too far away (farther than closest village) then use them, otherwise make a new one at the closest village.
-            EntityNPC npc = new EntityNPC(worldState.world);
-            npc.changeDimension(worldState.dimension);
-            BlockPos spawnPos;
-            if (worldState.dimension == DimensionType.OVERWORLD.getId()) {
-                spawnPos = worldState.closestStructurePerType.get("Village").first();
-                spawnPos = worldState.world.getTopSolidOrLiquidBlock(spawnPos).add(0, 1, 0);
-            } else {
-                spawnPos = worldState.playerPos.add(0, 0.5, 0);
-            }
-            npc.setPosition(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
-            worldState.world.spawnEntity(npc);
-            int entID = quest.addEntity(npc.getUniqueID());
-
-            ((ParamsEscort) params).setParamDetails(entID, (WorldServer) worldState.world, structure, spawnPos);
+            params = ObjectiveGenerator.generateEscortObjective(firstCheckpoint, worldState, structure);
         } else if (objectiveType == ObjectiveType.GATHER) {
-            ItemStack itemStack = Util.getGatherFromDimAndDifficulty(rand, worldState.dimension, worldState.overallDifficulty);
-            params = new ParamsGather(firstCheckpoint, "Gather some Resources!").setParamDetails(itemStack, itemStack.getCount());
+            ItemStack itemStack = Util.getGatherFromDimAndDifficulty(ObjectiveGenerator.rand, worldState.dimension, worldState.overallDifficulty);
+            params = ObjectiveGenerator.generateGatherObjective(firstCheckpoint, itemStack);
         } else if (objectiveType == ObjectiveType.SEARCH) {
             List<String> structures = Util.getStructuresFromDimension(worldState.dimension);
             String structure = null;
             while (structure == null || worldState.closestStructurePerType.get(structure).second()) {
-                structure = structures.get(rand.nextInt(structures.size()));
+                structure = structures.get(ObjectiveGenerator.rand.nextInt(structures.size()));
             }
-            params = new ParamsSearch(firstCheckpoint, "Search for a " + structure + "!").setParamDetails(structure);
+            params = ObjectiveGenerator.generateSearchObjective(firstCheckpoint, structure);
         } else if (objectiveType == ObjectiveType.DELIVER) {
-            ItemStack itemStack = Util.getGatherFromDimAndDifficulty(rand, worldState.dimension, worldState.overallDifficulty);
+            ItemStack itemStack = Util.getGatherFromDimAndDifficulty(ObjectiveGenerator.rand, worldState.dimension, worldState.overallDifficulty);
             //?Todo pick an NPC, if there is an NPC NOT currently in an open quest then use them, otherwise make a new one at the closest village.
-            params = new ParamsDeliver(firstCheckpoint, "Deliver to an NPC!");
-
-            EntityNPC npc = new EntityNPC(worldState.world);
-            BlockPos villagePos = worldState.closestStructurePerType.get("Village").first();
-            villagePos = worldState.world.getTopSolidOrLiquidBlock(villagePos);
-            npc.setPosition(villagePos.getX(), villagePos.getY(), villagePos.getZ());
-            worldState.world.spawnEntity(npc);
-            int entID = quest.addEntity(npc.getUniqueID());
-            ((ParamsDeliver) params).setParamDetails(itemStack, itemStack.getCount(), entID, npc.getPosition());
+            params = ObjectiveGenerator.generateDeliverObjective(firstCheckpoint, worldState, itemStack);
         }
         else {
             MineQuest.logger.error("Could not construct an objective, bad ObjectiveType");
             return null;
         }
-        return ObjectiveBuilder.fromParams(params, objectiveType);
+        return ObjectiveBuilder.fromParams(params);
     }
+
 }
