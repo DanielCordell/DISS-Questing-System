@@ -91,9 +91,6 @@ public class QuestGeneratorPreviousCheckpoint {
             if (param instanceof ParamsSearch || param instanceof ParamsEscort) {
                 //Has just been told to go somewhere
             }
-            if (param instanceof ParamsTrigger) {
-
-            }
         });
 
         int numberOfObjectives = worldState.overallDifficulty/4 + rand.nextInt(worldState.overallDifficulty/4);
@@ -112,8 +109,8 @@ public class QuestGeneratorPreviousCheckpoint {
             else if (!worldState.nearbySpawners.isEmpty()){
                 BlockPos pos = worldState.nearbySpawners.get(rand.nextInt(worldState.nearbySpawners.size()));
                 TileEntityMobSpawner spawner = (TileEntityMobSpawner) worldState.world.getTileEntity(pos);
-                Class<? extends EntityLivingBase> spawnerEntity = spawner.getSpawnerBaseLogic().getSpawnerEntity().getClass().asSubclass(EntityLivingBase.class);
-                params = new ParamsKillType(firstCheckpoint, "You're near a Spawner, kill some " + spawner.getSpawnerBaseLogic().getSpawnerEntity().getName() + "s!").setParamDetails(spawnerEntity, worldState.overallDifficulty / 2 + 5);
+                Class<? extends EntityLivingBase> spawnerEntity = spawner.getSpawnerBaseLogic().getCachedEntity().getClass().asSubclass(EntityLivingBase.class);
+                params = new ParamsKillType(firstCheckpoint, "You're near a Spawner, kill some " + Util.getPrintableNameFromEntity(spawnerEntity) + "s!").setParamDetails(spawnerEntity, worldState.overallDifficulty / 2 + 5);
             }
             else {
                 int numToKill = (rand.nextInt(3) + 3) * worldState.overallDifficulty / 2;
@@ -127,7 +124,7 @@ public class QuestGeneratorPreviousCheckpoint {
             int numToKill = (worldState.overallDifficulty / 4) * (rand.nextInt(5)+4);
             numToKill = numToKill > 0 ? numToKill : 1;
             String nbt = quest.getName()+quest.getQuestID();
-            firstCheckpoint.addIntent(new IntentSpawnEntity(quest, entType, (int) (Math.ceil(numToKill * 1.5)), new PlayerRadiusPosParam(10), nbt, "Ambush",  worldState.overallDifficulty / 5));
+            firstCheckpoint.addIntent(new IntentSpawnEntity(quest, entType, numToKill, new PlayerRadiusPosParam(10), nbt, "Ambush",  worldState.overallDifficulty / 5));
             params = new ParamsKillSpecific(firstCheckpoint, "Oh no, you're being attacked!").setParamDetails(nbt, numToKill);
         } else if (objectiveType == ObjectiveType.TRIGGER) {
             throw new NotImplementedException("Not implemented this objective yet");

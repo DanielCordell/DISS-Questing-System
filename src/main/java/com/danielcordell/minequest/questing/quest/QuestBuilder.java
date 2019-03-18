@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagList;
 
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class QuestBuilder {
     private int questID;
@@ -15,7 +16,7 @@ public class QuestBuilder {
     private UUID playerID;
     private QuestState state = QuestState.CREATED;
     private int currentCheckpontIndex = 0;
-    private HashMap<Integer, UUID> entityMap = new HashMap<Integer, UUID>();
+    private ConcurrentHashMap<Integer, UUID> entityMap = new ConcurrentHashMap<>();
 
     public static Quest fromNBT(NBTTagCompound nbt) {
         UUID id = nbt.getUniqueId("playerID");

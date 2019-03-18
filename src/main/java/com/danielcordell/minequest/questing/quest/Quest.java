@@ -17,6 +17,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Quest {
     // For setting up quest entities for quests that have been loaded from save data, should not be saved!
@@ -27,7 +28,7 @@ public class Quest {
 
     //QuestEntityID -> WorldEntityID
     //For specific KNOWN entities at the start of the quest. Must exist throughout the entire quest, not just for an objective/checkpoint.
-    private HashMap<Integer, UUID> entityMap;
+    private ConcurrentHashMap<Integer, UUID> entityMap;
 
     private int currentCheckpointIndex;
     private ArrayList<QuestCheckpoint> checkpoints;
@@ -39,7 +40,7 @@ public class Quest {
 
     private ArrayList<Intent> onFinishIntents;
 
-    Quest(int questID, String questName, UUID playerID, QuestState state, int currentCheckpointIndex, HashMap<Integer, UUID> entityMap) {
+    Quest(int questID, String questName, UUID playerID, QuestState state, int currentCheckpointIndex, ConcurrentHashMap<Integer, UUID> entityMap) {
         this.questID = questID;
         this.questName = questName;
         this.playerID = playerID;

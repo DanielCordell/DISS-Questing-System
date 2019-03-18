@@ -3,6 +3,7 @@ package com.danielcordell.minequest;
 import com.danielcordell.minequest.entities.EntityNPC;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
 import com.danielcordell.minequest.questing.quest.Quest;
+import com.google.common.base.CaseFormat;
 import com.mojang.realmsclient.util.Pair;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -31,7 +32,13 @@ public class Util {
     }
 
     public static String getNameFromEntity(Class<? extends EntityLivingBase> entity) {
-        return EntityRegistry.getEntry(entity).getName();
+        return EntityRegistry.getEntry(entity).getRegistryName().toString();
+    }
+
+    public static String getPrintableNameFromEntity(Class<? extends EntityLivingBase> entity) {
+        String name = getNameFromEntity(entity);
+        String s = name.substring(name.indexOf(':')+1);
+        return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, s);
     }
 
     public static boolean isEmptyUUID(UUID uuid) {
@@ -174,7 +181,7 @@ public class Util {
 
     public static ItemStack getRewardFromDifficulty(Random rand, int overallDifficulty) {
         int finalOverallDifficulty = overallDifficulty > 0 ? overallDifficulty : 1;
-        Collection<Pair<ItemStack, Integer>> filteredItemRarities = rewardItemRarities.stream().filter(it -> it.second()/5 > (20 - finalOverallDifficulty)).collect(Collectors.toCollection(ArrayList::new));
+        Collection<Pair<ItemStack, Integer>> filteredItemRarities = rewardItemRarities.stream().filter(it -> it.second() > (20 - finalOverallDifficulty)).collect(Collectors.toCollection(ArrayList::new));
         int max = filteredItemRarities.stream().map(Pair::second).mapToInt(Integer::intValue).sum();
         int randVal = rand.nextInt(max);
 

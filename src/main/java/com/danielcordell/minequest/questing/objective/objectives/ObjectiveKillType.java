@@ -49,7 +49,7 @@ public class ObjectiveKillType extends ObjectiveBase {
     protected NBTTagCompound objectiveSpecificToNBT(NBTTagCompound nbt) {
         nbt.setInteger("numToKill", numToKill);
         nbt.setInteger("numKilled", numKilled);
-        nbt.setString("entityName", EntityRegistry.getEntry(entityType).getName());
+        nbt.setString("entityName", Util.getNameFromEntity(entityType));
         return nbt;
     }
 
@@ -62,7 +62,7 @@ public class ObjectiveKillType extends ObjectiveBase {
 
     @Override
     public String getSPObjectiveInfo(EntityPlayerSP player) {
-        return Util.getNameFromEntity(entityType) + ": " + numKilled + "/" + numToKill;
+        return Util.getPrintableNameFromEntity(entityType) + ": " + numKilled + "/" + numToKill;
     }
 
     @Override
