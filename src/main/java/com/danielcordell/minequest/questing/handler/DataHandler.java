@@ -76,7 +76,7 @@ public class DataHandler {
         if (event.phase == TickEvent.Phase.END) return;
         EntityPlayer player = event.player;
         World world = player.world;
-        if (world.getWorldTime() % 50 == 0) {
+        if (world.getWorldTime() % 20 == 0) {
             WorldQuestData wqd = WorldQuestData.get(world);
             PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
             //Should start quest.

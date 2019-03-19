@@ -1,12 +1,13 @@
 package com.danielcordell.minequest;
 
 import com.danielcordell.minequest.entities.EntityNPC;
-import com.danielcordell.minequest.questing.enums.ObjectiveType;
+import com.danielcordell.minequest.questing.generators.WorldState;
+import com.danielcordell.minequest.questing.objective.params.ParamsKillType;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.google.common.base.CaseFormat;
 import com.mojang.realmsclient.util.Pair;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -16,10 +17,16 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootPool;
+import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,7 +39,11 @@ public class Util {
     }
 
     public static String getNameFromEntity(Class<? extends EntityLivingBase> entity) {
-        return EntityRegistry.getEntry(entity).getRegistryName().toString();
+        return getResourceNameFromEntity(entity).toString();
+    }
+
+    public static ResourceLocation getResourceNameFromEntity(Class<? extends EntityLivingBase> entity) {
+        return EntityRegistry.getEntry(entity).getRegistryName();
     }
 
     public static String getPrintableNameFromEntity(Class<? extends EntityLivingBase> entity) {
@@ -176,7 +187,11 @@ public class Util {
         }
         Item item = itemToGather.first();
         int num = itemToGather.second()/2 + (randVal - (count - itemToGather.second()))/2;
-        return new ItemStack(item, num > 0 ? num : 1);
+        if (item instanceof ItemBlock) {
+            return new ItemStack(((ItemBlock) item).getBlock(), num > 0 ? num : 1);
+        } else {
+            return new ItemStack(item, num > 0 ? num : 1);
+        }
     }
 
     public static ItemStack getRewardFromDifficulty(Random rand, int overallDifficulty) {
@@ -232,5 +247,12 @@ public class Util {
         if (angle > -112.5 && angle <= -67.5) return "North";
         if (angle > -67.5 && angle <= -22.5) return "North East";
         else return "Invalid Direction - Fix";
+    }
+
+    public static IBlockState getFirstSolidBelow(World world, BlockPos pos) {
+            do {
+                pos = pos.add(0, -1, 0);
+            } while (world.getBlockState(pos.add(0, -1, 0)) == Blocks.AIR);
+        return world.getBlockState(pos.add(0, -1, 0));
     }
 }

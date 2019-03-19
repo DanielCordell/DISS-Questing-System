@@ -4,6 +4,7 @@ import com.danielcordell.minequest.questing.intent.Intent;
 import com.danielcordell.minequest.questing.intent.IntentBuilder;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -71,5 +72,9 @@ public class QuestCheckpoint {
 
     public void performIntents(World world) {
         intents.forEach(intent -> intent.perform(world));
+    }
+
+    public ImmutableList<Intent> getIntents() {
+        return ImmutableList.copyOf(intents);
     }
 }

@@ -21,6 +21,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class ObjectiveDeliver extends ObjectiveBase {
@@ -71,7 +72,7 @@ public class ObjectiveDeliver extends ObjectiveBase {
         // If this objective is not for this NPC then stop.
         if (quest.getQuestEntityIDFromEntityID(target.getUniqueID()) != questEntityID) return;
 
-        HashMap<Integer, Integer> currentCount = new HashMap<>();
+        ConcurrentHashMap<Integer, Integer> currentCount = new ConcurrentHashMap<>();
         InventoryPlayer inv = event.getEntityPlayer().inventory;
         for (int i = 0; i < inv.getSizeInventory(); ++i) {
             ItemStack itemStack = inv.getStackInSlot(i);

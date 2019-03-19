@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WorldState {
     public Biome biome;
@@ -31,7 +32,7 @@ public class WorldState {
 
     public BlockPos playerPos;
 
-    public HashMap<String, Pair<BlockPos, Boolean>> closestStructurePerType;
+    public ConcurrentHashMap<String, Pair<BlockPos, Boolean>> closestStructurePerType;
     public boolean inWater;
     public int overallDifficulty;
 
@@ -41,6 +42,8 @@ public class WorldState {
         WorldState worldState = new WorldState();
         worldState.world = world;
         BlockPos pos = player.getPosition();
+
+        worldState.playerPos = player.getPosition();
 
         Chunk[] chunks = {world.getChunkFromBlockCoords(pos), world.getChunkFromBlockCoords(pos.add(128, 0, 0)),
                 world.getChunkFromBlockCoords(pos.add(-128, 0, 0)), world.getChunkFromBlockCoords(pos.add(0, 0, 128)),
@@ -57,11 +60,11 @@ public class WorldState {
         worldState.nearbySpawners = new ArrayList<>();
         for (Chunk chunk : chunks)
             chunk.getTileEntityMap().forEach((key, value) -> {
-                if (value instanceof TileEntityMobSpawner) worldState.nearbySpawners.add(key);
+                if (value instanceof TileEntityMobSpawner && worldState.playerPos.getDistance(key.getX(), key.getY(), key.getZ()) < 32) worldState.nearbySpawners.add(key);
             });
 
         worldState.dimension = player.dimension;
-        worldState.closestStructurePerType = new HashMap<>();
+        worldState.closestStructurePerType = new ConcurrentHashMap<>();
         Util.getStructuresFromDimension(worldState.dimension).forEach(type -> worldState.closestStructurePerType
                 .put(type, Pair.of(
                         world.getChunkProvider().getNearestStructurePos(world, type, player.getPosition(), true),
@@ -74,7 +77,6 @@ public class WorldState {
         //Difficulty
         worldState.worldTime = world.getTotalWorldTime();
         worldState.playerAlive = player.ticksExisted;
-        worldState.playerPos = player.getPosition();
 
         worldState.overallDifficulty = (int) Math.round(Math.min(
                 Math.pow(worldState.worldTime / 24000.f <= 10 ? worldState.playerAlive : worldState.worldTime, 0.25f) / 4,

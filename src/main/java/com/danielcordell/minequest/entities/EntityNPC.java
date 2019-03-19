@@ -38,7 +38,7 @@ public class EntityNPC extends EntityMob {
         super(worldIn);
         this.setEntityInvulnerable(true);
         this.setSize(0.6f, 1.95f);
-        this.dataManager.register(NPC_TYPE, new Random().nextInt(4));
+        this.dataManager.register(NPC_TYPE, worldIn.rand.nextInt(4));
         this.dataManager.register(NPC_FOLLOW, Optional.absent());
         this.addPotionEffect(new PotionEffect(MobEffects.GLOWING, Integer.MAX_VALUE));
     }
@@ -46,10 +46,6 @@ public class EntityNPC extends EntityMob {
     @Override
     public boolean canDespawn() {
         return false;
-    }
-
-    public void setNPCType(int type) {
-        this.dataManager.set(NPC_TYPE, type);
     }
 
     public int getNPCType() {
@@ -84,12 +80,11 @@ public class EntityNPC extends EntityMob {
     @Override
     protected void initEntityAI() {
         this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(2, new EntityAIMoveIndoors(this));
-        this.tasks.addTask(4, new EntityAIOpenDoor(this, true));
-        this.tasks.addTask(4, new EntityAIMoveTowardsPlayer(this));
+        this.tasks.addTask(1, new EntityAIMoveTowardsPlayer(this));
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(8, new EntityAILookIdle(this));
+        this.tasks.addTask(10, new EntityAIOpenDoor(this, true));
     }
 
     @Override

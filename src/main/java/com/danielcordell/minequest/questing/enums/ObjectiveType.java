@@ -1,16 +1,14 @@
 package com.danielcordell.minequest.questing.enums;
 
 import com.danielcordell.minequest.questing.generators.WorldState;
-import com.mojang.realmsclient.util.Pair;
 import net.minecraft.entity.monster.IMob;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 public enum ObjectiveType {
     KILL_TYPE(0),
@@ -41,8 +39,8 @@ public enum ObjectiveType {
         return vals[rand.nextInt(vals.length)];
     }
 
-    public static HashMap<ObjectiveType, Integer> getObjectiveWeightMap() {
-        HashMap<ObjectiveType, Integer> weight = new HashMap<>();
+    public static ConcurrentHashMap<ObjectiveType, Integer> getObjectiveWeightMap() {
+        ConcurrentHashMap<ObjectiveType, Integer> weight = new ConcurrentHashMap<>();
         weight.put(ObjectiveType.KILL_TYPE, 0);
         weight.put(ObjectiveType.KILL_SPECIFIC, 0);
         weight.put(ObjectiveType.GATHER, 0);
@@ -53,8 +51,8 @@ public enum ObjectiveType {
         return weight;
     }
     //Get Default Objective Weights
-    public static HashMap<ObjectiveType, Integer> getObjectiveWeightMap(WorldState worldState) {
-        HashMap<ObjectiveType, Integer> weight = getObjectiveWeightMap();
+    public static ConcurrentHashMap<ObjectiveType, Integer> getObjectiveWeightMap(WorldState worldState) {
+        ConcurrentHashMap<ObjectiveType, Integer> weight = getObjectiveWeightMap();
         int baseVal = (int) ((worldState.nearbySpawners.size() + 1) * (0.1 * worldState.nearbyMobs.stream().filter(it -> it instanceof IMob).count())) + (worldState.inOrNextToSlimeChunk ? 2 : 0);
         weight.put(ObjectiveType.KILL_TYPE, baseVal < 6 ? 6 : baseVal > 12 ? 12 : baseVal);
         weight.put(ObjectiveType.KILL_SPECIFIC, weight.get(ObjectiveType.KILL_TYPE)/2);
@@ -69,7 +67,8 @@ public enum ObjectiveType {
         weight.put(ObjectiveType.SEARCH, (searchWeight));
 
         //boolean isPlayerInsideStructure = worldState.closestStructurePerType.entrySet().stream().anyMatch(it -> it.getValue().second() && it.getKey().equals("Temple") && worldState.inWater);
-        int escortWeight = worldState.closestStructurePerType.get("Village").second() ? 40 : worldState.dimension != DimensionType.OVERWORLD.getId() ? 10 : 0;
+        int escortWeight = worldState.dimension != DimensionType.OVERWORLD.getId() ? 10 : worldState.closestStructurePerType.get("Village").second() ? 40 : 0;
+
         weight.put(ObjectiveType.ESCORT,  escortWeight);
         weight.put(ObjectiveType.DELIVER, 5);
         return weight;

@@ -12,6 +12,7 @@ import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -45,17 +46,19 @@ public class ObjectiveEscort extends ObjectiveBase {
 
     @Override
     protected NBTTagCompound objectiveSpecificToNBT(NBTTagCompound nbt) {
-        nbt.setInteger("x", pos.getX());
-        nbt.setInteger("y", pos.getY());
-        nbt.setInteger("z", pos.getZ());
+        nbt.setTag("pos", NBTUtil.createPosTag(pos));
         nbt.setInteger("questEntityID", questEntityID);
+        nbt.setString("structureType", structureType);
+        nbt.setTag("nearby", NBTUtil.createPosTag(nearby));
         return nbt;
     }
 
     @Override
     public void objectiveSpecificFromNBT(NBTTagCompound nbt) {
-        pos = new BlockPos(nbt.getInteger("x"), nbt.getInteger("y"), nbt.getInteger("z"));
         questEntityID = nbt.getInteger("questEntityID");
+        nearby = NBTUtil.getPosFromTag(((NBTTagCompound) nbt.getTag("nearby")));
+        structureType = nbt.getString("structureType");
+        pos = NBTUtil.getPosFromTag(((NBTTagCompound) nbt.getTag("pos")));
     }
 
     @Override
@@ -94,7 +97,7 @@ public class ObjectiveEscort extends ObjectiveBase {
     public String getSPObjectiveInfo(EntityPlayerSP player) {
         String direction = Util.getDirectionFromPositions(player.getPosition(), pos);
         int distance = (int) Math.round(player.getPosition().getDistance(pos.getX(), pos.getY(), pos.getZ()));
-        return "Take NPC near Position " + nearby +" to the + " + structureType + " " + direction + " of here. (" + distance + "m)";
+        return "Take NPC from Position (" + nearby.getX() + ", " + nearby.getY() + ", " + nearby.getZ() +") to the " + structureType + " " + direction + " of here. (" + distance + "m)";
     }
 
     @Override

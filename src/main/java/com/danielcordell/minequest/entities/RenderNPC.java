@@ -30,9 +30,9 @@ public class RenderNPC extends RenderLiving<EntityNPC> {
             case 2:
                 return NPC_MEDIC_TEXTURE;
             case 3:
-                return NPC_COOL_TEXTURE;
-            default:
                 return NPC_PRIEST_TEXTURE;
+            default:
+                return NPC_COOL_TEXTURE;
         }
     }
 }

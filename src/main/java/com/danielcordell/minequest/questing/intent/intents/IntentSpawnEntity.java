@@ -39,6 +39,7 @@ public class IntentSpawnEntity extends Intent {
         this.posParam = posParam;
         this.entityData = entityData;
         this.nametag = nametag;
+        this.armorLevel = armorLevel;
     }
 
     public IntentSpawnEntity(NBTTagCompound nbt, Quest quest) {
@@ -69,7 +70,7 @@ public class IntentSpawnEntity extends Intent {
 
                 // Give armor
 
-                ItemArmor head = null;
+                ItemArmor head;
                 ItemArmor chest = null;
                 ItemArmor legs = null;
                 ItemArmor feet = null;
@@ -129,5 +130,13 @@ public class IntentSpawnEntity extends Intent {
     @Override
     public IntentType getIntentType() {
         return IntentType.SPAWN_ENTITY;
+    }
+
+    public String getEntityData() {
+        return entityData;
+    }
+
+    public Class<? extends EntityLivingBase> getEntityToSpawn() {
+        return entityToSpawn;
     }
 }
