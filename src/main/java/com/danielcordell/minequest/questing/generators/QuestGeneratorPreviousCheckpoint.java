@@ -15,6 +15,7 @@ import com.danielcordell.minequest.worlddata.WorldQuestData;
 import com.mojang.realmsclient.util.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -91,7 +92,7 @@ public class QuestGeneratorPreviousCheckpoint {
         QuestCheckpoint newCheckpoint = new QuestCheckpoint(prevCheckpoint.getQuest());
 
         Random rand = ObjectiveGenerator.rand;
-        int numberOfObjectives = worldState.overallDifficulty/4 + rand.nextInt(worldState.overallDifficulty/4 + 1);
+        int numberOfObjectives = worldState.overallDifficulty/4 + rand.nextInt(worldState.overallDifficulty/4 + 1) + 1;
         int[] numToGeneratePerOriginal = new int[prevParams.size()];
         for (int i = 0; i < numberOfObjectives; ++i) {
             numToGeneratePerOriginal[i%prevParams.size()]++;
@@ -107,10 +108,10 @@ public class QuestGeneratorPreviousCheckpoint {
                     Class<? extends EntityLivingBase> entity;
                     do {
                         entity = Util.getRandomEnemyFromDimension(rand, worldState.dimension);
-                    } while (entity == ((ParamsKillType) param).entityTypeToKill);
-
+                    } while (entity == ((ParamsKillType) param).entityTypeToKill && (entity != EntityEnderman.class || worldState.isNight));
                     int numToKill = (rand.nextInt(3) + 3) * worldState.overallDifficulty / 2;
                     numToKill = numToKill > 0 ? numToKill : 1;
+                    if (entity == EntityEnderman.class) numToKill = numToKill / 2  + 1;
                     newParams = new ParamsKillType(newCheckpoint, "Keep cleansing the world!")
                             .setParamDetails(entity, numToKill);
                 }

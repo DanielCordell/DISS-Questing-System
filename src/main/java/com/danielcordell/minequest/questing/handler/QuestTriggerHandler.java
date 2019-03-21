@@ -6,11 +6,17 @@ import com.danielcordell.minequest.Util;
 import com.danielcordell.minequest.events.ActionBlockTriggeredEvent;
 import com.danielcordell.minequest.questing.capabilities.CapPlayerQuestData;
 import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
+import net.minecraft.advancements.critereon.DamageSourcePredicate;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.loot.conditions.KilledByPlayer;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -20,11 +26,12 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @Mod.EventBusSubscriber(modid = MineQuest.MODID)
 public class QuestTriggerHandler {
+
     @SubscribeEvent
     public static void onEntityDeath(LivingDeathEvent event) {
         if (MineQuest.isClient(event.getEntity().world.isRemote)) return;
         Entity trueSource = event.getSource().getTrueSource();
-        if (!(trueSource instanceof EntityPlayer)) return;
+        if (!(event.getEntityLiving().getAttackingEntity() instanceof EntityPlayerMP) && !event.getSource().damageType.equalsIgnoreCase("player")) return;
         EntityPlayer player = ((EntityPlayer) trueSource);
         PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
         if (pqd == null) return;

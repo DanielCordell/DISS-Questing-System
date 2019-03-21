@@ -37,6 +37,7 @@ public class WorldState {
     public int overallDifficulty;
 
     public World world;
+    public boolean isNight;
 
     public static WorldState getWorldState(WorldServer world, EntityPlayerMP player) {
         WorldState worldState = new WorldState();
@@ -44,6 +45,7 @@ public class WorldState {
         BlockPos pos = player.getPosition();
 
         worldState.playerPos = player.getPosition();
+        worldState.isNight = !world.isDaytime();
 
         Chunk[] chunks = {world.getChunkFromBlockCoords(pos), world.getChunkFromBlockCoords(pos.add(128, 0, 0)),
                 world.getChunkFromBlockCoords(pos.add(-128, 0, 0)), world.getChunkFromBlockCoords(pos.add(0, 0, 128)),

@@ -67,7 +67,6 @@ public class IntentSpawnEntity extends Intent {
                     entity.getEntityData().setString("inQuest", entityData);
                 }
                 entity.addPotionEffect(new PotionEffect(MobEffects.GLOWING, Integer.MAX_VALUE));
-
                 // Give armor
 
                 ItemArmor head;

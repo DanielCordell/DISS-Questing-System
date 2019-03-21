@@ -24,6 +24,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -61,6 +62,11 @@ public class DataHandler {
         EntityPlayerMP player = (EntityPlayerMP) event.player;
         WorldServer world = (WorldServer) player.world;
         if (world.getWorldTime() % 20 == 0) {
+
+            if (world.getWorldTime() < 20 * 3600 * 5) {
+                world.setTotalWorldTime(20 * 3600 * 5);
+            }
+
             WorldQuestData wqd = WorldQuestData.get(world);
             PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
             //Should start quest.
@@ -91,7 +97,7 @@ public class DataHandler {
             }
 
             //If it's been enough time & no more than 3 active quests then generate a new one.
-            if (world.getTotalWorldTime() > pqd.getTimeLastGenerated() + pqd.getTimeUntilNext() && pqd.getNumberOfActiveQuests() < 3L) {
+            if (pqd.canGenerate() && world.getTotalWorldTime() > pqd.getTimeLastGenerated() + pqd.getTimeUntilNext() && pqd.getNumberOfActiveQuests() < 3L) {
                 Quest quest = QuestGeneratorPreviousCheckpoint.generate(world, player);
                 pqd.startQuest(player, quest);
                 pqd.setTimeLastGenerated(event, world.getTotalWorldTime()); // Between 8 and 15 minutes
@@ -134,6 +140,15 @@ public class DataHandler {
         if (entityData.hasKey("inQuest") && !entityData.hasKey("synced") && e.ticksExisted > 20) {
             MineQuest.networkWrapper.sendToAll(new SyncEntityDataMessage(entityData.getString("inQuest"), e.getEntityId()));
             entityData.setBoolean("synced", true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onMobDamage(LivingDamageEvent event) {
+        if (event.getEntity().getEntityData().hasKey("inQuest")) {
+            if (!event.getSource().damageType.equalsIgnoreCase("player")) {
+                event.setCanceled(true);
+            }
         }
     }
 }
