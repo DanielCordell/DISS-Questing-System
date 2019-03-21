@@ -2,36 +2,21 @@ package com.danielcordell.minequest.questing.handler;
 
 import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.core.ModBlocks;
-import com.danielcordell.minequest.entities.EntityNPC;
 import com.danielcordell.minequest.questing.capabilities.CapPlayerQuestData;
 import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
-import com.danielcordell.minequest.questing.enums.ObjectiveType;
-import com.danielcordell.minequest.questing.intent.Intent;
-import com.danielcordell.minequest.questing.intent.intents.IntentGiveItemStack;
-import com.danielcordell.minequest.questing.intent.intents.IntentSetNPCFollow;
-import com.danielcordell.minequest.questing.intent.intents.IntentSpawnEntity;
-import com.danielcordell.minequest.questing.intent.params.PlayerRadiusPosParam;
+import com.danielcordell.minequest.questing.generators.QuestGeneratorPreviousCheckpoint;
 import com.danielcordell.minequest.questing.message.QuestSyncMessage;
 import com.danielcordell.minequest.questing.message.SyncEntityDataMessage;
-import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
-import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
-import com.danielcordell.minequest.questing.objective.params.*;
 import com.danielcordell.minequest.questing.quest.Quest;
-import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
-import com.danielcordell.minequest.tileentities.QuestActionTileEntity;
 import com.danielcordell.minequest.tileentities.QuestStartTileEntity;
 import com.danielcordell.minequest.worlddata.WorldQuestData;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementManager;
+import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.EntitySpider;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -40,7 +25,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -74,13 +58,15 @@ public class DataHandler {
     public static void onPlayerUpdate(TickEvent.PlayerTickEvent event) {
         if (MineQuest.isClient(event.player.world.isRemote)) return;
         if (event.phase == TickEvent.Phase.END) return;
-        EntityPlayer player = event.player;
-        World world = player.world;
+        EntityPlayerMP player = (EntityPlayerMP) event.player;
+        WorldServer world = (WorldServer) player.world;
         if (world.getWorldTime() % 20 == 0) {
             WorldQuestData wqd = WorldQuestData.get(world);
             PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
             //Should start quest.
             BlockPos position = player.getPosition().add(0, -1, 0);
+
+            //Detect if standing on a quest trigger block.
             if (world.getBlockState(position) == ModBlocks.questStartBlock.getDefaultState()) {
                 QuestStartTileEntity te = (QuestStartTileEntity) world.getTileEntity(position);
                 wqd.getImmutableQuests().stream().filter(quest -> quest.getQuestID() == te.getQuestID()).forEach(quest -> {
@@ -92,6 +78,26 @@ public class DataHandler {
                     }
                 });
             }
+
+            if (!pqd.canGenerate()) {
+                AdvancementManager am = world.getAdvancementManager();
+                Advancement pick = am.getAdvancement(new ResourceLocation("story/upgrade_tools"));
+                Advancement sword = am.getAdvancement(new ResourceLocation("adventure/kill_a_mob"));
+                PlayerAdvancements advancements = player.getAdvancements();
+                if (advancements.getProgress(pick).isDone() && advancements.getProgress(sword).isDone()) {
+                    pqd.startGenerating();
+                    player.sendMessage(new TextComponentString("Quests will now begin generating."));
+                }
+            }
+
+            //If it's been enough time & no more than 3 active quests then generate a new one.
+            if (world.getTotalWorldTime() > pqd.getTimeLastGenerated() + pqd.getTimeUntilNext() && pqd.getNumberOfActiveQuests() < 3L) {
+                Quest quest = QuestGeneratorPreviousCheckpoint.generate(world, player);
+                pqd.startQuest(player, quest);
+                pqd.setTimeLastGenerated(event, world.getTotalWorldTime()); // Between 8 and 15 minutes
+                pqd.setTimeUntilNext(event, world.rand.nextInt(9600) + 8400);
+            }
+
             //Check for Quest Completion
             //FAILING ON SAVE AND RELOAD? TODO CHECK THIS
             pqd.getQuests().forEach(quest -> quest.update(world));

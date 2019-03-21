@@ -1,9 +1,9 @@
 package com.danielcordell.minequest.questing.capabilities;
 
 import com.danielcordell.minequest.MineQuest;
+import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestBuilder;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketTitle;
@@ -11,6 +11,7 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +19,9 @@ import java.util.Collection;
 public class PlayerQuestData {
 
     ArrayList<Quest> playerQuests = new ArrayList<>();
+    boolean canGenerate = false;
+    long timeLastGenerated = 0;
+    int timeUntilNext = 0;
 
     public void startQuest(EntityPlayer player, Quest quest) {
         //Quest Duplication in case it's a global quest and not a player-specific one
@@ -65,5 +69,33 @@ public class PlayerQuestData {
 
     public void updateAllCurrentObjectives(Event event) {
         playerQuests.stream().map(Quest::getCurrentCheckpointObjectives).flatMap(Collection::stream).forEach(objective -> objective.update(event));
+    }
+
+    public boolean canGenerate() {
+        return canGenerate;
+    }
+
+    public void startGenerating() {
+        canGenerate = true;
+    }
+
+    public long getTimeLastGenerated() {
+        return timeLastGenerated;
+    }
+
+    public int getTimeUntilNext() {
+        return timeUntilNext;
+    }
+
+    public void setTimeLastGenerated(TickEvent.PlayerTickEvent event, long timeLastGenerated) {
+        this.timeLastGenerated = timeLastGenerated;
+    }
+
+    public void setTimeUntilNext(TickEvent.PlayerTickEvent event, int timeUntilNext) {
+        this.timeUntilNext = timeUntilNext;
+    }
+
+    public long getNumberOfActiveQuests() {
+        return playerQuests.stream().filter(it -> it.getState() == QuestState.STARTED).count();
     }
 }
