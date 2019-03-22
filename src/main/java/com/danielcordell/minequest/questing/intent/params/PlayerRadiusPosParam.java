@@ -21,12 +21,21 @@ public class PlayerRadiusPosParam extends PosParamBase {
         BlockPos playerPos = world.getPlayerEntityByUUID(quest.getPlayerID()).getPosition();
         double angle = Math.random() * 2 * Math.PI;
         BlockPos pos;
+        int count = 0;
         do {
+            if (radius == 0) {
+                pos = playerPos;
+                break;
+            }
+
             pos = new BlockPos(playerPos.getX() + radius * Math.cos(angle), ((double) playerPos.getY()), playerPos.getZ() + radius * Math.sin(angle));
-        } while (Util.getFirstSolidBelow(world, pos) == Blocks.LAVA.getDefaultState());
-        while (world.getBlockState(pos) != Blocks.AIR.getDefaultState() && world.getBlockState(pos.add(0,1,0)) != Blocks.AIR.getDefaultState()){
-            pos.add(0,1,0);
-        }
+            if (count == 15) {
+                --radius;
+                count = 0;
+                continue;
+            }
+            ++count;
+        } while (Util.getFirstSolidBelow(world, pos) == Blocks.LAVA.getDefaultState() || (world.getBlockState(pos) != Blocks.AIR && world.getBlockState(pos.add(0,1,0)) != Blocks.AIR));
         return pos;
     }
 

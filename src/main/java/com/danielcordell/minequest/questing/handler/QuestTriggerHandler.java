@@ -12,6 +12,7 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -31,8 +32,9 @@ public class QuestTriggerHandler {
     public static void onEntityDeath(LivingDeathEvent event) {
         if (MineQuest.isClient(event.getEntity().world.isRemote)) return;
         Entity trueSource = event.getSource().getTrueSource();
-        if (!(event.getEntityLiving().getAttackingEntity() instanceof EntityPlayerMP) && !event.getSource().damageType.equalsIgnoreCase("player")) return;
-        EntityPlayer player = ((EntityPlayer) trueSource);
+        String damageType = event.getSource().damageType;
+        if (!(event.getEntityLiving().getAttackingEntity() instanceof EntityPlayerMP) && !damageType.equalsIgnoreCase("player")) return;
+        EntityPlayer player = ((EntityPlayer) event.getEntityLiving().getAttackingEntity());
         PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
         if (pqd == null) return;
         pqd.updateAllCurrentObjectives(event);

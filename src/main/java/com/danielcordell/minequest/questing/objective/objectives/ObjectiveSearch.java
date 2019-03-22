@@ -60,4 +60,8 @@ public class ObjectiveSearch extends ObjectiveBase {
     public ObjectiveParamsBase getParams() {
         return new ParamsSearch(checkpoint, getDescription(), optional, state).setParamDetails(structureType);
     }
+
+    public String getStructureType() {
+        return structureType;
+    }
 }

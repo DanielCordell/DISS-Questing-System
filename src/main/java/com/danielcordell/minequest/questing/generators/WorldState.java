@@ -13,10 +13,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WorldState {
@@ -32,18 +29,20 @@ public class WorldState {
 
     public BlockPos playerPos;
 
-    public ConcurrentHashMap<String, Pair<BlockPos, Boolean>> closestStructurePerType;
+    public HashMap<String, Pair<BlockPos, Boolean>> closestStructurePerType;
     public boolean inWater;
     public int overallDifficulty;
 
     public World world;
     public boolean isNight;
+    public UUID playerID;
 
     public static WorldState getWorldState(WorldServer world, EntityPlayerMP player) {
         WorldState worldState = new WorldState();
         worldState.world = world;
         BlockPos pos = player.getPosition();
 
+        worldState.playerID = player.getUniqueID();
         worldState.playerPos = player.getPosition();
         worldState.isNight = !world.isDaytime();
 
@@ -66,7 +65,7 @@ public class WorldState {
             });
 
         worldState.dimension = player.dimension;
-        worldState.closestStructurePerType = new ConcurrentHashMap<>();
+        worldState.closestStructurePerType = new HashMap<>();
         Util.getStructuresFromDimension(worldState.dimension).forEach(type -> worldState.closestStructurePerType
                 .put(type, Pair.of(
                         world.getChunkProvider().getNearestStructurePos(world, type, player.getPosition(), true),

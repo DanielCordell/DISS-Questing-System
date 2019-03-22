@@ -78,7 +78,7 @@ public class ObjectiveKillSpecific extends ObjectiveBase {
 
     @Override
     public String getSPObjectiveInfo(EntityPlayerSP player) {
-        return "Specific Entities" + ": " + numKilled + "/" + numToKill;
+        return "Attacking Entities" + ": " + numKilled + "/" + numToKill;
     }
 
     @Override

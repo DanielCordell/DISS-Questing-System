@@ -71,4 +71,8 @@ public class ObjectiveGather extends ObjectiveBase {
     public ObjectiveParamsBase getParams() {
         return new ParamsGather(checkpoint, getDescription(), optional, state).setParamDetails(item, count);
     }
+
+    public ItemStack getItem() {
+        return item;
+    }
 }

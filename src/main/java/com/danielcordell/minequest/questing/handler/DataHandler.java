@@ -18,6 +18,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -26,6 +27,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -146,9 +148,29 @@ public class DataHandler {
     @SubscribeEvent
     public static void onMobDamage(LivingDamageEvent event) {
         if (event.getEntity().getEntityData().hasKey("inQuest")) {
+            String damageType = event.getSource().damageType;
+
+            if (damageType.equalsIgnoreCase(DamageSource.OUT_OF_WORLD.damageType) || damageType.equalsIgnoreCase(DamageSource.ANVIL.damageType) || damageType.equalsIgnoreCase(DamageSource.MAGIC.damageType))
+                return;
+
             if (!event.getSource().damageType.equalsIgnoreCase("player")) {
                 event.setCanceled(true);
             }
         }
     }
+
+    @SubscribeEvent
+    public static void onMobDamage(LivingHurtEvent event) {
+        if (event.getEntity().getEntityData().hasKey("inQuest")) {
+            String damageType = event.getSource().damageType;
+
+            if (damageType.equalsIgnoreCase(DamageSource.OUT_OF_WORLD.damageType) || damageType.equalsIgnoreCase(DamageSource.ANVIL.damageType) || damageType.equalsIgnoreCase(DamageSource.MAGIC.damageType))
+                return;
+
+            if (!event.getSource().damageType.equalsIgnoreCase("player")) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
 }

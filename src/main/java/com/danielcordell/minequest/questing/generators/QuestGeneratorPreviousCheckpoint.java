@@ -8,12 +8,14 @@ import com.danielcordell.minequest.questing.intent.intents.IntentSpawnEntity;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
 import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
+import com.danielcordell.minequest.questing.objective.objectives.ObjectiveDeliver;
+import com.danielcordell.minequest.questing.objective.objectives.ObjectiveEscort;
+import com.danielcordell.minequest.questing.objective.objectives.ObjectiveGather;
+import com.danielcordell.minequest.questing.objective.objectives.ObjectiveSearch;
 import com.danielcordell.minequest.questing.objective.params.*;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
-import com.danielcordell.minequest.worlddata.WorldQuestData;
 import com.mojang.realmsclient.util.Pair;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntitySlime;
@@ -30,6 +32,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -48,12 +51,9 @@ public class QuestGeneratorPreviousCheckpoint {
         int randVal = ObjectiveGenerator.rand.nextInt(max+1);
         ObjectiveType objectiveType = null;
         int count = 0;
-        MineQuest.logger.info("randVal: " + randVal);
-        MineQuest.logger.info("New Weights:");
-        for (Map.Entry<ObjectiveType, Integer> entry : objectiveWeights.entrySet()) {
+        for (Entry<ObjectiveType, Integer> entry : objectiveWeights.entrySet()) {
             count += entry.getValue();
             objectiveType = entry.getKey();
-            MineQuest.logger.info(entry.getKey().name() + ": " + entry.getValue());
             if (count > randVal) break;
         }
         if (objectiveType == null) {
@@ -63,11 +63,11 @@ public class QuestGeneratorPreviousCheckpoint {
         }
 
         if (objectiveType == ObjectiveType.TRIGGER) {
-            MineQuest.logger.error("Starting 'objectiveType' is null!");
+            MineQuest.logger.error("Starting 'objectiveType' is Trigger, is bad!");
             MineQuest.logger.error("Defaulting to KillType");
             objectiveType = ObjectiveType.KILL_TYPE;
         }
-
+        MineQuest.logger.info("Initial: " + objectiveType.name());
         ObjectiveBase objective = makeObjectiveFromWorldState(objectiveType, worldState, firstCheckpoint);
         firstCheckpoint.addObjective(objective);
         quest.addCheckpoint(firstCheckpoint);
@@ -90,6 +90,7 @@ public class QuestGeneratorPreviousCheckpoint {
         List<ObjectiveParamsBase> prevParams = prevCheckpoint.getObjectives().stream().map(ObjectiveBase::getParams).collect(Collectors.toList());
         Collections.shuffle(prevParams);
         QuestCheckpoint newCheckpoint = new QuestCheckpoint(prevCheckpoint.getQuest());
+        MineQuest.logger.info("Starteed Checkpoint");
 
         Random rand = ObjectiveGenerator.rand;
         int numberOfObjectives = worldState.overallDifficulty/4 + rand.nextInt(worldState.overallDifficulty/4 + 1) + 1;
@@ -141,7 +142,7 @@ public class QuestGeneratorPreviousCheckpoint {
                     } else {
                         List<IRecipe> allRecipes = ForgeRegistries.RECIPES.getEntries()
                                 .stream()
-                                .map(Map.Entry::getValue)
+                                .map(Entry::getValue)
                                 .collect(Collectors.toList());
                         Collections.shuffle(allRecipes);
                         IRecipe recipe = null;
@@ -160,38 +161,45 @@ public class QuestGeneratorPreviousCheckpoint {
                             }
                         }
                         if (recipe == null)
-                            newParams = ObjectiveGenerator.generateDeliverObjective(newCheckpoint, worldState, itemStack);
+                            newParams = ObjectiveGenerator.generateGatherObjective(newCheckpoint, itemStack);
                         else
                             newParams = ObjectiveGenerator.generateGatherObjective(newCheckpoint, recipe.getRecipeOutput());
                     }
                 }
                 else if (param instanceof ParamsDeliver) {
-                    if (rand.nextInt(2) == 0) {
+
+                    List<String> prevStructures = prevCheckpoint.getQuest().getCheckpoints().stream().map(QuestCheckpoint::getObjectives)
+                            .flatMap(List::stream).filter(it -> it instanceof ObjectiveEscort).map(it -> ((ObjectiveEscort) it).getStructureType()).collect(Collectors.toList());
+                    List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
+                            .stream().filter(it -> Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
+                            .map(Entry::getKey).collect(Collectors.toList());
+
+                    if (rand.nextInt(2) != 0 && !worldState.closestStructurePerType.values().stream().allMatch(Pair::second) && prevStructures.size() < possibleStructures.size()) {
+                        possibleStructures.removeAll(prevStructures);
+                        String structure = possibleStructures.get(rand.nextInt(possibleStructures.size()));
+
+                        newParams = ObjectiveGenerator.generateEscortObjective(newCheckpoint, worldState, structure, ((ParamsDeliver) param).questEntityID);
+                        newParams.description = "Now the NPC is stocked up, escort them to a " + structure;
+                    } else {
                         // Deliver something else to the same NPC.
                         ItemStack item = Util.getGatherFromDimAndDifficulty(rand, worldState.dimension, worldState.overallDifficulty);
                         newParams = ObjectiveGenerator.generateDeliverObjective(newCheckpoint, worldState, item, ((ParamsDeliver) param).questEntityID);
                         newParams.description = "Gather the NPC some more items!";
-                    } else {
-                        // Take that NPC somewhere (not a village).
-                        List<Pair<String, Double>> structures = worldState.closestStructurePerType
-                                .entrySet()
-                                .stream()
-                                .filter(it -> !it.getKey().equalsIgnoreCase("village") && !it.getValue().second())
-                                .map(it -> Pair.of(it.getKey(), Math.sqrt(worldState.playerPos.distanceSq(it.getValue().first()))))
-                                .sorted(Comparator.comparing(Pair::second))
-                                .collect(Collectors.toList());
-                        String structure = structures.get(0).first();
-                        newParams = ObjectiveGenerator.generateEscortObjective(newCheckpoint, worldState, structure, ((ParamsDeliver) param).questEntityID);
-                        newParams.description = "Now the NPC is stocked up, escort them to a " + structure;
                     }
                 }
                 else if (param instanceof ParamsEscort) {
-                    if (rand.nextInt(5) == 0) {
+                    //List of all previous escorts
+                    List<String> prevStructures = prevCheckpoint.getQuest().getCheckpoints().stream().map(QuestCheckpoint::getObjectives)
+                            .flatMap(List::stream).filter(it -> it instanceof ObjectiveEscort).map(it -> ((ObjectiveEscort) it).getStructureType()).collect(Collectors.toList());
+                    List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
+                            .stream().filter(it -> Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
+                            .map(Entry::getKey).collect(Collectors.toList());
+                    if (rand.nextInt(5) == 0 && prevStructures.size() < possibleStructures.size()) {
                         // Go somewhere else
+                        possibleStructures.removeAll(prevStructures);
                         String structure;
-                        List<String> structures = Util.getStructuresFromDimension(worldState.dimension);
                         do {
-                            structure = structures.get(rand.nextInt(structures.size()));
+                            structure = possibleStructures.get(rand.nextInt(possibleStructures.size()));
                         } while (structure.equalsIgnoreCase(((ParamsEscort) param).type));
                         newParams = ObjectiveGenerator.generateEscortObjective(newCheckpoint, worldState, structure, ((ParamsEscort) param).questEntityID);
                         newParams.description = "The NPC wants to keep exploring, take them to a " + structure + "!";
@@ -202,8 +210,16 @@ public class QuestGeneratorPreviousCheckpoint {
                         newParams.description = "The NPC wants to set up camp, gather them some resources!";
                     }
                 } else if (param instanceof ParamsSearch) {
-                    if (rand.nextInt(5) == 0) {
-                        // Find a new structure.
+                    //List of all previous searches
+                    List<String> prevStructures = prevCheckpoint.getQuest().getCheckpoints().stream().map(QuestCheckpoint::getObjectives)
+                            .flatMap(List::stream).filter(it -> it instanceof ObjectiveSearch).map(it -> ((ObjectiveSearch) it).getStructureType()).collect(Collectors.toList());
+                    List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
+                            .stream().filter(it -> Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
+                            .map(Entry::getKey).collect(Collectors.toList());
+
+                    if (rand.nextInt(5) == 0 && prevStructures.size() < possibleStructures.size()) {
+                        // Go somewhere else
+                        possibleStructures.removeAll(prevStructures);
                         String structure;
                         List<String> structures = Util.getStructuresFromDimension(worldState.dimension);
                         do {
@@ -214,13 +230,37 @@ public class QuestGeneratorPreviousCheckpoint {
                     } else {
                         // Ambush!
                         newParams = ObjectiveGenerator.generateKillSpecificObjective(newCheckpoint, worldState, Util.getRandomEnemyFromDimension(rand, worldState.dimension));
+                        j = numToGeneratePerOriginal[i];
                     }
                 } else {
                     newParams = ObjectiveGenerator.generateGatherObjective(newCheckpoint, new ItemStack(Items.APPLE));
                 }
+                MineQuest.logger.info("Generating: " + newParams.description);
                 newCheckpoint.addObjective(ObjectiveBuilder.fromParams(newParams));
             }
         }
+        //Combine like checkpoints
+        List<ObjectiveGather> objectiveGathers = newCheckpoint.getObjectives().stream()
+                .filter(it -> it instanceof ObjectiveGather).map(it -> ((ObjectiveGather) it)).collect(Collectors.toList());
+        List<Item> collect = Util.getDuplicates(objectiveGathers.stream().map(objective -> objective.getItem().getItem()).collect(Collectors.toList()));
+        for (Item item : collect) {
+            long count = objectiveGathers.stream().filter(it -> it.getItem().getItem() == item).mapToInt(it -> it.getItem().getCount()).count();
+            ParamsGather gather = ((ParamsGather) objectiveGathers.stream().filter(it -> it.getItem().getItem() == item).findFirst().get().getParams());
+            objectiveGathers.removeIf(it -> it.getItem().getItem() == item);
+            objectiveGathers.add((ObjectiveGather) ObjectiveBuilder.fromParams(gather.setParamDetails(new ItemStack(item), ((int) count))));
+        }
+
+        List<ObjectiveDeliver> objectiveDelivers = newCheckpoint.getObjectives().stream()
+                .filter(it -> it instanceof ObjectiveDeliver).map(it -> ((ObjectiveDeliver) it)).collect(Collectors.toList());
+        collect = Util.getDuplicates(objectiveDelivers.stream().map(objective -> objective.getItem().getItem()).collect(Collectors.toList()));
+        for (Item item : collect) {
+            long count = objectiveGathers.stream().filter(it -> it.getItem().getItem() == item).mapToInt(it -> it.getItem().getCount()).count();
+            ParamsDeliver deliver = ((ParamsDeliver) objectiveDelivers.stream().filter(it -> it.getItem().getItem() == item).findFirst().get().getParams());
+            objectiveDelivers.removeIf(it -> it.getItem().getItem() == item);
+            objectiveDelivers.add((ObjectiveDeliver) ObjectiveBuilder.fromParams(deliver.setParamDetails(new ItemStack(item), ((int) count), deliver.questEntityID, deliver.nearby)));
+        }
+
+        MineQuest.logger.info("Finished Checkpoint");
         return newCheckpoint;
     }
 
@@ -249,11 +289,12 @@ public class QuestGeneratorPreviousCheckpoint {
             throw new NotImplementedException("Not implemented this objective yet");
             //params = new ParamsKillSpecific(firstCheckpoint, "Trigger something!");
         } else if (objectiveType == ObjectiveType.ESCORT) {
-            List<String> structures = Util.getStructuresFromDimension(worldState.dimension);
-            String structure = null;
-            while (structure == null || worldState.closestStructurePerType.get(structure).second()) {
-                structure = structures.get(ObjectiveGenerator.rand.nextInt(structures.size()));
-            }
+            List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
+                    .stream().filter(it -> !it.getValue().second() && Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
+                    .map(Entry::getKey).collect(Collectors.toList());
+
+            String structure = possibleStructures.get(ObjectiveGenerator.rand.nextInt(possibleStructures.size()));
+
             //?Todo pick an NPC in the world, if there is an NPC NOT currently in an open quest and not too far away (farther than closest village) then use them, otherwise make a new one at the closest village.
             params = ObjectiveGenerator.generateEscortObjective(firstCheckpoint, worldState, structure);
         } else if (objectiveType == ObjectiveType.GATHER) {

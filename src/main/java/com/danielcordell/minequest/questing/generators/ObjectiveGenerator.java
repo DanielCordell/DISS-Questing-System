@@ -36,6 +36,7 @@ public class ObjectiveGenerator {
     }
 
     static ParamsEscort generateEscortObjective(QuestCheckpoint firstCheckpoint, WorldState worldState, String structure, int questEntityID) {
+        firstCheckpoint.addIntent(new IntentSetNPCFollow(firstCheckpoint.getQuest(), questEntityID));
         return generateEscortObjective(firstCheckpoint, worldState, structure, questEntityID, Util.getNPCFromQuestIDOrNull(questEntityID, worldState.world, firstCheckpoint.getQuest()).getPosition());
     }
 

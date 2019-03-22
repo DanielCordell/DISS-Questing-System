@@ -9,13 +9,17 @@ import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestBuilder;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import com.danielcordell.minequest.worlddata.WorldQuestData;
+import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -23,6 +27,7 @@ import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
@@ -34,6 +39,10 @@ public class DungeonGenerator implements IWorldGenerator {
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
         if (chunkX % 16 != 0 || chunkZ % 16 != 0) return;
+        ChunkPos pos = world.getChunkFromChunkCoords(chunkX, chunkZ).getPos();
+        if (world.provider.getDimension() != DimensionType.OVERWORLD.getId()) return;
+        Biome biome = world.getBiome(new BlockPos(pos.getXStart() + 8, world.getSeaLevel(), pos.getZStart() + 8));
+        if (biome == Biomes.OCEAN || biome == Biomes.DEEP_OCEAN || biome == Biomes.FROZEN_OCEAN || biome == Biomes.RIVER || biome == Biomes.FROZEN_RIVER) return;
 
         WorldQuestData wqd = WorldQuestData.get(world);
         int id = wqd.getFreshQuestID();

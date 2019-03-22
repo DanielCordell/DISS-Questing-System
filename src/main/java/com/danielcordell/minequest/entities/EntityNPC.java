@@ -54,6 +54,7 @@ public class EntityNPC extends EntityMob {
 
     public void setNPCFollow(UUID player) {
         this.dataManager.set(NPC_FOLLOW, Optional.fromNullable(player));
+        this.dataManager.setDirty(NPC_FOLLOW);
     }
 
     public void clearNPCFollow() {

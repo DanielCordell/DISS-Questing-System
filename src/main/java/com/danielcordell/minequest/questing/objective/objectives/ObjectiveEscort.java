@@ -34,7 +34,7 @@ public class ObjectiveEscort extends ObjectiveBase {
         WorldServer world = params.world;
         String structureType = params.type;
         pos = world.getChunkProvider().getNearestStructurePos(world, structureType,
-                new BlockPos(world.rand.nextInt(5000) - 2500, world.getSeaLevel(), world.rand.nextInt(5000) - 2500), true
+                new BlockPos(params.nearby.getX() + world.rand.nextInt(500) - 250, world.getSeaLevel(), params.nearby.getZ() + world.rand.nextInt(500) - 250), true
         );
         nearby = params.nearby;
     }
@@ -74,9 +74,8 @@ public class ObjectiveEscort extends ObjectiveBase {
         // If this objective is not for this NPC then stop.
         if (quest.getQuestEntityIDFromEntityID(target.getUniqueID()) != questEntityID) return;
 
-        MineQuest.logger.error("Mob Position: " + target.getPosition().toString());
+        BlockPos nearStructurePos = world.getChunkProvider().getNearestStructurePos(world, structureType, target.getPosition(), false);
 
-        BlockPos nearStructurePos = world.getChunkProvider().getNearestStructurePos(world, structureType, target.getPosition(), true);
         if (nearStructurePos == null) return;
 
         if (nearStructurePos.equals(pos)) {
@@ -103,5 +102,9 @@ public class ObjectiveEscort extends ObjectiveBase {
     @Override
     public ObjectiveParamsBase getParams() {
         return new ParamsEscort(checkpoint, getDescription(), optional, state).setParamDetails(questEntityID, null, structureType,  nearby);
+    }
+
+    public String getStructureType() {
+        return structureType;
     }
 }

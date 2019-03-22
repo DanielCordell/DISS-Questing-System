@@ -184,7 +184,7 @@ public class Quest {
         if (state == QuestState.COMPLETED || state == QuestState.FAILED) return;
         //Check current checkpoint for completion.
         if (getCurrentCheckpointObjectives().stream().allMatch(chkpnt -> chkpnt.getState() == QuestState.COMPLETED)) {
-            if (progressCheckpoint()) completeQuest(world);
+            if (progressCheckpoint(world)) completeQuest(world);
             setDirty();
         }
     }
@@ -204,11 +204,14 @@ public class Quest {
     }
 
     // Returns true if the quest has just been completed.
-    private boolean progressCheckpoint() {
+    private boolean progressCheckpoint(World world) {
         if (currentCheckpointIndex + 1 == checkpoints.size()) {
             MineQuest.logger.info("Quest complete!");
             return true;
-        } else currentCheckpointIndex++;
+        } else  {
+            currentCheckpointIndex++;
+            performCurrentCheckpointIntents(world);
+        }
         setDirty();
         return false;
     }
@@ -226,7 +229,7 @@ public class Quest {
         return entityMap.values();
     }
 
-    public ImmutableList getCheckpoints() {
-        return new ImmutableList.Builder<QuestCheckpoint>().addAll(checkpoints).build();
+    public ArrayList<QuestCheckpoint> getCheckpoints() {
+        return checkpoints;
     }
 }

@@ -38,6 +38,7 @@ public class KeybindEventHandler {
                 player.sendMessage(new TextComponentString(questStatus).setStyle(style));
                 if (quest.getState() == QuestState.STARTED) {
                     for (ObjectiveBase objective : quest.getCurrentCheckpointObjectives()) {
+                        if (objective.getState() == QuestState.COMPLETED) continue;
                         String objectiveName = '\u00bb' + " " + objective.getDescription();
                         String objectiveInfo = objective.getSPObjectiveInfo(player);
                         HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(objectiveInfo).setStyle(style.setUnderlined(false)));

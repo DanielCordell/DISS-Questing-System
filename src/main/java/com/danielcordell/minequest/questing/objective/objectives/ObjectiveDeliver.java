@@ -101,4 +101,8 @@ public class ObjectiveDeliver extends ObjectiveBase {
     public ObjectiveParamsBase getParams() {
         return new ParamsDeliver(checkpoint, getDescription(), optional, state).setParamDetails(item, count, questEntityID, nearby);
     }
+
+    public ItemStack getItem() {
+        return item;
+    }
 }
