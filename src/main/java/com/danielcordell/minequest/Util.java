@@ -17,6 +17,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
@@ -238,6 +239,10 @@ public class Util {
 
     public static String getDirectionFromPositions(BlockPos playerPos, BlockPos targetPos) {
         double angle = Math.toDegrees(Math.atan2(targetPos.getZ() - playerPos.getZ(), targetPos.getX() - playerPos.getX()));
+        return getDirectionFromAngle(angle);
+    }
+
+    private static String getDirectionFromAngle(double angle) {
         if (angle <= 22.5 && angle > -22.5) return "East";
         if (angle <= 67.5 && angle > 22.5) return "South East";
         if (angle <= 112.5 && angle > 67.5) return "South";
@@ -254,5 +259,12 @@ public class Util {
                 pos = pos.add(0, -1, 0);
             } while (world.getBlockState(pos.add(0, -1, 0)) == Blocks.AIR);
         return world.getBlockState(pos.add(0, -1, 0));
+    }
+
+    public static String getFacing(EnumFacing horizontalFacing) {
+        float angle = horizontalFacing.getHorizontalAngle() + 90;
+        if (angle > 180) angle -= 360;
+        if (angle <= -180) angle += 360;
+        return getDirectionFromAngle(angle);
     }
 }

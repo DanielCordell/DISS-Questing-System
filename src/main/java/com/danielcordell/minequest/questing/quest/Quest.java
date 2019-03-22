@@ -6,6 +6,8 @@ import com.danielcordell.minequest.questing.enums.QuestState;
 import com.danielcordell.minequest.questing.intent.Intent;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.worlddata.WorldQuestData;
+import com.google.common.collect.ImmutableList;
+import com.sun.javafx.UnmodifiableArrayList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -222,5 +224,9 @@ public class Quest {
 
     public Collection<UUID> getEntities() {
         return entityMap.values();
+    }
+
+    public ImmutableList getCheckpoints() {
+        return new ImmutableList.Builder<QuestCheckpoint>().addAll(checkpoints).build();
     }
 }

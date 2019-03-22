@@ -11,9 +11,8 @@ import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
 import com.danielcordell.minequest.questing.objective.params.*;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
-import com.danielcordell.minequest.worlddata.WorldQuestData;
+import com.google.common.collect.ImmutableList;
 import com.mojang.realmsclient.util.Pair;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntitySlime;
@@ -33,7 +32,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class QuestGeneratorPreviousCheckpoint {
+public class QuestGeneratorRandomCheckpoint {
 
     public static Quest generate(WorldServer world, EntityPlayerMP player) {
         Quest quest = Quest.newEmptyQuest(world);
@@ -72,11 +71,10 @@ public class QuestGeneratorPreviousCheckpoint {
         firstCheckpoint.addObjective(objective);
         quest.addCheckpoint(firstCheckpoint);
 
-        QuestCheckpoint chkpnt = firstCheckpoint;
-
         for (int i = 0; i < worldState.overallDifficulty / 4 + ObjectiveGenerator.rand.nextInt(2); ++i) {
-            chkpnt = iterate(worldState, chkpnt);
-            quest.addCheckpoint(chkpnt);
+            ImmutableList checkpoints = quest.getCheckpoints();
+            QuestCheckpoint checkpoint = iterate(worldState, (QuestCheckpoint) checkpoints.get(ObjectiveGenerator.rand.nextInt(checkpoints.size())));
+            quest.addCheckpoint(checkpoint);
         }
 
         quest.addFinishIntent(new IntentGiveItemStack(quest, Util.getRewardFromDifficulty(ObjectiveGenerator.rand, worldState.overallDifficulty)));
@@ -198,7 +196,7 @@ public class QuestGeneratorPreviousCheckpoint {
                     } else {
                         // Give me resources
                         ItemStack item = Util.getGatherFromDimAndDifficulty(rand, worldState.dimension, worldState.overallDifficulty);
-                        newParams = ObjectiveGenerator.generateDeliverObjective(newCheckpoint, worldState, item, ((ParamsEscort) param).questEntityID);
+                        newParams = ObjectiveGenerator.generateDeliverObjective(newCheckpoint, worldState, item, ((ParamsDeliver) param).questEntityID);
                         newParams.description = "The NPC wants to set up camp, gather them some resources!";
                     }
                 } else if (param instanceof ParamsSearch) {

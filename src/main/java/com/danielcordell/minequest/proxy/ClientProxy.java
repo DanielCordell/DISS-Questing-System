@@ -3,10 +3,12 @@ package com.danielcordell.minequest.proxy;
 import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.core.ModBlocks;
 import com.danielcordell.minequest.core.ModEntities;
+import com.danielcordell.minequest.gui.PositionGui;
 import com.danielcordell.minequest.keybind.KeyBindings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -31,7 +33,6 @@ public class ClientProxy implements IProxy {
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
-
     }
 
     @Override

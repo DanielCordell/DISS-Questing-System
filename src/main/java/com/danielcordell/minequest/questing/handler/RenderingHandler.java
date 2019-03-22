@@ -1,6 +1,7 @@
 package com.danielcordell.minequest.questing.handler;
 
 import com.danielcordell.minequest.MineQuest;
+import com.danielcordell.minequest.gui.PositionGui;
 import com.danielcordell.minequest.questing.capabilities.CapPlayerQuestData;
 import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
 import com.danielcordell.minequest.questing.objective.objectives.ObjectiveKillSpecific;
@@ -12,10 +13,12 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import javax.swing.text.Position;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,5 +71,11 @@ public class RenderingHandler {
                 (ent.world.rand.nextDouble() - 0.5D) * 2.0D,
                 -ent.world.rand.nextDouble(),
                 (ent.world.rand.nextDouble() - 0.5D) * 2.0D));
+    }
+
+    @SubscribeEvent
+    public static void onRenderGui(RenderGameOverlayEvent.Post event) {
+        if (event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE) return;
+        new PositionGui(Minecraft.getMinecraft());
     }
 }
