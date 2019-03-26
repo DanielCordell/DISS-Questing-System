@@ -2,8 +2,11 @@ package com.danielcordell.minequest;
 
 import com.danielcordell.minequest.entities.EntityNPC;
 import com.danielcordell.minequest.questing.generators.WorldState;
+import com.danielcordell.minequest.questing.objective.ObjectiveBase;
+import com.danielcordell.minequest.questing.objective.objectives.*;
 import com.danielcordell.minequest.questing.objective.params.ParamsKillType;
 import com.danielcordell.minequest.questing.quest.Quest;
+import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import com.google.common.base.CaseFormat;
 import com.mojang.realmsclient.util.Pair;
 import net.minecraft.block.state.IBlockState;
@@ -154,7 +157,7 @@ public class Util {
     }
 
     private static Class<? extends EntityLivingBase> getRandomEndEnemy(Random rand) {
-        switch (rand.nextInt(5)) {
+        switch (rand.nextInt(2)) {
             case 0: return EntityEnderman.class;
             case 1: return EntityShulker.class;
             default: return EntityEnderman.class;
@@ -216,9 +219,27 @@ public class Util {
     }
 
     public static String generateQuestName(Quest quest) {
-        return "The Quest for Glory!";
+        ArrayList<QuestCheckpoint> checkpoints = quest.getCheckpoints();
+        String defaultName = "The Quest for Glory!";
+        if (checkpoints.isEmpty()) return defaultName;
+        // Get first objective from first checkpoint.
+        ObjectiveBase objective = checkpoints.get(0).getObjectives().get(0);
+        if (objective instanceof ObjectiveKillType)
+            return "Doing my Duty";
+        if (objective instanceof ObjectiveKillSpecific)
+            return "Ambush";
+        if (objective instanceof ObjectiveDeliver)
+            return "The Delivery";
+        if (objective instanceof ObjectiveGather)
+            return "I Might Need This Later";
+        if (objective instanceof ObjectiveEscort)
+            return "You Lead, I'll Follow";
+        if (objective instanceof ObjectiveSearch)
+            return "Exploration Without Limits";
+        return defaultName;
     }
 
+    // Will remove as many as possible up to count (if count > total, will remove total happily).
     public static void removeItemCountFromInventory(InventoryPlayer inv, Item item, int count) {
         int size = inv.getSizeInventory();
         int currentTotal = 0;
@@ -280,9 +301,7 @@ public class Util {
                 return super.add(e);
             }
         };
-        for (T t : list) {
-            set.add(t);
-        }
+        set.addAll(list);
         return duplicatedObjects;
     }
 
