@@ -4,7 +4,6 @@ import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.core.ModBlocks;
 import com.danielcordell.minequest.questing.capabilities.CapPlayerQuestData;
 import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
-import com.danielcordell.minequest.questing.capabilities.StoragePlayerQuestData;
 import com.danielcordell.minequest.questing.generators.QuestGeneratorPreviousCheckpoint;
 import com.danielcordell.minequest.questing.message.QuestSyncMessage;
 import com.danielcordell.minequest.questing.message.SyncEntityDataMessage;
@@ -29,7 +28,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -45,7 +44,7 @@ public class DataHandler {
     }
 
     @SubscribeEvent
-    public static void onPlayerPickup(PlayerEvent.ItemPickupEvent event) {
+    public static void onPlayerPickup(net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent event) {
         WorldQuestData data = WorldQuestData.get(event.player.world);
         Quest q = data.getQuestByID(0);
         if (q == null) MineQuest.logger.error("SERVER: WHOOPS ITS NULL BAD ABORT");
@@ -175,7 +174,7 @@ public class DataHandler {
     }
 
     @SubscribeEvent
-    public static void onRespawn(PlayerEvent.Clone event){
+    public static void onRespawn(net.minecraftforge.event.entity.player.PlayerEvent.Clone event){
         EntityPlayer original = event.getOriginal();
         if (MineQuest.isClient(original.world.isRemote) || !event.isWasDeath()) return;
         PlayerQuestData capOld = original.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
