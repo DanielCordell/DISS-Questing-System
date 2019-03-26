@@ -181,5 +181,4 @@ public class DataHandler {
         PlayerQuestData capNew = event.getEntityPlayer().getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
         capOld.copyTo(capNew);
     }
-
 }

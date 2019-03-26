@@ -209,7 +209,8 @@ public class QuestGeneratorPreviousCheckpoint {
                         newParams = ObjectiveGenerator.generateDeliverObjective(newCheckpoint, worldState, item, ((ParamsEscort) param).questEntityID);
                         newParams.description = "The NPC wants to set up camp, gather them some resources!";
                     }
-                } else if (param instanceof ParamsSearch) {
+                }
+                else if (param instanceof ParamsSearch) {
                     //List of all previous searches
                     List<String> prevStructures = prevCheckpoint.getQuest().getCheckpoints().stream().map(QuestCheckpoint::getObjectives)
                             .flatMap(List::stream).filter(it -> it instanceof ObjectiveSearch).map(it -> ((ObjectiveSearch) it).getStructureType()).collect(Collectors.toList());
@@ -301,11 +302,11 @@ public class QuestGeneratorPreviousCheckpoint {
             ItemStack itemStack = Util.getGatherFromDimAndDifficulty(ObjectiveGenerator.rand, worldState.dimension, worldState.overallDifficulty);
             params = ObjectiveGenerator.generateGatherObjective(firstCheckpoint, itemStack);
         } else if (objectiveType == ObjectiveType.SEARCH) {
-            List<String> structures = Util.getStructuresFromDimension(worldState.dimension);
-            String structure = null;
-            while (structure == null || worldState.closestStructurePerType.get(structure).second()) {
-                structure = structures.get(ObjectiveGenerator.rand.nextInt(structures.size()));
-            }
+            List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
+                    .stream().filter(it -> !it.getValue().second() && Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
+                    .map(Entry::getKey).collect(Collectors.toList());
+
+            String structure = possibleStructures.get(ObjectiveGenerator.rand.nextInt(possibleStructures.size()));
             params = ObjectiveGenerator.generateSearchObjective(firstCheckpoint, structure);
         } else if (objectiveType == ObjectiveType.DELIVER) {
             ItemStack itemStack = Util.getGatherFromDimAndDifficulty(ObjectiveGenerator.rand, worldState.dimension, worldState.overallDifficulty);
