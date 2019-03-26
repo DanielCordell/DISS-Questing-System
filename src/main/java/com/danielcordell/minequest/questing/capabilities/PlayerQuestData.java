@@ -98,4 +98,12 @@ public class PlayerQuestData {
     public long getNumberOfActiveQuests() {
         return playerQuests.stream().filter(it -> it.getState() == QuestState.STARTED).count();
     }
+
+    public void copyTo(PlayerQuestData capNew) {
+        capNew.canGenerate          = this.canGenerate;
+        capNew.playerQuests         = this.playerQuests;
+        capNew.timeUntilNext        = this.timeUntilNext;
+        capNew.timeLastGenerated    = this.timeLastGenerated;
+
+    }
 }

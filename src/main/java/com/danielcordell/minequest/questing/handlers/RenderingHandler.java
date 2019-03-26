@@ -1,4 +1,4 @@
-package com.danielcordell.minequest.questing.handler;
+package com.danielcordell.minequest.questing.handlers;
 
 import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.gui.PositionGui;
@@ -9,7 +9,6 @@ import com.danielcordell.minequest.questing.quest.Quest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.Vec3d;
@@ -18,8 +17,6 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import javax.swing.text.Position;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
