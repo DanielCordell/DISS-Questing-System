@@ -191,6 +191,8 @@ public class QuestGeneratorPreviousCheckpoint {
                     //List of all previous escorts
                     List<String> prevStructures = prevCheckpoint.getQuest().getCheckpoints().stream().map(QuestCheckpoint::getObjectives)
                             .flatMap(List::stream).filter(it -> it instanceof ObjectiveEscort).map(it -> ((ObjectiveEscort) it).getStructureType()).collect(Collectors.toList());
+                    prevStructures.addAll(newCheckpoint.getObjectives().stream()
+                            .filter(it -> it instanceof ObjectiveEscort && !prevStructures.contains(((ObjectiveEscort) it).getStructureType())).map(it -> ((ObjectiveEscort) it).getStructureType()).collect(Collectors.toList()));
                     List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
                             .stream().filter(it -> Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
                             .map(Entry::getKey).collect(Collectors.toList());
@@ -214,6 +216,8 @@ public class QuestGeneratorPreviousCheckpoint {
                     //List of all previous searches
                     List<String> prevStructures = prevCheckpoint.getQuest().getCheckpoints().stream().map(QuestCheckpoint::getObjectives)
                             .flatMap(List::stream).filter(it -> it instanceof ObjectiveSearch).map(it -> ((ObjectiveSearch) it).getStructureType()).collect(Collectors.toList());
+                    prevStructures.addAll(newCheckpoint.getObjectives().stream()
+                            .filter(it -> it instanceof ObjectiveSearch && !prevStructures.contains(((ObjectiveSearch) it).getStructureType())).map(it -> ((ObjectiveSearch) it).getStructureType()).collect(Collectors.toList()));
                     List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
                             .stream().filter(it -> Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
                             .map(Entry::getKey).collect(Collectors.toList());
