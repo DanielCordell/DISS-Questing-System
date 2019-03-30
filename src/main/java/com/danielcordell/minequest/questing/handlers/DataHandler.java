@@ -4,7 +4,7 @@ import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.core.ModBlocks;
 import com.danielcordell.minequest.questing.capabilities.CapPlayerQuestData;
 import com.danielcordell.minequest.questing.capabilities.PlayerQuestData;
-import com.danielcordell.minequest.questing.generators.QuestGeneratorPreviousCheckpoint;
+import com.danielcordell.minequest.questing.generators.QuestGenerator;
 import com.danielcordell.minequest.questing.message.QuestSyncMessage;
 import com.danielcordell.minequest.questing.message.SyncEntityDataMessage;
 import com.danielcordell.minequest.questing.quest.Quest;
@@ -28,8 +28,8 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -100,7 +100,7 @@ public class DataHandler {
 
             //If it's been enough time & no more than 3 active quests then generate a new one.
             if (pqd.canGenerate() && world.getTotalWorldTime() > pqd.getTimeLastGenerated() + pqd.getTimeUntilNext() && pqd.getNumberOfActiveQuests() < 3L) {
-                Quest quest = QuestGeneratorPreviousCheckpoint.generate(world, player);
+                Quest quest = QuestGenerator.generate(world, player);
                 pqd.startQuest(player, quest);
                 pqd.setTimeLastGenerated(event, world.getTotalWorldTime()); // Between 8 and 15 minutes
                 pqd.setTimeUntilNext(event, world.rand.nextInt(9600) + 8400);

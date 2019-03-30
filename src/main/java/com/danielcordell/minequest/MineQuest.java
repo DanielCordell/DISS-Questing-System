@@ -1,5 +1,6 @@
 package com.danielcordell.minequest;
 
+import com.danielcordell.minequest.commands.RagsRichesCommand;
 import com.danielcordell.minequest.core.ModBlocks;
 import com.danielcordell.minequest.core.ModEntities;
 import com.danielcordell.minequest.proxy.IProxy;
@@ -21,6 +22,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -94,5 +96,10 @@ public class MineQuest {
 
     public static boolean isServer(boolean isRemote) {
         return !isRemote;
+    }
+
+    @Mod.EventHandler
+    public void serverLoad(FMLServerStartingEvent event) {
+        event.registerServerCommand(new RagsRichesCommand());
     }
 }

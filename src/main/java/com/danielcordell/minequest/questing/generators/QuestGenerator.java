@@ -1,5 +1,6 @@
 package com.danielcordell.minequest.questing.generators;
 
+import com.danielcordell.minequest.Conf;
 import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.Util;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
@@ -36,7 +37,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class QuestGeneratorPreviousCheckpoint {
+public class QuestGenerator {
 
     public static Quest generate(WorldServer world, EntityPlayerMP player) {
         Quest quest = Quest.newEmptyQuest(world);
@@ -72,9 +73,13 @@ public class QuestGeneratorPreviousCheckpoint {
         firstCheckpoint.addObjective(objective);
         quest.addCheckpoint(firstCheckpoint);
 
-        QuestCheckpoint chkpnt = firstCheckpoint;
 
         for (int i = 0; i < worldState.overallDifficulty / 4 + ObjectiveGenerator.rand.nextInt(2); ++i) {
+            QuestCheckpoint chkpnt  = firstCheckpoint;
+            if (!Conf.shouldGenerateLinear) {
+                ArrayList<QuestCheckpoint> checkpoints = quest.getCheckpoints();
+                chkpnt = checkpoints.get(checkpoints.size()-1);
+            }
             chkpnt = iterate(worldState, chkpnt);
             quest.addCheckpoint(chkpnt);
         }

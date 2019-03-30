@@ -1,5 +1,6 @@
 package com.danielcordell.minequest.questing.generators;
 
+import com.danielcordell.minequest.Conf;
 import com.danielcordell.minequest.Util;
 import com.mojang.realmsclient.util.Pair;
 import net.minecraft.entity.EntityLiving;
@@ -83,6 +84,9 @@ public class WorldState {
                 Math.pow(worldState.worldTime / 24000.f <= 10 ? worldState.playerAlive : worldState.worldTime, 0.25f) / 4,
                 20
         ));
+
+        if (Conf.shouldDifficultyScaleFaster) worldState.overallDifficulty = Math.min(worldState.overallDifficulty * 5, 20);
+
         return worldState;
     }
 }
