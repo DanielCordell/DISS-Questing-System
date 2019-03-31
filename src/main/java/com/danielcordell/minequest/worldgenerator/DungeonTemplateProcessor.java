@@ -28,7 +28,7 @@ public class DungeonTemplateProcessor implements ITemplateProcessor {
             nbt.setInteger("questID", questID);
             return new Template.BlockInfo(blockInfo.pos, ModBlocks.questStartBlock.getDefaultState(), nbt);
         }
-        else if (blockInfo.blockState == Blocks.PRISMARINE.getDefaultState()) {
+        else if (blockInfo.blockState == Blocks.BOOKSHELF.getDefaultState()) {
             NBTTagCompound nbt = new NBTTagCompound();
             nbt.setTag("actionBlockID", NBTUtil.createUUIDTag(actionBlockID));
             return new Template.BlockInfo(blockInfo.pos, ModBlocks.questActionBlock.getDefaultState(), nbt);

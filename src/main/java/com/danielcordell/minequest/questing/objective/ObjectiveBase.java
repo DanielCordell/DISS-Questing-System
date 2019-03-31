@@ -87,6 +87,7 @@ public abstract class ObjectiveBase {
         player.connection.sendPacket(packet);
         packet = new SPacketTitle(SPacketTitle.Type.SUBTITLE, new TextComponentString(description).setStyle(new Style().setColor(TextFormatting.GRAY).setItalic(true)));
         player.connection.sendPacket(packet);
+        player.sendMessage(new TextComponentString("Quest log updated, press R to view."));
         quest.setDirty();
     }
 

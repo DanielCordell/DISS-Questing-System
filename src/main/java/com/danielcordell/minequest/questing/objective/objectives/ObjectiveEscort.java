@@ -87,9 +87,10 @@ public class ObjectiveEscort extends ObjectiveBase {
 
     @Override
     protected void completeObjective(World world) {
-        EntityNPC npc = Util.getNPCFromQuestIDOrNull(questEntityID, world, quest);;
-        npc.clearNPCFollow();
         super.completeObjective(world);
+        EntityNPC npc = Util.getNPCFromQuestIDOrNull(questEntityID, world, quest);
+        if (checkpoint.getObjectives().stream().noneMatch(it -> it instanceof ObjectiveEscort && it.getState() == QuestState.STARTED))
+            npc.clearNPCFollow();
     }
 
     @Override

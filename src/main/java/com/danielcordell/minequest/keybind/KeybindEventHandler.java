@@ -45,6 +45,7 @@ public class KeybindEventHandler {
                         player.sendMessage(new TextComponentString(objectiveName).setStyle(style.setHoverEvent(hoverEvent).setUnderlined(true)));
                     }
                 }
+                player.sendMessage(new TextComponentString(""));
             }
         }
         if (KeyBindings.keyBindings.get(1).isPressed()) {

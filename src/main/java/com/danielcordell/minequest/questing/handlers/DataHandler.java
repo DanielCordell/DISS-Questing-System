@@ -64,11 +64,6 @@ public class DataHandler {
         EntityPlayerMP player = (EntityPlayerMP) event.player;
         WorldServer world = (WorldServer) player.world;
         if (world.getWorldTime() % 20 == 0) {
-
-            if (world.getWorldTime() < 20 * 3600 * 5) {
-                world.setTotalWorldTime(20 * 3600 * 5);
-            }
-
             WorldQuestData wqd = WorldQuestData.get(world);
             PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
             //Should start quest.
@@ -95,8 +90,8 @@ public class DataHandler {
                 if (advancements.getProgress(pick).isDone() && advancements.getProgress(sword).isDone()) {
                     pqd.startGenerating();
                     player.sendMessage(new TextComponentString("Quests will now begin generating."));
-                    player.sendMessage(new TextComponentString("Press Q to view your quests in the chat log."));
-                    player.sendMessage(new TextComponentString("Hover over your objectives for more information."));
+                    player.sendMessage(new TextComponentString("Press R ingame (not in chat) to view your quests in the chat log."));
+                    player.sendMessage(new TextComponentString("Hover over underlined objectives for more information."));
                 }
             }
 
@@ -104,8 +99,8 @@ public class DataHandler {
             if (pqd.canGenerate() && world.getTotalWorldTime() > pqd.getTimeLastGenerated() + pqd.getTimeUntilNext() && pqd.getNumberOfActiveQuests() < 3L) {
                 Quest quest = QuestGenerator.generate(world, player);
                 pqd.startQuest(player, quest);
-                pqd.setTimeLastGenerated(event, world.getTotalWorldTime()); // Between 8 and 15 minutes
-                pqd.setTimeUntilNext(event, world.rand.nextInt(9600) + 8400);
+                pqd.setTimeLastGenerated(event, world.getTotalWorldTime());
+                pqd.setTimeUntilNext(event, world.rand.nextInt(9600) + 8400); // Between 8 and 15 minutes
             }
 
             //Check for Quest Completion
@@ -178,7 +173,7 @@ public class DataHandler {
     @SubscribeEvent
     public static void onRespawn(net.minecraftforge.event.entity.player.PlayerEvent.Clone event){
         EntityPlayer original = event.getOriginal();
-        if (MineQuest.isClient(original.world.isRemote) || !event.isWasDeath()) return;
+        if (!event.isWasDeath()) return;
         PlayerQuestData capOld = original.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
         PlayerQuestData capNew = event.getEntityPlayer().getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
         capOld.copyTo(capNew);

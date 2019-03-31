@@ -52,7 +52,7 @@ public class ObjectiveTrigger extends ObjectiveBase {
 
     @Override
     public String getSPObjectiveInfo(EntityPlayerSP player) {
-        return "Interact with Action Block: " + actionBlockID;
+        return "Locate the heart of the structure!";
     }
 
     @Override

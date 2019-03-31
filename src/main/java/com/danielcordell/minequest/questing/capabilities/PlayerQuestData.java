@@ -104,6 +104,7 @@ public class PlayerQuestData {
         capNew.playerQuests         = this.playerQuests;
         capNew.timeUntilNext        = this.timeUntilNext;
         capNew.timeLastGenerated    = this.timeLastGenerated;
+        this.playerQuests.forEach(Quest::setDirty);
 
     }
 }
