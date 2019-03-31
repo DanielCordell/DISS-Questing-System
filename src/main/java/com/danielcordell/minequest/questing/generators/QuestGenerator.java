@@ -18,6 +18,7 @@ import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
 import com.mojang.realmsclient.util.Pair;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -74,7 +75,7 @@ public class QuestGenerator {
         quest.addCheckpoint(firstCheckpoint);
 
 
-        for (int i = 0; i < worldState.overallDifficulty / 4 + ObjectiveGenerator.rand.nextInt(2); ++i) {
+        for (int i = 0; i < worldState.overallDifficulty / 6; ++i) {
             QuestCheckpoint chkpnt  = firstCheckpoint;
             if (!Conf.shouldGenerateLinear) {
                 ArrayList<QuestCheckpoint> checkpoints = quest.getCheckpoints();
@@ -98,13 +99,11 @@ public class QuestGenerator {
         MineQuest.logger.info("Starteed Checkpoint");
 
         Random rand = ObjectiveGenerator.rand;
-        int numberOfObjectives = worldState.overallDifficulty/4 + rand.nextInt(worldState.overallDifficulty/4 + 1) + 1;
+        int numberOfObjectives = worldState.overallDifficulty <= 10 ? 1 : 2;
         int[] numToGeneratePerOriginal = new int[prevParams.size()];
         for (int i = 0; i < numberOfObjectives; ++i) {
             numToGeneratePerOriginal[i%prevParams.size()]++;
         }
-
-        ArrayList<Item> allItemsUsed = new ArrayList<>();
 
         for (int i = 0; i < prevParams.size(); ++i) {
             for (int j = 0; j < numToGeneratePerOriginal[i]; ++j) {
@@ -115,8 +114,7 @@ public class QuestGenerator {
                     do {
                         entity = Util.getRandomEnemyFromDimension(rand, worldState.dimension);
                     } while (entity == ((ParamsKillType) param).entityTypeToKill && (entity != EntityEnderman.class || worldState.isNight));
-                    int numToKill = (rand.nextInt(3) + 3) * worldState.overallDifficulty / 2;
-                    numToKill = numToKill > 0 ? numToKill : 1;
+                    int numToKill = worldState.overallDifficulty < 5 ? 5 : worldState.overallDifficulty;
                     if (entity == EntityEnderman.class) numToKill = numToKill / 2  + 1;
                     newParams = new ParamsKillType(newCheckpoint, "Keep cleansing the world!")
                             .setParamDetails(entity, numToKill);
@@ -127,14 +125,14 @@ public class QuestGenerator {
                             .map(it -> ((IntentSpawnEntity) it))
                             .filter(it -> it.getEntityData().equals(((ParamsKillSpecific) param).nbtTagToFind)).findFirst().orElse(null);
                     Class<? extends EntityLivingBase> entityToSpawn;
-                    if (oldIntent == null) {
-                        entityToSpawn = Util.getRandomEnemyFromDimension(rand, worldState.dimension);
-                    }
-                    else {
-                        entityToSpawn = oldIntent.getEntityToSpawn();
-                    }
-                    int numToKill = (rand.nextInt(3) + 3) * worldState.overallDifficulty / 2;
-                    numToKill = numToKill > 0 ? numToKill : 1;
+                    do {
+                        if (oldIntent == null) {
+                            entityToSpawn = Util.getRandomEnemyFromDimension(rand, worldState.dimension);
+                        } else {
+                            entityToSpawn = oldIntent.getEntityToSpawn();
+                        }
+                    } while (entityToSpawn == EntityCreeper.class);
+                    int numToKill = worldState.overallDifficulty / 3 + 1;
                     newParams = new ParamsKillType(newCheckpoint, "Get Revenge!")
                             .setParamDetails(entityToSpawn, numToKill);
 
@@ -159,16 +157,20 @@ public class QuestGenerator {
                                     .map(ItemStack::getItem)
                                     .collect(Collectors.toList());
                             Item item = itemStack.getItem();
-                            if (items.contains(item) && !allItemsUsed.contains(item)) {
+                            if (items.contains(item)) {
                                 recipe = iRecipe;
-                                allItemsUsed.add(item);
                                 break;
                             }
                         }
-                        if (recipe == null)
-                            newParams = ObjectiveGenerator.generateGatherObjective(newCheckpoint, itemStack);
-                        else
-                            newParams = ObjectiveGenerator.generateGatherObjective(newCheckpoint, recipe.getRecipeOutput());
+
+                        if (recipe != null) {
+                            itemStack = recipe.getRecipeOutput();
+                            itemStack.setCount(worldState.overallDifficulty / 2 + 5);
+                        }
+                        else {
+                            itemStack.setCount(((int) (itemStack.getCount() * 1.8)));
+                        }
+                        newParams = ObjectiveGenerator.generateGatherObjective(newCheckpoint, itemStack);
                     }
                 }
                 else if (param instanceof ParamsDeliver) {
@@ -254,20 +256,20 @@ public class QuestGenerator {
                 .filter(it -> it instanceof ObjectiveGather).map(it -> ((ObjectiveGather) it)).collect(Collectors.toList());
         List<Item> collect = Util.getDuplicates(objectiveGathers.stream().map(objective -> objective.getItem().getItem()).collect(Collectors.toList()));
         for (Item item : collect) {
-            long count = objectiveGathers.stream().filter(it -> it.getItem().getItem() == item).mapToInt(it -> it.getItem().getCount()).count();
+            long count = objectiveGathers.stream().filter(it -> it.getItem().getItem() == item).mapToInt(it -> it.getItem().getCount()).sum();
             ParamsGather gather = ((ParamsGather) objectiveGathers.stream().filter(it -> it.getItem().getItem() == item).findFirst().get().getParams());
-            objectiveGathers.removeIf(it -> it.getItem().getItem() == item);
-            objectiveGathers.add((ObjectiveGather) ObjectiveBuilder.fromParams(gather.setParamDetails(new ItemStack(item), ((int) count))));
+            newCheckpoint.removeObjectivesIf(it -> it instanceof ObjectiveGather && ((ObjectiveGather) it).getItem().getItem() == item);
+            newCheckpoint.addObjective(ObjectiveBuilder.fromParams(gather.setParamDetails(new ItemStack(item), ((int) count))));
         }
 
         List<ObjectiveDeliver> objectiveDelivers = newCheckpoint.getObjectives().stream()
                 .filter(it -> it instanceof ObjectiveDeliver).map(it -> ((ObjectiveDeliver) it)).collect(Collectors.toList());
         collect = Util.getDuplicates(objectiveDelivers.stream().map(objective -> objective.getItem().getItem()).collect(Collectors.toList()));
         for (Item item : collect) {
-            long count = objectiveGathers.stream().filter(it -> it.getItem().getItem() == item).mapToInt(it -> it.getItem().getCount()).count();
+            long count = objectiveDelivers.stream().filter(it -> it.getItem().getItem() == item).mapToInt(it -> it.getItem().getCount()).sum();
             ParamsDeliver deliver = ((ParamsDeliver) objectiveDelivers.stream().filter(it -> it.getItem().getItem() == item).findFirst().get().getParams());
-            objectiveDelivers.removeIf(it -> it.getItem().getItem() == item);
-            objectiveDelivers.add((ObjectiveDeliver) ObjectiveBuilder.fromParams(deliver.setParamDetails(new ItemStack(item), ((int) count), deliver.questEntityID, deliver.nearby)));
+            newCheckpoint.removeObjectivesIf(it -> it instanceof ObjectiveDeliver && ((ObjectiveDeliver) it).getItem().getItem() == item);
+            newCheckpoint.addObjective(ObjectiveBuilder.fromParams(deliver.setParamDetails(new ItemStack(item), ((int) count), deliver.questEntityID, deliver.nearby)));
         }
 
         MineQuest.logger.info("Finished Checkpoint");
@@ -286,14 +288,16 @@ public class QuestGenerator {
                 params = new ParamsKillType(firstCheckpoint, "You're very close to a Spawner, kill some " + Util.getPrintableNameFromEntity(spawnerEntity) + "s!").setParamDetails(spawnerEntity, worldState.overallDifficulty / 2 + 5);
             }
             else {
-                int numToKill = (ObjectiveGenerator.rand.nextInt(3) + 3) * worldState.overallDifficulty / 2;
-                numToKill = numToKill > 0 ? numToKill : 1;
+                int numToKill = worldState.overallDifficulty < 5 ? 5 : worldState.overallDifficulty;
                 params = new ParamsKillType(firstCheckpoint, "Kill some enemies!").setParamDetails(
                         Util.getRandomEnemyFromDimension(ObjectiveGenerator.rand, worldState.dimension), numToKill
                 );
             }
         } else if (objectiveType == ObjectiveType.KILL_SPECIFIC) {
-            Class<? extends EntityLivingBase> entType = Util.getRandomEnemyFromDimension(ObjectiveGenerator.rand, worldState.dimension);
+            Class<? extends EntityLivingBase> entType;
+            do {
+                entType = Util.getRandomEnemyFromDimension(ObjectiveGenerator.rand, worldState.dimension);
+            } while (entType == EntityCreeper.class);
             params = ObjectiveGenerator.generateKillSpecificObjective(firstCheckpoint, worldState, entType);
         } else if (objectiveType == ObjectiveType.TRIGGER) {
             throw new NotImplementedException("Not implemented this objective yet");

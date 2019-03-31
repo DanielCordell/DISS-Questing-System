@@ -8,6 +8,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -45,7 +46,9 @@ public class RagsRichesCommand extends CommandBase {
         player.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.DIAMOND_LEGGINGS));
         InventoryPlayer inventory = player.inventory;
         inventory.addItemStackToInventory(new ItemStack(Items.DIAMOND_SWORD));
-        inventory.addItemStackToInventory(new ItemStack(Items.DIAMOND_PICKAXE));
+        ItemStack itemStack = new ItemStack(Items.DIAMOND_PICKAXE);
+        itemStack.addEnchantment(Enchantments.EFFICIENCY, 5);
+        inventory.addItemStackToInventory(itemStack);
         inventory.addItemStackToInventory(new ItemStack(Items.DIAMOND_SHOVEL));
         inventory.addItemStackToInventory(new ItemStack(Items.GOLDEN_APPLE,10 ));
         inventory.addItemStackToInventory(new ItemStack(Items.BOW));

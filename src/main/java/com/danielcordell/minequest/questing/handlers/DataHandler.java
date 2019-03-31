@@ -95,6 +95,8 @@ public class DataHandler {
                 if (advancements.getProgress(pick).isDone() && advancements.getProgress(sword).isDone()) {
                     pqd.startGenerating();
                     player.sendMessage(new TextComponentString("Quests will now begin generating."));
+                    player.sendMessage(new TextComponentString("Press Q to view your quests in the chat log."));
+                    player.sendMessage(new TextComponentString("Hover over your objectives for more information."));
                 }
             }
 

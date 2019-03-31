@@ -23,7 +23,7 @@ public class ObjectiveGenerator {
 
     static ObjectiveParamsBase generateKillSpecificObjective(QuestCheckpoint firstCheckpoint, WorldState worldState, Class<? extends EntityLivingBase> entType) {
         Quest quest = firstCheckpoint.getQuest();
-        int numToKill = (worldState.overallDifficulty / 4) * (rand.nextInt(5)+4);
+        int numToKill = (worldState.overallDifficulty / 3) + 1;
         numToKill = numToKill > 0 ? numToKill : 1;
         String nbt = quest.getName()+quest.getQuestID();
         firstCheckpoint.addIntent(new IntentSpawnEntity(quest, entType, numToKill, new PlayerRadiusPosParam(10), nbt, "Ambush",  worldState.overallDifficulty / 5));

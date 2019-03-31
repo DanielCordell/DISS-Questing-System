@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 public class QuestCheckpoint {
     private final Quest quest;
@@ -68,6 +69,10 @@ public class QuestCheckpoint {
 
     public ArrayList<ObjectiveBase> getObjectives() {
         return new ArrayList<>(objectives);
+    }
+
+    public void removeObjectivesIf(Predicate<? super ObjectiveBase> filter){
+        objectives.removeIf(filter);
     }
 
     public void performIntents(World world) {
