@@ -17,6 +17,7 @@ public class QuestStartBlock extends Block implements ITileEntityProvider {
         super(Material.CLOTH);
         setUnlocalizedName("queststartblock");
         setRegistryName("queststartblock");
+        setBlockUnbreakable();
     }
 
     @SideOnly(Side.CLIENT)
