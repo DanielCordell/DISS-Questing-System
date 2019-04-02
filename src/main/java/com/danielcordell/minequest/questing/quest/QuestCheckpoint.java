@@ -15,7 +15,6 @@ import java.util.function.Predicate;
 
 public class QuestCheckpoint {
     private final Quest quest;
-    private final boolean isFinalCheckpoint;
 
     private final ArrayList<ObjectiveBase> objectives;
 
@@ -27,7 +26,6 @@ public class QuestCheckpoint {
 
     public QuestCheckpoint(Quest quest, NBTTagCompound nbt) {
         this.quest = quest;
-        this.isFinalCheckpoint = nbt.getBoolean("isFinalCheckpoint");
 
         objectives = new ArrayList<>();
         intents = new ArrayList<>();
@@ -43,7 +41,6 @@ public class QuestCheckpoint {
 
     public NBTBase toNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setBoolean("isFinalCheckpoint", isFinalCheckpoint);
         NBTTagList objList = new NBTTagList();
         objectives.forEach(objective -> objList.appendTag(objective.toNBT()));
         nbt.setTag("objectives", objList);

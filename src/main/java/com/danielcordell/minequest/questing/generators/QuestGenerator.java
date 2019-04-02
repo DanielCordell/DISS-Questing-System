@@ -74,15 +74,17 @@ public class QuestGenerator {
         firstCheckpoint.addObjective(objective);
         quest.addCheckpoint(firstCheckpoint);
 
-
+        QuestCheckpoint chkpnt  = firstCheckpoint;
         for (int i = 0; i < worldState.overallDifficulty / 6; ++i) {
-            QuestCheckpoint chkpnt  = firstCheckpoint;
-            if (!Conf.shouldGenerateLinear) {
+            if (Conf.shouldGenerateLinear) {
+                chkpnt = iterate(worldState, chkpnt);
+                quest.addCheckpoint(chkpnt);
+            } else {
                 ArrayList<QuestCheckpoint> checkpoints = quest.getCheckpoints();
-                chkpnt = checkpoints.get(checkpoints.size()-1);
+                int index = ObjectiveGenerator.rand.nextInt(checkpoints.size());
+                chkpnt = iterate(worldState, quest.getCheckpoints().get(index));
+                quest.addCheckpoint(chkpnt, index+1);
             }
-            chkpnt = iterate(worldState, chkpnt);
-            quest.addCheckpoint(chkpnt);
         }
 
         quest.addFinishIntent(new IntentGiveItemStack(quest, Util.getRewardFromDifficulty(ObjectiveGenerator.rand, worldState.overallDifficulty)));
@@ -164,8 +166,12 @@ public class QuestGenerator {
                         }
 
                         if (recipe != null) {
-                            itemStack = recipe.getRecipeOutput();
-                            itemStack.setCount(worldState.overallDifficulty / 2 + 5);
+                            ItemStack newItemStack = recipe.getRecipeOutput();
+                            int count = worldState.overallDifficulty / 2 + 5;
+                            ItemStack finalItemStack = itemStack;
+                            count = (int) (count / recipe.getIngredients().stream().filter(it -> (Arrays.asList(it.getMatchingStacks()).contains(finalItemStack.getItem()))).count());
+                            newItemStack.setCount(count < 2 ? 2 : count);
+                            itemStack = newItemStack;
                         }
                         else {
                             itemStack.setCount(((int) (itemStack.getCount() * 1.8)));

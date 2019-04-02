@@ -78,6 +78,7 @@ public class DataHandler {
                         MineQuest.logger.info("Started New Quest!");
                         MineQuest.logger.info("Quest: " + quest.toNBT());
                         player.sendMessage(new TextComponentString("New Quest Started: " + quest.getName()));
+                        player.sendMessage(new TextComponentString("Press R ingame (not with chat open) to view your quests in the chat log."));
                     }
                 });
             }
@@ -90,7 +91,7 @@ public class DataHandler {
                 if (advancements.getProgress(pick).isDone() && advancements.getProgress(sword).isDone()) {
                     pqd.startGenerating();
                     player.sendMessage(new TextComponentString("Quests will now begin generating."));
-                    player.sendMessage(new TextComponentString("Press R ingame (not in chat) to view your quests in the chat log."));
+                    player.sendMessage(new TextComponentString("Press R ingame (not with chat open) to view your quests in the chat log."));
                     player.sendMessage(new TextComponentString("Hover over underlined objectives for more information."));
                 }
             }

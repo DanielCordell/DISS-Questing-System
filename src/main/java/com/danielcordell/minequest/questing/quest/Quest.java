@@ -138,11 +138,6 @@ public class Quest {
         return state;
     }
 
-    public void addCheckpoint(QuestCheckpoint checkpoint) {
-        this.checkpoints.add(checkpoint);
-        setDirty();
-    }
-
     public void setPlayer(EntityPlayer player) {
         playerID = player.getUniqueID();
         setDirty();
@@ -231,5 +226,14 @@ public class Quest {
 
     public ArrayList<QuestCheckpoint> getCheckpoints() {
         return checkpoints;
+    }
+
+    public void addCheckpoint(QuestCheckpoint checkpoint) {
+        this.checkpoints.add(checkpoint);
+        setDirty();
+    }
+
+    public void addCheckpoint(QuestCheckpoint checkpoint, int index) {
+        this.checkpoints.add(index, checkpoint);
     }
 }

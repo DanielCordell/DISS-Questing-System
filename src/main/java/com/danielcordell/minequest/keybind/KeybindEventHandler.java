@@ -34,7 +34,7 @@ public class KeybindEventHandler {
             for (Quest quest : pqd.getQuests()) {
                 alternating = (alternating == TextFormatting.WHITE) ? TextFormatting.GRAY : TextFormatting.WHITE;
                 Style style = new Style().setColor(alternating);
-                String questStatus = quest.getName() + " - Status: " + quest.getState().name();
+                String questStatus = quest.getName() + " (" + quest.getQuestID() + ") - Status: " + quest.getState().name();
                 player.sendMessage(new TextComponentString(questStatus).setStyle(style));
                 if (quest.getState() == QuestState.STARTED) {
                     for (ObjectiveBase objective : quest.getCurrentCheckpointObjectives()) {
