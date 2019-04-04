@@ -106,7 +106,7 @@ public class DataHandler {
     @SubscribeEvent
     public static void onWorldUpdate(TickEvent.WorldTickEvent event) {
         World world = event.world;
-        if (world.getWorldTime() % 50 == 0) {
+        if (world.getWorldTime() % 100 == 0) {
             WorldQuestData wqd = WorldQuestData.get(world);
             wqd.getImmutableQuests()
                     .stream()

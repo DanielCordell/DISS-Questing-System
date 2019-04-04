@@ -37,7 +37,7 @@ public class QuestTriggerHandler {
         if (MineQuest.isClient(event.player.world.isRemote)) return;
         EntityPlayer player = event.player;
         World world = player.world;
-        if (world.getWorldTime() % 50 == 0) {
+        if (world.getWorldTime() % 100 == 0) {
             PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
             if (pqd == null) return;
             pqd.updateAllCurrentObjectives(event);
@@ -66,7 +66,7 @@ public class QuestTriggerHandler {
     @SubscribeEvent
     public static void onEntityLivingUpdate(LivingEvent.LivingUpdateEvent event) {
         World world = event.getEntity().world;
-        if (world.getWorldTime() % 50 != 0) return;
+        if (world.getWorldTime() % 100 != 0) return;
         if (MineQuest.isClient(world.isRemote)) return;
         world.playerEntities.forEach(player -> {
             PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);

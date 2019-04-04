@@ -331,13 +331,13 @@ public class QuestGenerator {
             //params = new ParamsKillSpecific(firstCheckpoint, "Trigger something!");
         } else if (objectiveType == ObjectiveType.ESCORT) {
             List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
-                    .stream().filter(it -> !it.getValue().second() && Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
+                    .stream().filter(it -> !it.getValue().second() && Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 50 && !it.getKey().equals("Temple"))
                     .map(Entry::getKey).collect(Collectors.toList());
 
             int size = possibleStructures.size();
             if (size == 0)
                 possibleStructures = worldState.closestStructurePerType.entrySet()
-                        .stream().filter(it -> !it.getValue().second())
+                        .stream().filter(it -> !it.getValue().second() && !it.getKey().equals("Temple"))
                         .map(Entry::getKey).collect(Collectors.toList());
             String structure = possibleStructures.get(ObjectiveGenerator.rand.nextInt(possibleStructures.size()));
 
