@@ -1,6 +1,5 @@
 package com.danielcordell.minequest.questing.objective.objectives;
 
-import com.danielcordell.minequest.MineQuest;
 import com.danielcordell.minequest.Util;
 import com.danielcordell.minequest.entities.EntityNPC;
 import com.danielcordell.minequest.questing.enums.ObjectiveType;
@@ -27,7 +26,7 @@ public class ObjectiveEscort extends ObjectiveBase {
     private BlockPos nearby;
 
     public ObjectiveEscort(ParamsEscort params, ObjectiveType type) {
-        super(params.checkpoint, params.description, params.state, params.optional, type);
+        super(params.checkpoint, params.description, params.state, type);
         questEntityID = params.questEntityID;
         structureType = params.type;
 
@@ -102,7 +101,7 @@ public class ObjectiveEscort extends ObjectiveBase {
 
     @Override
     public ObjectiveParamsBase getParams() {
-        return new ParamsEscort(checkpoint, getDescription(), optional, state).setParamDetails(questEntityID, null, structureType,  nearby);
+        return new ParamsEscort(checkpoint, getDescription(), state).setParamDetails(questEntityID, null, structureType,  nearby);
     }
 
     public String getStructureType() {

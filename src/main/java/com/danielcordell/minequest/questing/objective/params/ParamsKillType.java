@@ -11,6 +11,10 @@ public class ParamsKillType extends ObjectiveParamsBase {
     public int numToKill;
     public int numAlreadyKilled;
 
+    public ParamsKillType(QuestCheckpoint checkpoint, String description, QuestState state) {
+        super(checkpoint, description, state);
+    }
+
     public ParamsKillType setParamDetails(Class<? extends EntityLivingBase> entityTypeToKill, int numToKill) {
         return setParamDetails(entityTypeToKill, numToKill, 0);
     }
@@ -24,13 +28,5 @@ public class ParamsKillType extends ObjectiveParamsBase {
 
     public ParamsKillType(QuestCheckpoint questCheckpoint, String description) {
         super(questCheckpoint, description);
-    }
-
-    public ParamsKillType(QuestCheckpoint questCheckpoint, String description, boolean optional) {
-        super(questCheckpoint, description, optional);
-    }
-
-    public ParamsKillType(QuestCheckpoint questCheckpoint, String description, boolean optional, QuestState state) {
-        super(questCheckpoint, description, optional, state);
     }
 }

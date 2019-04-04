@@ -18,7 +18,7 @@ public class ObjectiveSearch extends ObjectiveBase {
     private String structureType;
 
     public ObjectiveSearch(ParamsSearch params, ObjectiveType type) {
-        super(params.checkpoint, params.description, params.state, params.optional, type);
+        super(params.checkpoint, params.description, params.state, type);
         structureType = params.structureType;
     }
 
@@ -58,7 +58,7 @@ public class ObjectiveSearch extends ObjectiveBase {
 
     @Override
     public ObjectiveParamsBase getParams() {
-        return new ParamsSearch(checkpoint, getDescription(), optional, state).setParamDetails(structureType);
+        return new ParamsSearch(checkpoint, getDescription(), state).setParamDetails(structureType);
     }
 
     public String getStructureType() {

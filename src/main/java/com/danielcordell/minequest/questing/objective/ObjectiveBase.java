@@ -22,28 +22,25 @@ public abstract class ObjectiveBase {
     //Objective Data
     protected String description;
     protected QuestState state;
-    protected boolean optional;
     protected ObjectiveType type;
 
-    public ObjectiveBase(QuestCheckpoint checkpoint, String description, QuestState state, boolean optional, ObjectiveType type) {
+    public ObjectiveBase(QuestCheckpoint checkpoint, String description, QuestState state, ObjectiveType type) {
         this.checkpoint = checkpoint;
         this.quest = checkpoint.getQuest();
         this.description = description;
         this.state = state;
-        this.optional = optional;
         this.type = type;
     }
 
     public ObjectiveBase(QuestCheckpoint checkpoint, ObjectiveType type, NBTTagCompound nbt) {
         this(checkpoint, nbt.getString("description"), QuestState.getStateFromInt(nbt.getInteger("state")),
-                nbt.getBoolean("optional"), type);
+                type);
     }
 
     public NBTTagCompound toNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setString("description", description);
         nbt.setInteger("state", state.stateInt);
-        nbt.setBoolean("optional", optional);
         nbt.setInteger("type", type.objectiveInt);
         return objectiveSpecificToNBT(nbt);
     }
@@ -76,7 +73,6 @@ public abstract class ObjectiveBase {
 
     public abstract String getSPObjectiveInfo(EntityPlayerSP player);
 
-
     public abstract ObjectiveParamsBase getParams();
 
     protected void completeObjective(World world) {
@@ -90,5 +86,4 @@ public abstract class ObjectiveBase {
         player.sendMessage(new TextComponentString("Quest log updated, press R to view."));
         quest.setDirty();
     }
-
 }

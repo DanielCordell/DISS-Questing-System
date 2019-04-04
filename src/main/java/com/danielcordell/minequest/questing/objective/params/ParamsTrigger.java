@@ -13,12 +13,8 @@ public class ParamsTrigger extends ObjectiveParamsBase {
         super(questCheckpoint, description);
     }
 
-    public ParamsTrigger(QuestCheckpoint questCheckpoint, String description, boolean optional) {
-        super(questCheckpoint, description, optional);
-    }
-
-    public ParamsTrigger(QuestCheckpoint questCheckpoint, String description, boolean optional, QuestState state) {
-        super(questCheckpoint, description, optional, state);
+    public ParamsTrigger(QuestCheckpoint checkpoint, String description, QuestState state) {
+        super(checkpoint, description, state);
     }
 
     public ParamsTrigger setParamDetails(UUID actionBlockID) {

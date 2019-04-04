@@ -20,7 +20,7 @@ public class ObjectiveTrigger extends ObjectiveBase {
     private UUID actionBlockID;
 
     public ObjectiveTrigger(ParamsTrigger params, ObjectiveType type) {
-        super(params.checkpoint, params.description, params.state, params.optional, type);
+        super(params.checkpoint, params.description, params.state, type);
         actionBlockID = params.actionBlockID;
     }
 
@@ -57,6 +57,6 @@ public class ObjectiveTrigger extends ObjectiveBase {
 
     @Override
     public ObjectiveParamsBase getParams() {
-        return new ParamsTrigger(checkpoint, getDescription(), optional, state).setParamDetails(actionBlockID);
+        return new ParamsTrigger(checkpoint, getDescription(), state).setParamDetails(actionBlockID);
     }
 }

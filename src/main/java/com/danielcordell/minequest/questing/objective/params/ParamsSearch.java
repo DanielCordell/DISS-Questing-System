@@ -11,12 +11,8 @@ public class ParamsSearch extends ObjectiveParamsBase {
         super(questCheckpoint, description);
     }
 
-    public ParamsSearch(QuestCheckpoint questCheckpoint, String description, boolean optional) {
-        super(questCheckpoint, description, optional);
-    }
-
-    public ParamsSearch(QuestCheckpoint questCheckpoint, String description, boolean optional, QuestState state) {
-        super(questCheckpoint, description, optional, state);
+    public ParamsSearch(QuestCheckpoint checkpoint, String description, QuestState state) {
+        super(checkpoint, description, state);
     }
 
     public ParamsSearch setParamDetails(String structureType) {

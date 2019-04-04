@@ -26,7 +26,7 @@ public class ObjectiveKillSpecific extends ObjectiveBase {
     private int numKilled;
 
     public ObjectiveKillSpecific(ParamsKillSpecific params, ObjectiveType type) {
-        super(params.checkpoint, params.description, params.state, params.optional, type);
+        super(params.checkpoint, params.description, params.state, type);
         nbtTagToFind = params.nbtTagToFind;
         numToKill = params.numToKill;
         numKilled = params.numAlreadyKilled;
@@ -83,7 +83,7 @@ public class ObjectiveKillSpecific extends ObjectiveBase {
 
     @Override
     public ObjectiveParamsBase getParams() {
-        return new ParamsKillSpecific(checkpoint, getDescription(), optional, state).setParamDetails(nbtTagToFind, numToKill);
+        return new ParamsKillSpecific(checkpoint, getDescription(), state).setParamDetails(nbtTagToFind, numToKill);
     }
 
 }

@@ -12,7 +12,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 public class ObjectiveKillType extends ObjectiveBase {
     private Class<? extends EntityLivingBase> entityType;
@@ -20,7 +19,7 @@ public class ObjectiveKillType extends ObjectiveBase {
     private int numKilled;
 
     public ObjectiveKillType(ParamsKillType params, ObjectiveType type) {
-        super(params.checkpoint, params.description, params.state, params.optional, type);
+        super(params.checkpoint, params.description, params.state, type);
         entityType = params.entityTypeToKill;
         numToKill = params.numToKill;
         numKilled = params.numAlreadyKilled;
@@ -67,7 +66,7 @@ public class ObjectiveKillType extends ObjectiveBase {
 
     @Override
     public ObjectiveParamsBase getParams() {
-        return new ParamsKillType(checkpoint, getDescription(), optional, state).setParamDetails(entityType, numToKill);
+        return new ParamsKillType(checkpoint, getDescription(), state).setParamDetails(entityType, numToKill);
     }
 
 }

@@ -44,20 +44,6 @@ public class DataHandler {
     }
 
     @SubscribeEvent
-    public static void onPlayerPickup(net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemPickupEvent event) {
-        WorldQuestData data = WorldQuestData.get(event.player.world);
-        Quest q = data.getQuestByID(0);
-        if (q == null) MineQuest.logger.error("SERVER: WHOOPS ITS NULL BAD ABORT");
-        else {
-            MineQuest.logger.info("\nSERVER");
-            MineQuest.logger.info("WorldQuests: ");
-            MineQuest.logger.info(q.toNBT().toString());
-            MineQuest.logger.info("PlayerDataQuests: ");
-            MineQuest.logger.info(event.player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null).numberOfQuests());
-        }
-    }
-
-    @SubscribeEvent
     public static void onPlayerUpdate(TickEvent.PlayerTickEvent event) {
         if (MineQuest.isClient(event.player.world.isRemote)) return;
         if (event.phase == TickEvent.Phase.END) return;
@@ -145,27 +131,20 @@ public class DataHandler {
 
     @SubscribeEvent
     public static void onMobDamage(LivingDamageEvent event) {
-        if (event.getEntity().getEntityData().hasKey("inQuest")) {
-            String damageType = event.getSource().damageType;
-
-            if (damageType.equalsIgnoreCase(DamageSource.OUT_OF_WORLD.damageType) || damageType.equalsIgnoreCase(DamageSource.ANVIL.damageType) || damageType.equalsIgnoreCase(DamageSource.MAGIC.damageType))
-                return;
-
-            if (!event.getSource().damageType.equalsIgnoreCase("player")) {
-                event.setCanceled(true);
-            }
-        }
+        onMobDamage(event, event.getSource().damageType);
     }
 
     @SubscribeEvent
     public static void onMobDamage(LivingHurtEvent event) {
-        if (event.getEntity().getEntityData().hasKey("inQuest")) {
-            String damageType = event.getSource().damageType;
+        onMobDamage(event, event.getSource().damageType);
+    }
 
+    private static void onMobDamage(LivingEvent event, String damageType) {
+        if (event.getEntity().getEntityData().hasKey("inQuest")) {
             if (damageType.equalsIgnoreCase(DamageSource.OUT_OF_WORLD.damageType) || damageType.equalsIgnoreCase(DamageSource.ANVIL.damageType) || damageType.equalsIgnoreCase(DamageSource.MAGIC.damageType))
                 return;
 
-            if (!event.getSource().damageType.equalsIgnoreCase("player")) {
+            if (!damageType.equalsIgnoreCase("player")) {
                 event.setCanceled(true);
             }
         }

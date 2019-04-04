@@ -20,7 +20,6 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -31,7 +30,7 @@ public class ObjectiveDeliver extends ObjectiveBase {
     private BlockPos nearby;
 
     public ObjectiveDeliver(ParamsDeliver params, ObjectiveType type) {
-        super(params.checkpoint, params.description, params.state, params.optional, type);
+        super(params.checkpoint, params.description, params.state, type);
         item = params.item;
         count = params.count;
         questEntityID = params.questEntityID;
@@ -99,7 +98,7 @@ public class ObjectiveDeliver extends ObjectiveBase {
 
     @Override
     public ObjectiveParamsBase getParams() {
-        return new ParamsDeliver(checkpoint, getDescription(), optional, state).setParamDetails(item, count, questEntityID, nearby);
+        return new ParamsDeliver(checkpoint, getDescription(), state).setParamDetails(item, count, questEntityID, nearby);
     }
 
     public ItemStack getItem() {

@@ -16,12 +16,8 @@ public class ParamsEscort extends ObjectiveParamsBase {
         super(questCheckpoint, description);
     }
 
-    public ParamsEscort(QuestCheckpoint questCheckpoint, String description, boolean optional) {
-        super(questCheckpoint, description, optional);
-    }
-
-    public ParamsEscort(QuestCheckpoint questCheckpoint, String description, boolean optional, QuestState state) {
-        super(questCheckpoint, description, optional, state);
+    public ParamsEscort(QuestCheckpoint checkpoint, String description, QuestState state) {
+        super(checkpoint, description, state);
     }
 
     public ParamsEscort setParamDetails(int questEntityID, WorldServer world, String type, BlockPos nearby) {

@@ -23,7 +23,6 @@ public class QuestTriggerHandler {
     @SubscribeEvent
     public static void onEntityDeath(LivingDeathEvent event) {
         if (MineQuest.isClient(event.getEntity().world.isRemote)) return;
-        Entity trueSource = event.getSource().getTrueSource();
         String damageType = event.getSource().damageType;
         if (!(event.getEntityLiving().getAttackingEntity() instanceof EntityPlayerMP) && !damageType.equalsIgnoreCase("player")) return;
         EntityPlayer player = ((EntityPlayer) event.getEntityLiving().getAttackingEntity());
@@ -74,6 +73,5 @@ public class QuestTriggerHandler {
             if (pqd == null) return;
             pqd.updateAllCurrentObjectives(event);
         });
-
     }
 }

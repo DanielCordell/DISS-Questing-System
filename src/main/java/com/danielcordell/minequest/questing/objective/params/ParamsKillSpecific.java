@@ -10,6 +10,10 @@ public class ParamsKillSpecific extends ObjectiveParamsBase {
     public int numToKill;
     public int numAlreadyKilled;
 
+    public ParamsKillSpecific(QuestCheckpoint checkpoint, String description, QuestState state) {
+        super(checkpoint, description, state);
+    }
+
     public ParamsKillSpecific setParamDetails(String nbtTagToFind, int numToKill) {
         return setParamDetails(nbtTagToFind, numToKill, 0);
     }
@@ -23,13 +27,5 @@ public class ParamsKillSpecific extends ObjectiveParamsBase {
 
     public ParamsKillSpecific(QuestCheckpoint questCheckpoint, String description) {
         super(questCheckpoint, description);
-    }
-
-    public ParamsKillSpecific(QuestCheckpoint questCheckpoint, String description, boolean optional) {
-        super(questCheckpoint, description, optional);
-    }
-
-    public ParamsKillSpecific(QuestCheckpoint questCheckpoint, String description, boolean optional, QuestState state) {
-        super(questCheckpoint, description, optional, state);
     }
 }

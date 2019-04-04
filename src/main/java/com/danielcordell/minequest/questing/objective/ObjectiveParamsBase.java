@@ -8,20 +8,15 @@ public abstract class ObjectiveParamsBase {
 
     public String description;
     public final QuestState state;
-    public final boolean optional;
+
 
     public ObjectiveParamsBase(QuestCheckpoint questCheckpoint, String description) {
-        this(questCheckpoint, description, false);
+        this(questCheckpoint, description, QuestState.STARTED);
     }
 
-    public ObjectiveParamsBase(QuestCheckpoint questCheckpoint, String description, boolean optional) {
-        this(questCheckpoint, description, optional, QuestState.STARTED);
-    }
-
-    public ObjectiveParamsBase(QuestCheckpoint questCheckpoint, String description, boolean optional, QuestState state) {
+    public ObjectiveParamsBase(QuestCheckpoint questCheckpoint, String description, QuestState state) {
         this.checkpoint = questCheckpoint;
         this.description = description;
-        this.optional = optional;
         this.state = state == QuestState.CREATED ? QuestState.STARTED : state;
     }
 }

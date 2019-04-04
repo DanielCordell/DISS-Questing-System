@@ -21,7 +21,7 @@ public class ObjectiveGather extends ObjectiveBase {
     private int count;
 
     public ObjectiveGather(ParamsGather params, ObjectiveType type) {
-        super(params.checkpoint, params.description, params.state, params.optional, type);
+        super(params.checkpoint, params.description, params.state, type);
         item = params.item;
         count = params.count;
     }
@@ -69,7 +69,7 @@ public class ObjectiveGather extends ObjectiveBase {
 
     @Override
     public ObjectiveParamsBase getParams() {
-        return new ParamsGather(checkpoint, getDescription(), optional, state).setParamDetails(item, count);
+        return new ParamsGather(checkpoint, getDescription(), state).setParamDetails(item, count);
     }
 
     public ItemStack getItem() {

@@ -13,12 +13,8 @@ public class ParamsGather extends ObjectiveParamsBase {
         super(questCheckpoint, description);
     }
 
-    public ParamsGather(QuestCheckpoint questCheckpoint, String description, boolean optional) {
-        super(questCheckpoint, description, optional);
-    }
-
-    public ParamsGather(QuestCheckpoint questCheckpoint, String description, boolean optional, QuestState state) {
-        super(questCheckpoint, description, optional, state);
+    public ParamsGather(QuestCheckpoint checkpoint, String description, QuestState state) {
+        super(checkpoint, description, state);
     }
 
     public ParamsGather setParamDetails(ItemStack item, int count) {

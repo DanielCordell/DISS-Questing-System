@@ -169,7 +169,7 @@ public class QuestGenerator {
                             ItemStack newItemStack = recipe.getRecipeOutput();
                             int count = worldState.overallDifficulty / 2 + 5;
                             ItemStack finalItemStack = itemStack;
-                            count = (int) (count / recipe.getIngredients().stream().filter(it -> (Arrays.asList(it.getMatchingStacks()).contains(finalItemStack.getItem()))).count());
+                            count = (int) (count / recipe.getIngredients().stream().filter(it -> (Arrays.stream(it.getMatchingStacks()).map(ItemStack::getItem).collect(Collectors.toList()).contains(finalItemStack.getItem()))).count());
                             newItemStack.setCount(count < 2 ? 2 : count);
                             itemStack = newItemStack;
                         }
@@ -186,6 +186,12 @@ public class QuestGenerator {
                     List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
                             .stream().filter(it -> Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
                             .map(Entry::getKey).collect(Collectors.toList());
+
+                    int size = possibleStructures.size();
+                    if (size == 0)
+                        possibleStructures = worldState.closestStructurePerType.entrySet()
+                                .stream().filter(it -> !it.getValue().second())
+                                .map(Entry::getKey).collect(Collectors.toList());
 
                     if (rand.nextInt(2) != 0 && !worldState.closestStructurePerType.values().stream().allMatch(Pair::second) && prevStructures.size() < possibleStructures.size()) {
                         possibleStructures.removeAll(prevStructures);
@@ -209,6 +215,14 @@ public class QuestGenerator {
                     List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
                             .stream().filter(it -> Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
                             .map(Entry::getKey).collect(Collectors.toList());
+
+                    int size = possibleStructures.size();
+                    if (size == 0)
+                        possibleStructures = worldState.closestStructurePerType.entrySet()
+                                .stream().filter(it -> !it.getValue().second())
+                                .map(Entry::getKey).collect(Collectors.toList());
+
+
                     if (rand.nextInt(5) == 0 && prevStructures.size() < possibleStructures.size()) {
                         // Go somewhere else
                         possibleStructures.removeAll(prevStructures);
@@ -234,6 +248,13 @@ public class QuestGenerator {
                     List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
                             .stream().filter(it -> Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
                             .map(Entry::getKey).collect(Collectors.toList());
+
+                    int size = possibleStructures.size();
+                    if (size == 0)
+                        possibleStructures = worldState.closestStructurePerType.entrySet()
+                                .stream().filter(it -> !it.getValue().second())
+                                .map(Entry::getKey).collect(Collectors.toList());
+
 
                     if (rand.nextInt(5) == 0 && prevStructures.size() < possibleStructures.size()) {
                         // Go somewhere else
@@ -313,6 +334,11 @@ public class QuestGenerator {
                     .stream().filter(it -> !it.getValue().second() && Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
                     .map(Entry::getKey).collect(Collectors.toList());
 
+            int size = possibleStructures.size();
+            if (size == 0)
+                possibleStructures = worldState.closestStructurePerType.entrySet()
+                        .stream().filter(it -> !it.getValue().second())
+                        .map(Entry::getKey).collect(Collectors.toList());
             String structure = possibleStructures.get(ObjectiveGenerator.rand.nextInt(possibleStructures.size()));
 
             //?Todo pick an NPC in the world, if there is an NPC NOT currently in an open quest and not too far away (farther than closest village) then use them, otherwise make a new one at the closest village.
@@ -324,7 +350,11 @@ public class QuestGenerator {
             List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
                     .stream().filter(it -> !it.getValue().second() && Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
                     .map(Entry::getKey).collect(Collectors.toList());
-
+            int size = possibleStructures.size();
+            if (size == 0)
+                possibleStructures = worldState.closestStructurePerType.entrySet()
+                        .stream().filter(it -> !it.getValue().second())
+                        .map(Entry::getKey).collect(Collectors.toList());
             String structure = possibleStructures.get(ObjectiveGenerator.rand.nextInt(possibleStructures.size()));
             params = ObjectiveGenerator.generateSearchObjective(firstCheckpoint, structure);
         } else if (objectiveType == ObjectiveType.DELIVER) {
