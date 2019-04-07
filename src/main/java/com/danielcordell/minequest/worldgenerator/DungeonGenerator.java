@@ -55,7 +55,6 @@ public class DungeonGenerator implements IWorldGenerator {
         quest.addCheckpoint(checkpoint);
         quest.addFinishIntent(new IntentGiveItemStack(quest, new ItemStack(Blocks.GOLD_BLOCK, 2)));
         wqd.addQuest(quest);
-        //tODO WAS AUTO OCMPLETING?
         DungeonTemplateProcessor processor = new DungeonTemplateProcessor(id, actionID);
 
         final BlockPos basePos = new BlockPos(chunkX * 16 + random.nextInt(16), world.getSeaLevel(), chunkZ * 16 + random.nextInt(16));

@@ -10,7 +10,8 @@ public class QuestStartTileEntity extends TileEntity {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        questID = compound.getInteger("questID");
+        if (compound.hasKey("questID"))
+            questID = compound.getInteger("questID");
     }
 
     @Override

@@ -44,8 +44,6 @@ public class QuestGenerator {
         WorldState worldState = WorldState.getWorldState(world, player);
         ConcurrentHashMap<ObjectiveType, Integer> objectiveWeights = ObjectiveType.getObjectiveWeightMap(worldState);
 
-        MineQuest.logger.info("Difficulty: " + worldState.overallDifficulty);
-
         //Determine Objective for first Checkpoint
         int max = objectiveWeights.values().stream().mapToInt(Integer::intValue).sum();
         int randVal = ObjectiveGenerator.rand.nextInt(max+1);
@@ -67,7 +65,6 @@ public class QuestGenerator {
             MineQuest.logger.error("Defaulting to KillType");
             objectiveType = ObjectiveType.KILL_TYPE;
         }
-        MineQuest.logger.info("Initial: " + objectiveType.name());
         ObjectiveBase objective = makeObjectiveFromWorldState(objectiveType, worldState, firstCheckpoint);
         firstCheckpoint.addObjective(objective);
         quest.addCheckpoint(firstCheckpoint);
@@ -96,7 +93,6 @@ public class QuestGenerator {
         List<ObjectiveParamsBase> prevParams = prevCheckpoint.getObjectives().stream().map(ObjectiveBase::getParams).collect(Collectors.toList());
         Collections.shuffle(prevParams);
         QuestCheckpoint newCheckpoint = new QuestCheckpoint(prevCheckpoint.getQuest());
-        MineQuest.logger.info("Starteed Checkpoint");
 
         Random rand = ObjectiveGenerator.rand;
         int numberOfObjectives = worldState.overallDifficulty <= 10 ? 1 : 2;
@@ -272,7 +268,6 @@ public class QuestGenerator {
                 } else {
                     newParams = ObjectiveGenerator.generateGatherObjective(newCheckpoint, new ItemStack(Items.APPLE));
                 }
-                MineQuest.logger.info("Generating: " + newParams.description);
                 newCheckpoint.addObjective(ObjectiveBuilder.fromParams(newParams));
             }
         }
@@ -307,7 +302,6 @@ public class QuestGenerator {
             newCheckpoint.addObjective(ObjectiveBuilder.fromParams(kill.setParamDetails(type, (int) count)));
         }
 
-        MineQuest.logger.info("Finished Checkpoint");
         return newCheckpoint;
     }
 

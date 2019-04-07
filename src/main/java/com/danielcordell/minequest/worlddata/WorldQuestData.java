@@ -24,6 +24,11 @@ public class WorldQuestData extends WorldSavedData {
         super(NAME);
     }
 
+    public WorldQuestData(String name) {
+        super(name);
+    }
+
+
     public static WorldQuestData get(World world) {
         MapStorage storage = world.getMapStorage();
         WorldQuestData instance = (WorldQuestData) storage.getOrLoadData(WorldQuestData.class, NAME);

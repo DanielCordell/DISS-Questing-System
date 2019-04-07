@@ -3,6 +3,8 @@ package com.danielcordell.minequest.tileentities;
 import com.danielcordell.minequest.Util;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 import java.util.UUID;
@@ -13,8 +15,8 @@ public class QuestActionTileEntity extends TileEntity {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-
-        actionBlockID = NBTUtil.getUUIDFromTag((NBTTagCompound) compound.getTag("actionBlockID"));
+        if (compound.hasKey("actionBlockID"))
+            actionBlockID = NBTUtil.getUUIDFromTag((NBTTagCompound) compound.getTag("actionBlockID"));
     }
 
     @Override
