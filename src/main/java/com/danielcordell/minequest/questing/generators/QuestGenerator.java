@@ -9,10 +9,7 @@ import com.danielcordell.minequest.questing.intent.intents.IntentSpawnEntity;
 import com.danielcordell.minequest.questing.objective.ObjectiveBase;
 import com.danielcordell.minequest.questing.objective.ObjectiveBuilder;
 import com.danielcordell.minequest.questing.objective.ObjectiveParamsBase;
-import com.danielcordell.minequest.questing.objective.objectives.ObjectiveDeliver;
-import com.danielcordell.minequest.questing.objective.objectives.ObjectiveEscort;
-import com.danielcordell.minequest.questing.objective.objectives.ObjectiveGather;
-import com.danielcordell.minequest.questing.objective.objectives.ObjectiveSearch;
+import com.danielcordell.minequest.questing.objective.objectives.*;
 import com.danielcordell.minequest.questing.objective.params.*;
 import com.danielcordell.minequest.questing.quest.Quest;
 import com.danielcordell.minequest.questing.quest.QuestCheckpoint;
@@ -29,6 +26,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.lang3.NotImplementedException;
@@ -299,6 +297,16 @@ public class QuestGenerator {
             newCheckpoint.addObjective(ObjectiveBuilder.fromParams(deliver.setParamDetails(new ItemStack(item), ((int) count), deliver.questEntityID, deliver.nearby)));
         }
 
+        List<ObjectiveKillType> objectiveKillTypes = newCheckpoint.getObjectives().stream()
+                .filter(it -> it instanceof ObjectiveKillType).map(it -> ((ObjectiveKillType) it)).collect(Collectors.toList());
+        List<Class<? extends EntityLivingBase>> entities = Util.getDuplicates(objectiveKillTypes.stream().map(objective -> objective.getEnemyType()).collect(Collectors.toList()));
+        for (Class<? extends EntityLivingBase> type : entities) {
+            long count = objectiveKillTypes.stream().filter(it -> it.getEnemyType() == type).mapToInt(ObjectiveKillType::getRequired).sum();
+            ParamsKillType kill = ((ParamsKillType) objectiveKillTypes.stream().filter(it -> it.getEnemyType() == type).findFirst().get().getParams());
+            newCheckpoint.removeObjectivesIf(it -> it instanceof ObjectiveKillType && ((ObjectiveKillType) it).getEnemyType() == type);
+            newCheckpoint.addObjective(ObjectiveBuilder.fromParams(kill.setParamDetails(type, (int) count)));
+        }
+
         MineQuest.logger.info("Finished Checkpoint");
         return newCheckpoint;
     }
@@ -324,7 +332,7 @@ public class QuestGenerator {
             Class<? extends EntityLivingBase> entType;
             do {
                 entType = Util.getRandomEnemyFromDimension(ObjectiveGenerator.rand, worldState.dimension);
-            } while (entType == EntityCreeper.class);
+            } while (entType == EntityCreeper.class || (entType == EntityEnderman.class && !worldState.isNight && worldState.dimension == DimensionType.OVERWORLD.getId()));
             params = ObjectiveGenerator.generateKillSpecificObjective(firstCheckpoint, worldState, entType);
         } else if (objectiveType == ObjectiveType.TRIGGER) {
             throw new NotImplementedException("Not implemented this objective yet");

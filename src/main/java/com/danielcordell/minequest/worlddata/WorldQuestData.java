@@ -24,10 +24,6 @@ public class WorldQuestData extends WorldSavedData {
         super(NAME);
     }
 
-    public WorldQuestData(String s) {
-        super(s);
-    }
-
     public static WorldQuestData get(World world) {
         MapStorage storage = world.getMapStorage();
         WorldQuestData instance = (WorldQuestData) storage.getOrLoadData(WorldQuestData.class, NAME);
@@ -62,10 +58,6 @@ public class WorldQuestData extends WorldSavedData {
     public void addQuest(Quest q) {
         quests.add(q);
         markDirty();
-    }
-
-    public Quest getQuestByID(int id) {
-        return quests.stream().filter(quest -> quest.getQuestID() == id).findFirst().orElse(null);
     }
 
     public int getFreshQuestID() {

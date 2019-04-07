@@ -21,6 +21,8 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.ArrayList;
+
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(modid = MineQuest.MODID)
 public class KeybindEventHandler {

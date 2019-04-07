@@ -69,4 +69,11 @@ public class ObjectiveKillType extends ObjectiveBase {
         return new ParamsKillType(checkpoint, getDescription(), state).setParamDetails(entityType, numToKill);
     }
 
+    public Class<? extends EntityLivingBase> getEnemyType() {
+        return entityType;
+    }
+
+    public int getRequired() {
+        return numToKill;
+    }
 }

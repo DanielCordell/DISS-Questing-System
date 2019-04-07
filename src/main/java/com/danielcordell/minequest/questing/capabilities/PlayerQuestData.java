@@ -39,10 +39,6 @@ public class PlayerQuestData {
 
     }
 
-    public int numberOfQuests() {
-        return playerQuests.size();
-    }
-
     public ArrayList<Quest> getQuests() {
         return new ArrayList<>(playerQuests);
     }
@@ -104,7 +100,6 @@ public class PlayerQuestData {
         capNew.playerQuests         = this.playerQuests;
         capNew.timeUntilNext        = this.timeUntilNext;
         capNew.timeLastGenerated    = this.timeLastGenerated;
-        this.playerQuests.forEach(Quest::setDirty);
-
+        capNew.playerQuests.forEach(Quest::setDirty);
     }
 }

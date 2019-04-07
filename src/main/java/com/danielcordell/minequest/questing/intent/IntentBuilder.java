@@ -4,7 +4,6 @@ import com.danielcordell.minequest.questing.enums.IntentType;
 import com.danielcordell.minequest.questing.intent.intents.IntentGiveItemStack;
 import com.danielcordell.minequest.questing.intent.intents.IntentSetNPCFollow;
 import com.danielcordell.minequest.questing.intent.intents.IntentSpawnEntity;
-import com.danielcordell.minequest.questing.intent.intents.IntentStartQuest;
 import com.danielcordell.minequest.questing.quest.Quest;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -18,8 +17,6 @@ public class IntentBuilder {
                 return new IntentGiveItemStack(nbt, quest);
             case SET_NPC_FOLLOW:
                 return new IntentSetNPCFollow(nbt, quest);
-            case START_QUEST:
-                return new IntentStartQuest(nbt, quest);
         }
         return null;
     }
