@@ -23,11 +23,7 @@ public class MakeQuestMessageHandler implements IMessageHandler<MakeQuestMessage
     public IMessage onMessage(MakeQuestMessage message, MessageContext ctx) {
         EntityPlayerMP player = ctx.getServerHandler().player;
         PlayerQuestData pqd = player.getCapability(CapPlayerQuestData.PLAYER_QUEST_DATA, null);
-        Quest quest = null;
-        for (int i = 0; i < 100; ++i) {
-            quest = QuestGenerator.generate((WorldServer) player.world, player);
-            quest.getCheckpoints().stream().map(QuestCheckpoint::getObjectives).flatMap(Collection::stream).forEach(it -> objectiveTypes.add(it.getType().name()));
-        }
+        Quest quest = QuestGenerator.generate((WorldServer) player.world, player);
         pqd.startQuest(player, quest);
         MineQuest.logger.info("Generated quest for player " + player.getName());
         return null;

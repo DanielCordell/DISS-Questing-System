@@ -64,7 +64,7 @@ public enum ObjectiveType {
         HashMap<String, Pair<BlockPos, Boolean>> closestStructurePerType = worldState.closestStructurePerType;
         int searchWeight = (int) closestStructurePerType.values()
                 .stream()
-                // If a position exists, and it's < 800 away from the player, increase the probability of a locate quest.
+                // If a position exists, and it's < 1000 away from the player, increase the probability of a locate quest.
                 .filter(it -> it != null && Math.sqrt(it.first().distanceSq(worldState.playerPos)) < 1000)
                 .count();
         searchWeight = (int) Math.ceil(searchWeight * 1.5);

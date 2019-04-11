@@ -42,6 +42,9 @@ public class QuestGenerator {
         Quest quest = Quest.newEmptyQuest(world);
         QuestCheckpoint firstCheckpoint = new QuestCheckpoint(quest);
         WorldState worldState = WorldState.getWorldState(world, player);
+
+        worldState.overallDifficulty = 20; //Todo TEMP
+
         ConcurrentHashMap<ObjectiveType, Integer> objectiveWeights = ObjectiveType.getObjectiveWeightMap(worldState);
 
         //Determine Objective for first Checkpoint
@@ -178,7 +181,7 @@ public class QuestGenerator {
                     List<String> prevStructures = prevCheckpoint.getQuest().getCheckpoints().stream().map(QuestCheckpoint::getObjectives)
                             .flatMap(List::stream).filter(it -> it instanceof ObjectiveEscort).map(it -> ((ObjectiveEscort) it).getStructureType()).collect(Collectors.toList());
                     List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
-                            .stream().filter(it -> Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
+                            .stream().filter(it -> Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 1000)
                             .map(Entry::getKey).collect(Collectors.toList());
 
                     int size = possibleStructures.size();
@@ -207,7 +210,7 @@ public class QuestGenerator {
                     prevStructures.addAll(newCheckpoint.getObjectives().stream()
                             .filter(it -> it instanceof ObjectiveEscort && !prevStructures.contains(((ObjectiveEscort) it).getStructureType())).map(it -> ((ObjectiveEscort) it).getStructureType()).collect(Collectors.toList()));
                     List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
-                            .stream().filter(it -> Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
+                            .stream().filter(it -> Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 1000)
                             .map(Entry::getKey).collect(Collectors.toList());
 
                     int size = possibleStructures.size();
@@ -240,7 +243,7 @@ public class QuestGenerator {
                     prevStructures.addAll(newCheckpoint.getObjectives().stream()
                             .filter(it -> it instanceof ObjectiveSearch && !prevStructures.contains(((ObjectiveSearch) it).getStructureType())).map(it -> ((ObjectiveSearch) it).getStructureType()).collect(Collectors.toList()));
                     List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
-                            .stream().filter(it -> Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
+                            .stream().filter(it -> Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 1000)
                             .map(Entry::getKey).collect(Collectors.toList());
 
                     int size = possibleStructures.size();
@@ -250,7 +253,7 @@ public class QuestGenerator {
                                 .map(Entry::getKey).collect(Collectors.toList());
 
 
-                    if (rand.nextInt(5) == 0 && prevStructures.size() < possibleStructures.size()) {
+                    if (rand.nextInt(2) == 0 && prevStructures.size() < possibleStructures.size()) {
                         // Go somewhere else
                         possibleStructures.removeAll(prevStructures);
                         String structure;
@@ -350,7 +353,7 @@ public class QuestGenerator {
             params = ObjectiveGenerator.generateGatherObjective(firstCheckpoint, itemStack);
         } else if (objectiveType == ObjectiveType.SEARCH) {
             List<String> possibleStructures = worldState.closestStructurePerType.entrySet()
-                    .stream().filter(it -> !it.getValue().second() && Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 800)
+                    .stream().filter(it -> !it.getValue().second() && Math.sqrt(it.getValue().first().distanceSq(worldState.playerPos)) < 1000)
                     .map(Entry::getKey).collect(Collectors.toList());
             int size = possibleStructures.size();
             if (size == 0)

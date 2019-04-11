@@ -35,7 +35,7 @@ public class RenderingHandler {
         }
     }
 
-    //Code from https://github.com/AtomicStryker/atomicstrykers-minecraft-mods/blob/1.12.2/InfernalMobs/src/main/java/atomicstryker/infernalmobs/client/RendererBossGlow.java
+    //Function code from https://github.com/AtomicStryker/atomicstrykers-minecraft-mods/blob/1.12.2/InfernalMobs/src/main/java/atomicstryker/infernalmobs/client/RendererBossGlow.java
     //Permission granted from licence http://atomicstryker.net/about.php
     private static void renderBossGlow(float renderTick)
     {
